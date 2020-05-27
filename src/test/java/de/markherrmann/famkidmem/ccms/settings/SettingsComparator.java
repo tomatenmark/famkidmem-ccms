@@ -11,12 +11,7 @@ public class SettingsComparator implements Comparator<Settings> {
         return comparing(Settings::getApiKey)
                 .thenComparing(Settings::getBackendFilesDir)
                 .thenComparing(Settings::getBackendHost)
-                .thenComparing(Settings::getBackendPort)
-                .thenComparing(Settings::getBackendProtocol)
-                .thenComparing(Settings::getSshHost)
-                .thenComparing(Settings::getSshPort)
-                .thenComparing(Settings::getSshKeyPath)
-                .thenComparing(Settings::getSshTunnelLocalPort)
+                .thenComparing(Settings::getMasterKey)
                 .compare(s1, s2);
     }
 

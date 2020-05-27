@@ -59,12 +59,7 @@ public class SettingsReaderTest {
         settings.setApiKey("apiKey");
         settings.setBackendFilesDir("/opt/dir/");
         settings.setBackendHost("example.com");
-        settings.setBackendPort("4242");
-        settings.setBackendProtocol("https");
-        settings.setSshHost("ssh.example.com");
-        settings.setSshPort("22");
-        settings.setSshKeyPath("./key");
-        settings.setSshTunnelLocalPort("14242");
+        settings.setMasterKey("key");
         createTestSettingsFile(settings);
         return settings;
     }
