@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.nio.file.Files;
 
@@ -24,7 +25,7 @@ public class SettingsReader {
             File settingsFile = new File("./settings.json");
             return new String(Files.readAllBytes(settingsFile.toPath()));
         } catch (Exception ex){
-            LOGGER.error("Error while reading settings file settings.json: File not found or invalid. Shutting down");
+            showAndLogError("Error while reading settings file settings.json: File not found or invalid. Shutting down");
             System.exit(1);
             return "";
         }
@@ -34,9 +35,14 @@ public class SettingsReader {
         try {
             return new ObjectMapper().readValue(json, Settings.class);
         } catch (Exception ex) {
-            LOGGER.error("Error while reading settings file settings.json: File not found or invalid. Shutting down");
+            showAndLogError("Error while reading settings file settings.json: File not found or invalid. Shutting down");
             System.exit(1);
             return null;
         }
+    }
+
+    private static void showAndLogError(String message){
+        LOGGER.error(message);
+        JOptionPane.showMessageDialog(null, message, "Error!", JOptionPane.ERROR_MESSAGE);
     }
 }
