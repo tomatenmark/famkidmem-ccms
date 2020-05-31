@@ -2,17 +2,17 @@ package de.markherrmann.famkidmem.ccms.settings;
 
 public class Settings {
 
-    private String backendHost;
+    private String backendUrl;
     private String backendFilesDir;
     private String apiKey;
     private String masterKey;
 
-    public String getBackendHost() {
-        return backendHost;
+    public String getBackendUrl() {
+        return backendUrl;
     }
 
-    public void setBackendHost(String backendHost) {
-        this.backendHost = backendHost;
+    public void setBackendUrl(String backendUrl) {
+        this.backendUrl = backendUrl;
     }
 
     public String getBackendFilesDir() {

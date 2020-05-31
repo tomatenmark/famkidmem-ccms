@@ -10,7 +10,6 @@ import java.nio.file.Files;
 public class SettingsReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsReader.class);
-    public static boolean test = false;
 
     public static Settings readSettings() {
         String json = getStringFromFile();
@@ -25,8 +24,8 @@ public class SettingsReader {
             File settingsFile = new File("./settings.json");
             return new String(Files.readAllBytes(settingsFile.toPath()));
         } catch (Exception ex){
-            LOGGER.error("Error while reading settings file settings.json: File not found or invalid");
-            exit();
+            LOGGER.error("Error while reading settings file settings.json: File not found or invalid. Shutting down");
+            System.exit(1);
             return "";
         }
     }
@@ -35,34 +34,9 @@ public class SettingsReader {
         try {
             return new ObjectMapper().readValue(json, Settings.class);
         } catch (Exception ex) {
-            LOGGER.error("Error while reading settings file settings.json: File not found or invalid");
-            exit();
-            return null;
-        }
-    }
-
-    private static void exit(){
-        if(test){
-            exitInNewThread();
-        } else {
+            LOGGER.error("Error while reading settings file settings.json: File not found or invalid. Shutting down");
             System.exit(1);
-        }
-    }
-
-    private static void exitInNewThread(){
-        new Thread(SettingsReader::exitInSeconds).start();
-    }
-
-    private static void exitInSeconds(){
-        wait5Seconds();
-        System.exit(1);
-    }
-
-    private static void wait5Seconds(){
-        try {
-            Thread.sleep(5000);
-        } catch(Exception ex){
-            ex.printStackTrace();
+            return null;
         }
     }
 }

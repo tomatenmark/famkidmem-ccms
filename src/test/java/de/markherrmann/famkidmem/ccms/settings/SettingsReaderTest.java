@@ -2,63 +2,35 @@ package de.markherrmann.famkidmem.ccms.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class SettingsReaderTest {
-
-    @Before
-    public void setUp(){
-        SettingsReader.test = true;
-    }
 
     @After
     public void tearDown(){
         new File("./settings.json").delete();
-        SettingsReader.test = false;
     }
 
     @Test
     public void shouldReadSettings() throws IOException {
-        Settings testSettings = createTestSettings();
+        Settings reference = createTestSettings();
 
-        Settings actualSettings = SettingsReader.readSettings();
+        Settings actual = SettingsReader.readSettings();
 
-        assertThat(actualSettings).usingComparator(new SettingsComparator()).isEqualTo(testSettings);
-    }
-
-    @Test
-    public void shouldFailReadSettingsCausedByFileNotFound() {
-        Settings actualSettings = SettingsReader.readSettings();
-
-        assertThat(actualSettings).isNull();
-    }
-
-    @Test
-    public void shouldFailReadSettingsCausedByInvalidFile() throws IOException {
-        createInvalidSettingsFile();
-
-        Settings actualSettings = SettingsReader.readSettings();
-
-        assertThat(actualSettings).isNull();
+        assertToBe(actual, reference);
     }
 
     private Settings createTestSettings() throws IOException {
         Settings settings = new Settings();
         settings.setApiKey("apiKey");
         settings.setBackendFilesDir("/opt/dir/");
-        settings.setBackendHost("example.com");
+        settings.setBackendUrl("https://ccms.example.de");
         settings.setMasterKey("key");
         createTestSettingsFile(settings);
         return settings;
@@ -73,12 +45,11 @@ public class SettingsReaderTest {
         fileWriter.close();
     }
 
-    private void createInvalidSettingsFile() throws IOException {
-        File file = new File("./settings.json");
-        file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file.getPath());
-        fileWriter.write("invalid");
-        fileWriter.close();
+    private void assertToBe(Settings actual, Settings reference){
+        assertEquals(actual.getApiKey(), reference.getApiKey());
+        assertEquals(actual.getMasterKey(), reference.getMasterKey());
+        assertEquals(actual.getBackendFilesDir(), reference.getBackendFilesDir());
+        assertEquals(actual.getBackendUrl(), reference.getBackendUrl());
     }
 
     private static String asJsonString(final Object obj) {
