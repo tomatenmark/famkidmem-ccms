@@ -21,13 +21,11 @@ This repository contains the sources for the FamKidMem Control & Content Managem
 You will need a settings.json with following format:\
 {\
 &nbsp;&nbsp;&nbsp;&nbsp;"backendUrl": "string",\
-&nbsp;&nbsp;&nbsp;&nbsp;"backendFilesDir": "string",\
 &nbsp;&nbsp;&nbsp;&nbsp;"apiKey": "string",\
 &nbsp;&nbsp;&nbsp;&nbsp;"masterKey": "string"\
 }\
 **apiKey has to be a secure random 128 bit key (base64 encoded) or a random uuid**\
 **masterKey has to be secure random 128 bit key (base 64 encoded)** (**open-ssl rand** for example)\
-**backendFilesDir is the directory on the backend server where to store the video and thumbnail files**\
 **backendUrl is the url of the backend** (example: https://ccms.example.de/)
 
 # Build

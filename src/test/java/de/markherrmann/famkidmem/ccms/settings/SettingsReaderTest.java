@@ -29,7 +29,6 @@ public class SettingsReaderTest {
     private Settings createTestSettings() throws IOException {
         Settings settings = new Settings();
         settings.setApiKey("apiKey");
-        settings.setBackendFilesDir("/opt/dir/");
         settings.setBackendUrl("https://ccms.example.de");
         settings.setMasterKey("key");
         createTestSettingsFile(settings);
@@ -48,7 +47,6 @@ public class SettingsReaderTest {
     private void assertToBe(Settings actual, Settings reference){
         assertEquals(actual.getApiKey(), reference.getApiKey());
         assertEquals(actual.getMasterKey(), reference.getMasterKey());
-        assertEquals(actual.getBackendFilesDir(), reference.getBackendFilesDir());
         assertEquals(actual.getBackendUrl(), reference.getBackendUrl());
     }
 

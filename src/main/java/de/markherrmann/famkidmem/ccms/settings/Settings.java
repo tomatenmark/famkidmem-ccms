@@ -3,7 +3,6 @@ package de.markherrmann.famkidmem.ccms.settings;
 public class Settings {
 
     private String backendUrl;
-    private String backendFilesDir;
     private String apiKey;
     private String masterKey;
 
@@ -13,14 +12,6 @@ public class Settings {
 
     public void setBackendUrl(String backendUrl) {
         this.backendUrl = backendUrl;
-    }
-
-    public String getBackendFilesDir() {
-        return backendFilesDir;
-    }
-
-    public void setBackendFilesDir(String backendFilesDir) {
-        this.backendFilesDir = backendFilesDir;
     }
 
     public String getApiKey() {
