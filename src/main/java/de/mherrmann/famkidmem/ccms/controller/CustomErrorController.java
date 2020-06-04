@@ -1,31 +1,28 @@
 package de.mherrmann.famkidmem.ccms.controller;
 
-import de.mherrmann.famkidmem.ccms.body.ResponseBodyError;
 import de.mherrmann.famkidmem.ccms.utils.ErrorResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
+@Controller
 public class CustomErrorController implements ErrorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomErrorController.class);
 
     @RequestMapping("/error")
-    public ResponseEntity<ResponseBodyError> handleError(HttpServletRequest request) {
+    public String handleError(HttpServletRequest request, Model model) {
         HttpStatus httpStatus = ErrorResponseUtil.getErrorStatus(request);
-        ResponseBodyError errorResponse = ErrorResponseUtil.getErrorResponse(httpStatus);
-        LOGGER.error("Request error: status:{}; message:{}", httpStatus.value(), errorResponse.getMessage());
-        if("head".equalsIgnoreCase(request.getMethod())){
-            return ResponseEntity.status(httpStatus).build();
-        }
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        model.addAttribute("status", httpStatus.value());
+        model.addAttribute("statusDetail", httpStatus.getReasonPhrase());
+        LOGGER.error("Request error: status:{}; message:{}", httpStatus.value(), httpStatus.getReasonPhrase());
+        return "error";
     }
 
     @Override
