@@ -12,7 +12,7 @@
 
     <div class="feedback" th:if="${post}">
         <div class="success" th:if="${success}">
-            <div>Reset password successfully.</div>
+            <div>Successfully reset password.</div>
             Reset link:<br>[[${resetLink}]]
         </div>
         <div class="failure" th:if="${!success}">
