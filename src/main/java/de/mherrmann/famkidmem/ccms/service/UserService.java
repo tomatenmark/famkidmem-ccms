@@ -1,10 +1,7 @@
 package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.Application;
-import de.mherrmann.famkidmem.ccms.body.RequestBodyAddUser;
-import de.mherrmann.famkidmem.ccms.body.RequestBodyResetPassword;
-import de.mherrmann.famkidmem.ccms.body.ResponseBody;
-import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
+import de.mherrmann.famkidmem.ccms.body.*;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.User;
 import org.slf4j.Logger;
@@ -62,6 +59,22 @@ public class UserService {
             model.addAttribute("success", true);
             model.addAttribute("resetLink", request.getParameter("link"));
             LOGGER.info("Successfully reset password for user {}.", username);
+        } catch(Exception ex){
+            handleException(ex, model);
+        }
+    }
+
+    @SuppressWarnings("unchecked") //we know, the assignment will work
+    public void deleteUser(Model model, String username){
+        fillResetPasswordModel(model, username, true);
+        try {
+            RequestBodyDeleteUser deleteUserRequest = createDeleteUserRequest(username);
+            ResponseEntity<ResponseBody> response = connectionService.doDeleteRequest(deleteUserRequest, "/ccms/admin/user/delete", MediaType.APPLICATION_JSON);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                throw new WebBackendException(response.getBody());
+            }
+            model.addAttribute("success", true);
+            LOGGER.info("Successfully removed user {}.", username);
         } catch(Exception ex){
             handleException(ex, model);
         }
@@ -149,6 +162,12 @@ public class UserService {
         resetPasswordRequest.setPasswordKeySalt(request.getParameter("passwordKeySalt"));
         resetPasswordRequest.setMasterKey(request.getParameter("userKey"));
         return resetPasswordRequest;
+    }
+
+    private RequestBodyDeleteUser createDeleteUserRequest(String username){
+        RequestBodyDeleteUser deleteUserRequest = new RequestBodyDeleteUser();
+        deleteUserRequest.setUsername(username);
+        return deleteUserRequest;
     }
 
 }

@@ -38,6 +38,13 @@ public class UserController {
         return "user/reset";
     }
 
+    @GetMapping(value = "/user/remove/{username}")
+    public String loadRemove(Model model, @PathVariable String username){
+        model.addAttribute("username", username);
+        model.addAttribute("post", false);
+        return "user/remove";
+    }
+
     @PostMapping(value = "/user/add")
     public String addUser(HttpServletRequest request, Model model){
         userService.addUser(request, model);
@@ -48,5 +55,11 @@ public class UserController {
     public String resetPassword(HttpServletRequest request, Model model, @PathVariable String username){
         userService.resetPassword(request, model, username);
         return "user/reset";
+    }
+
+    @PostMapping(value = "/user/remove/{username}")
+    public String deleteUser(Model model, @PathVariable String username){
+        userService.deleteUser(model, username);
+        return "user/remove";
     }
 }
