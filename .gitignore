@@ -4,3 +4,4 @@ target
 files/
 *.log
 *.gz
+settings.json
