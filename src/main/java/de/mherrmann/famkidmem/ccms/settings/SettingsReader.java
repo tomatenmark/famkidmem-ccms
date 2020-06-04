@@ -1,4 +1,4 @@
-package de.markherrmann.famkidmem.ccms.settings;
+package de.mherrmann.famkidmem.ccms.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

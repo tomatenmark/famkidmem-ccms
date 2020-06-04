@@ -1,4 +1,4 @@
-package de.markherrmann.famkidmem.ccms.settings;
+package de.mherrmann.famkidmem.ccms.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
@@ -30,6 +30,7 @@ public class SettingsReaderTest {
         Settings settings = new Settings();
         settings.setApiKey("apiKey");
         settings.setBackendUrl("https://ccms.example.de");
+        settings.setBackendUrl("https://example.de");
         settings.setMasterKey("key");
         createTestSettingsFile(settings);
         return settings;
@@ -48,6 +49,7 @@ public class SettingsReaderTest {
         assertEquals(actual.getApiKey(), reference.getApiKey());
         assertEquals(actual.getMasterKey(), reference.getMasterKey());
         assertEquals(actual.getBackendUrl(), reference.getBackendUrl());
+        assertEquals(actual.getFrontendUrl(), reference.getFrontendUrl());
     }
 
     private static String asJsonString(final Object obj) {

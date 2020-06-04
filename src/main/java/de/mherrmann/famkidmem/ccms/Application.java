@@ -1,7 +1,7 @@
-package de.markherrmann.famkidmem.ccms;
+package de.mherrmann.famkidmem.ccms;
 
-import de.markherrmann.famkidmem.ccms.settings.Settings;
-import de.markherrmann.famkidmem.ccms.settings.SettingsReader;
+import de.mherrmann.famkidmem.ccms.settings.Settings;
+import de.mherrmann.famkidmem.ccms.settings.SettingsReader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
