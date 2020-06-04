@@ -30,6 +30,10 @@ public class ConnectionService {
         return doRequest(HttpMethod.POST, body, path, mediaType);
     }
 
+    ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType){
+        return doRequest(HttpMethod.DELETE, body, path, mediaType);
+    }
+
     private HttpEntity getHttpEntity(Object body, MediaType mediaType){
         return new HttpEntity<>(body, getHeaders(mediaType));
     }
