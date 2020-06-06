@@ -9,7 +9,7 @@ public class WebBackendException extends Exception {
 
     public WebBackendException(ResponseBody body){
         this.details = body.getDetails();
-        this.exception = "Web backend says: " + body.getException();
+        this.exception = body.getException();
     }
 
     public String getDetails() {
