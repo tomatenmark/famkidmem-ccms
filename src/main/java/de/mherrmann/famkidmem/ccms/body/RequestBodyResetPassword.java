@@ -38,4 +38,15 @@ public class RequestBodyResetPassword {
     public void setMasterKey(String masterKey) {
         this.masterKey = masterKey;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if( !(other instanceof RequestBodyResetPassword)){
+            return false;
+        }
+        if(this.username == null){
+            return ((RequestBodyResetPassword) other).username == null;
+        }
+        return this.username.equals(((RequestBodyResetPassword) other).username);
+    }
 }

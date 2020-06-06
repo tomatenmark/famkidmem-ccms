@@ -47,4 +47,15 @@ public class RequestBodyAddUser {
     public void setMasterKey(String masterKey) {
         this.masterKey = masterKey;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if( !(other instanceof RequestBodyAddUser)){
+            return false;
+        }
+        if(this.username == null){
+            return ((RequestBodyAddUser) other).username == null;
+        }
+        return this.username.equals(((RequestBodyAddUser) other).username);
+    }
 }
