@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -47,7 +48,7 @@ public class UserManagementTestIndex {
 
     @Test
     public void shouldLoadIndexView() throws Exception {
-        List<User> users = testUtil.createUsersList(false);
+        List<User> users = testUtil.createUsersList();
         given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
                 .willReturn(testUtil.createTestResponseEntityGetUsers(users));
 
@@ -60,7 +61,7 @@ public class UserManagementTestIndex {
 
     @Test
     public void shouldLoadIndexViewEmpty() throws Exception {
-        List<User> users = testUtil.createUsersList(true);
+        List<User> users = Collections.emptyList();
         given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
                 .willReturn(testUtil.createTestResponseEntityGetUsers(users));
 

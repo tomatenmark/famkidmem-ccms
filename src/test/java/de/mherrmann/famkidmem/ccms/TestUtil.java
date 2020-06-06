@@ -85,16 +85,14 @@ public class TestUtil {
         return removeUserRequest;
     }
 
-    public List<User> createUsersList(boolean empty){
+    public List<User> createUsersList(){
         List<User> users = new ArrayList<>();
-        if(!empty){
             User user1 = new User();
             User user2 = new User();
             user1.setUsername("user1");
             user2.setUsername("user2");
             users.add(user1);
             users.add(user2);
-        }
         return users;
     }
 
