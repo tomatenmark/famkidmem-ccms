@@ -4,6 +4,7 @@ import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.*;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.User;
+import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,12 +21,14 @@ import java.util.List;
 public class UserService {
 
     private final ConnectionService connectionService;
+    private final CryptoUtil cryptoUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(ConnectionService connectionService) {
+    public UserService(ConnectionService connectionService, CryptoUtil cryptoUtil) {
         this.connectionService = connectionService;
+        this.cryptoUtil = cryptoUtil;
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
@@ -81,7 +82,7 @@ public class UserService {
     }
 
     public void fillAddUserModel(Model model, boolean post){
-        fillUserModel(model, generateSecureRandomToken(), post);
+        fillUserModel(model, cryptoUtil.generateSecureRandomCredential(), post);
     }
 
     public void fillResetPasswordModel(Model model, String username, boolean post){
@@ -111,7 +112,7 @@ public class UserService {
         model.addAttribute("frontendUrl", Application.getSettings().getFrontendUrl());
         model.addAttribute("masterKey", Application.getSettings().getMasterKey());
         model.addAttribute("username", username);
-        model.addAttribute("password", generateSecureRandomToken());
+        model.addAttribute("password", cryptoUtil.generateSecureRandomCredential());
         model.addAttribute("post", post);
     }
 
@@ -136,14 +137,7 @@ public class UserService {
         throw new WebBackendException(response.getBody());
     }
 
-    //https://stackoverflow.com/questions/46261055/how-to-generate-a-securerandom-string-of-length-n-in-java
-    private String generateSecureRandomToken() {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-        return encoder.encodeToString(bytes);
-    }
+
 
     private RequestBodyAddUser createAddUserRequest(HttpServletRequest request){
         RequestBodyAddUser addUserRequest = new RequestBodyAddUser();
