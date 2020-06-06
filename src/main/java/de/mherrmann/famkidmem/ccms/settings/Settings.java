@@ -1,8 +1,9 @@
-package de.markherrmann.famkidmem.ccms.settings;
+package de.mherrmann.famkidmem.ccms.settings;
 
 public class Settings {
 
     private String backendUrl;
+    private String frontendUrl;
     private String apiKey;
     private String masterKey;
 
@@ -12,6 +13,14 @@ public class Settings {
 
     public void setBackendUrl(String backendUrl) {
         this.backendUrl = backendUrl;
+    }
+
+    public String getFrontendUrl() {
+        return frontendUrl;
+    }
+
+    public void setFrontendUrl(String frontendUrl) {
+        this.frontendUrl = frontendUrl;
     }
 
     public String getApiKey() {

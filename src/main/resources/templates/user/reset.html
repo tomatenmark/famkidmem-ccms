@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="username" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+
+    <div class="feedback" th:if="${post}">
+        <div class="success" th:if="${success}">
+            <div>Successfully reset password.</div>
+            Reset link:<br>[[${resetLink}]]
+        </div>
+        <div class="failure" th:if="${!success}">
+            <div>Could not reset password!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]<br>
+            <a class="button" th:href="@{'/user/reset/'+${username}}">Try again</a>
+        </div>
+        <p>
+            <a th:href="@{/user/index}">Back to user list</a>
+        </p>
+    </div>
+
+    <th:block th:if="${!post}">
+        <form method="post" th:action="@{'/user/reset/'+${username}}" name="userForm" style="display: none">
+            <input type="hidden" name="loginHash">
+            <input type="hidden" name="passwordKeySalt">
+            <input type="hidden" name="link">
+            <input type="hidden" name="userKey">
+            Are you sure you want to reset the password of [[${username}]]?
+            <button type="submit">Yes</button>
+            <a class="button" th:href="@{/user/index}">No</a>
+        </form>
+
+        <script>
+            prepareUserForm('[[${username}]]', '[[${password}]]', '[[${frontendUrl}]]', '[[${masterKey}]]', 'reset');
+        </script>
+    </th:block>
+
+</div>
+
+</body>
+</html>

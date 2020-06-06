@@ -1,0 +1,88 @@
+html, body { margin: 0; padding: 0; background:#bebebe; font-size: 1em;}
+body { padding: 30px; }
+
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-bottom: 2px black solid;
+    width: 100%;
+}
+
+#header h1 {
+    display: inline;
+    position: relative;
+    top: -23px;
+    left: 3px;
+    font-size: 2rem;
+}
+
+#main {
+    margin-top: 60px;
+}
+
+#h2 {
+    font-size: 1.5rem;
+}
+
+a:link, a:visited {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #00972d;
+}
+
+a:focus, a:hover {
+    color: #644eff;
+}
+
+a:active {
+    color: #d00;
+}
+
+.success div {
+    color: green;
+}
+
+.failure div {
+    color: #a00;
+}
+
+.feedback {
+    margin-bottom: 20px;
+}
+
+#users {
+    margin-bottom: 30px;
+}
+
+.user {
+    background: #e0e0e0;
+    color: #006;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.user .meta {
+    color: #acaccb;
+}
+button, a.button:link, a.button:visited {
+    background: #add9ff;
+    border: 1px #add9ff solid;
+    color: black;margin-top: 0;
+    font-size: 1rem;
+    padding: 3px;
+    border-radius: 11px;
+    cursor: pointer;
+}
+
+button:hover, button:focus, a.button:hover, a.button:focus, a.button:active {
+    background: #d0e9ff;
+    border: 1px #d0e9ff solid;
+    color: black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 2px;
+}

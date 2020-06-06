@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+    <h2>What would you like to manage?</h2>
+    <ul>
+        <li><a th:href="@{user/index}">Users</a></li>
+        <!--li><a th:href="video/">Videos</a></li-->
+    </ul>
+</div>
+
+</body>
+</html>

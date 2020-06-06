@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="username" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+
+
+    <div class="feedback" th:if="${post}">
+        <div class="success" th:if="${success}">
+            <div>Successfully added user.</div>
+            Init link:<br>[[${initLink}]]
+        </div>
+        <div class="failure" th:if="${!success}">
+            <div>Could not add user!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]
+        </div>
+    </div>
+
+    <form method="post" th:action="@{/user/add}" name="userForm" style="display: none">
+        <input type="text" name="displayName" placeholder="displayName">
+        <input type="hidden" name="username" th:value="${username}">
+        <input type="hidden" name="loginHash">
+        <input type="hidden" name="passwordKeySalt">
+        <input type="hidden" name="link">
+        <input type="hidden" name="userKey">
+        <button type="submit">Add</button>
+    </form>
+
+    <script>
+        prepareUserForm('[[${username}]]', '[[${password}]]', '[[${frontendUrl}]]', '[[${masterKey}]]', 'init');
+    </script>
+
+    <p>
+        <a th:href="@{/user/index}">Back to user list</a>
+    </p>
+
+
+</div>
+
+</body>
+</html>

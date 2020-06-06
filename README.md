@@ -21,12 +21,14 @@ This repository contains the sources for the FamKidMem Control & Content Managem
 You will need a settings.json with following format:\
 {\
 &nbsp;&nbsp;&nbsp;&nbsp;"backendUrl": "string",\
+&nbsp;&nbsp;&nbsp;&nbsp;"frontendUrl": "string",\
 &nbsp;&nbsp;&nbsp;&nbsp;"apiKey": "string",\
 &nbsp;&nbsp;&nbsp;&nbsp;"masterKey": "string"\
 }\
 **apiKey has to be a secure random 128 bit key (base64 encoded) or a random uuid**\
 **masterKey has to be secure random 128 bit key (base 64 encoded)** (**open-ssl rand** for example)\
 **backendUrl is the url of the backend** (example: https://ccms.example.de/)
+**frontendUrl is the public base url of famkidmem** (example: https://example.de/)
 
 # Build
 **mvn clean package**
