@@ -1,8 +1,8 @@
 package de.mherrmann.famkidmem.ccms.service;
 
-import com.sun.istack.internal.NotNull;
 import de.mherrmann.famkidmem.ccms.Application;
-import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
+import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,14 +12,15 @@ public class ConnectionService {
 
     private final RestTemplate restTemplate;
 
-    public ConnectionService() {
-        this.restTemplate = new RestTemplate();
+    @Autowired
+    public ConnectionService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
-    ResponseEntity doRequest(HttpMethod method, Object body, String path, MediaType mediaType){
+    private ResponseEntity doRequest(HttpMethod method, Object body, String path, MediaType mediaType){
         HttpEntity httpEntity = getHttpEntity(body, mediaType);
         String url = Application.getSettings().getBackendUrl() + path;
-        return restTemplate.exchange(url, method, httpEntity, ResponseBodyGetUsers.class);
+        return restTemplate.exchange(url, method, httpEntity, ResponseBody.class);
     }
 
     ResponseEntity doGetRequest(String path){
