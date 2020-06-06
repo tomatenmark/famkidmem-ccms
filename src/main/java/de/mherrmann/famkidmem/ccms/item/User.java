@@ -37,4 +37,15 @@ public class User {
     public void setReset(boolean reset) {
         this.reset = reset;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if( !(other instanceof User)){
+            return false;
+        }
+        if(this.username == null){
+            return ((User) other).username == null;
+        }
+        return this.username.equals(((User) other).username);
+    }
 }
