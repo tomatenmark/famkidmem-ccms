@@ -28,19 +28,19 @@ public class VideoController {
         return "video/index";
     }
 
-    @GetMapping(value = "/video/add")
+    @GetMapping(value = "/video/edit-data")
     public String loadEditDataView(Model model){
         videoService.fillEditDataModel(model);
         return "video/index";
     }
 
-    @GetMapping(value = "/video/add")
+    @GetMapping(value = "/video/replace-thumbnail")
     public String loadReplaceThumbnailView(Model model){
         videoService.fillReplaceThumbnailModel(model);
         return "video/index";
     }
 
-    @GetMapping(value = "/video/add")
+    @GetMapping(value = "/video/remove")
     public String loadRemoveVideoView(Model model){
         videoService.fillRemoveVideoModel(model);
         return "video/index";
