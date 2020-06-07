@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="m3u8" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="m3u8Filename" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="thumbnailFilename" type="java.lang.String"*/-->
+
+    <div class="feedback" th:if="${post}">
+        <div class="success" th:if="${success}">
+            <div>Successfully removed video.</div>
+        </div>
+        <div class="failure" th:if="${!success}">
+            <div>Could not remove video!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]<br>
+            <a class="button" th:href="@{'/video/remove/'+${title}}">Try again</a>
+        </div>
+        <p>
+            <a th:href="@{/video/index}">Back to video list</a>
+        </p>
+    </div>
+
+
+    <form method="post" th:if="${!post}" th:action="@{'/video/remove/'+${title}}" id="videoRemoveForm" name="videoRemoveForm">
+        Are you sure you want to remove the video [[${title}]]?
+        <input type="hidden" name="m3u8Filename" th:value="${m3u8Filename}">
+        <input type="hidden" name="thumbnailFilename" th:value="${thumbnailFilename}">
+        <button type="submit">Yes</button>
+        <a class="button" th:href="@{/user/index}">No</a>
+    </form>
+
+
+    <span th:attrappend="data-m38u=${m3u8}" id="m3u8"></span>
+    <script>addTsFilenamesToVideoRemoveForm();</script>
+</div>
+
+</body>
+</html>

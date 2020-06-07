@@ -86,3 +86,5 @@ button:hover, button:focus, a.button:hover, a.button:focus, a.button:active {
 h1, h2, h3, h4, h5, h6 {
     margin-bottom: 2px;
 }
+
+/* TODO: add styles for input fields, checkbox, label and other new things in the new templates (maybe initialize some elements with display:none)*/
