@@ -2,6 +2,7 @@ package de.mherrmann.famkidmem.ccms;
 
 import de.mherrmann.famkidmem.ccms.body.*;
 import de.mherrmann.famkidmem.ccms.item.User;
+import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.settings.Settings;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,10 @@ public class TestUtil {
 
     public ResponseEntity<ResponseBody> createTestResponseEntityGetUsers(List<User> users){
         return ResponseEntity.ok(createTestResponseBodyGetUsers(users));
+    }
+
+    public ResponseEntity<ResponseBody> createTestResponseEntityGetVideos(List<Video> videos){
+        return ResponseEntity.ok(createTestResponseBodyGetVideos(videos));
     }
 
     public ResponseEntity<ResponseBody> createTestResponseEntityGetUsersError(){
@@ -96,6 +101,17 @@ public class TestUtil {
         return users;
     }
 
+    public List<Video> createVideosList(){
+        List<Video> videos = new ArrayList<>();
+        Video video1 = new Video();
+        Video video2 = new Video();
+        video1.setTitle("video1");
+        video2.setTitle("video2");
+        videos.add(video1);
+        videos.add(video2);
+        return videos;
+    }
+
     private ResponseBody createTestResponseBodyOk(){
         return new ResponseBody("ok", "testDetails");
     }
@@ -106,6 +122,10 @@ public class TestUtil {
 
     private ResponseBody createTestResponseBodyGetUsers(List<User> users){
         return new ResponseBodyGetUsers(users);
+    }
+
+    private ResponseBody createTestResponseBodyGetVideos(List<Video> videos){
+        return new ResponseBodyGetVideos(videos);
     }
 
     private ResponseBody createTestResponseBodyGetUsersError(){
