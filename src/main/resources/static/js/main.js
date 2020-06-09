@@ -49,6 +49,7 @@ function addVideo(){
             * upload files and show progress,
             * encrypt thumbnail and show progress
             * encrypt video and show progress
+            * add filenames, keys and ivs (given via push notification) to videoDataForm
          * post videoDataForm (trigger submit)
      */
 }

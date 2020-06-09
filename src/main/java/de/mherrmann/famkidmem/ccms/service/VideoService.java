@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,6 +67,30 @@ public class VideoService {
          * m3u8 filename
          * thumbnail filename
          */
+    }
+
+    public void addVideo(HttpServletRequest request, Model model){
+        //TODO: save video attributes including keys ivs and filenames (included in request)
+    }
+
+    public void replaceThumbnail(MultipartFile file, Model model, String title){
+        //TODO:  save file to files folder locally, encrypt it and then upload it to web backend
+    }
+
+    public void editData(HttpServletRequest request, Model model, String title){
+        //TODO: save new video attributes (maybe get old via web-backend get video request)
+    }
+
+    public void deleteVideo(Model model, String title){
+        //TODO: delete video (get names of files to delete from request)
+    }
+
+    public void uploadAndEncryptThumbnail(MultipartFile file){
+        //TODO: gen key and iv, encrypt file, choose filename, send key, iv and filename via push to frontend, upload file to web-backend
+    }
+
+    public void uploadAndEncryptVideo(MultipartFile file){
+        //TODO: gen key and iv, encrypt video (ffmpeg, ts), choose filenames, send keys, ivs and filenames via push to frontend, upload files to web-backend
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
