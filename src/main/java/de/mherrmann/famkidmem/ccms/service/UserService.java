@@ -5,6 +5,7 @@ import de.mherrmann.famkidmem.ccms.body.*;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.User;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
+import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,15 @@ public class UserService {
 
     private final ConnectionService connectionService;
     private final CryptoUtil cryptoUtil;
+    private final ExceptionUtil exceptionUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(ConnectionService connectionService, CryptoUtil cryptoUtil) {
+    public UserService(ConnectionService connectionService, CryptoUtil cryptoUtil, ExceptionUtil exceptionUtil) {
         this.connectionService = connectionService;
         this.cryptoUtil = cryptoUtil;
+        this.exceptionUtil = exceptionUtil;
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
@@ -44,7 +47,7 @@ public class UserService {
             model.addAttribute("initLink", request.getParameter("link"));
             LOGGER.info("Successfully added user. Display name: {}.", addUserRequest.getDisplayName());
         } catch(Exception ex){
-            handleException(ex, model);
+            exceptionUtil.handleException(ex, model, LOGGER);
         }
     }
 
@@ -61,7 +64,7 @@ public class UserService {
             model.addAttribute("resetLink", request.getParameter("link"));
             LOGGER.info("Successfully reset password for user {}.", username);
         } catch(Exception ex){
-            handleException(ex, model);
+            exceptionUtil.handleException(ex, model, LOGGER);
         }
     }
 
@@ -77,7 +80,7 @@ public class UserService {
             model.addAttribute("success", true);
             LOGGER.info("Successfully removed user {}.", username);
         } catch(Exception ex){
-            handleException(ex, model);
+            exceptionUtil.handleException(ex, model, LOGGER);
         }
     }
 
@@ -94,19 +97,11 @@ public class UserService {
             model.addAttribute("users", getUsers());
             model.addAttribute("success", true);
         } catch(Exception ex){
-            handleException(ex, model);
+            exceptionUtil.handleException(ex, model, LOGGER);
             model.addAttribute("users", Collections.emptyList());
         }
     }
 
-    private void handleException(Exception ex, Model model){
-        if(ex instanceof WebBackendException){
-            fillWebBackendExceptionValues((WebBackendException) ex, model);
-            LOGGER.error("Error", ex);
-        } else {
-            fillExceptionValues(ex, model);
-        }
-    }
 
     private void fillUserModel(Model model, String username, boolean post){
         model.addAttribute("frontendUrl", Application.getSettings().getFrontendUrl());
@@ -114,18 +109,6 @@ public class UserService {
         model.addAttribute("username", username);
         model.addAttribute("password", cryptoUtil.generateSecureRandomCredential());
         model.addAttribute("post", post);
-    }
-
-    private void fillExceptionValues(Exception ex, Model model){
-        model.addAttribute("success", false);
-        model.addAttribute("exception", ex.toString());
-        model.addAttribute("details", "connection failure");
-    }
-
-    private void fillWebBackendExceptionValues(WebBackendException ex, Model model){
-        model.addAttribute("success", false);
-        model.addAttribute("details", ex.getDetails());
-        model.addAttribute("exception", ex.getException());
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work

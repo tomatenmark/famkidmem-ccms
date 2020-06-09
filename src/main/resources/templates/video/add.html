@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+
+    <div class="feedback" th:if="${post}">
+        <div class="success" th:if="${success}">
+            Successfully added video.
+        </div>
+        <div class="failure" th:if="${!success}">
+            <div>Could not add Video!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]<br>
+            <a class="button" th:href="@{/video/add}">Try again</a>
+        </div>
+        <p>
+            <a th:href="@{/video/index}">Back to video list</a>
+        </p>
+    </div>
+
+
+    <th:block th:if="${!post}">
+        <form method="post" th:action="@{/video/upload-video}" enctype="multipart/form-data" name="uploadVideoForm" id="uploadVideoForm">
+            Select video file<input type="file" name="videoFile" id="videoFile">
+        </form>
+
+        <form method="post" th:action="@{/video/upload-thumbnail}" enctype="multipart/form-data" name="uploadThumbnailForm" id="uploadThumbnailForm">
+            Select thumbnail file<input type="file" name="thumbnailFile" id="thumbnailFile">
+        </form>
+
+        <form method="post" th:action="@{/video/add}" name="videoDataForm" id="videoDataForm">
+            <label>
+                <span>Title</span>
+                <input type="text" name="title">
+            </label>
+            <label>
+                <span>Description</span>
+                <textarea name="description"></textarea>
+            </label>
+            <label>
+                <span>Persons (comma-separated)</span>
+                <input type="text" name="persons">
+            </label>
+            <label>
+                <span>Recorded where?</span>
+                <input type="checkbox" name="recordedInCologne"> Cologne
+                <input type="checkbox" name="recordedInGardelegen"> Gardelegen
+            </label>
+            <label>
+                <span>Recorded when?</span>
+                <input name="year" type="number" min="1994" max="2999" required> Year
+                <input name="month" type="number" min="0" max="12"> Month (0 means unknown)
+                <input name="day" type="number" min="0" max="31" required> Day (0 means unknown)
+            </label>
+            <button type="button" onclick="addVideo();">Add Video</button>
+        </form>
+
+        <div id="progress">
+            <span id="step"></span>: <progress id="progressBar" value="0" max="100"></progress><br>
+            <div id="ffmpegProgress"></div>
+        </div>
+
+        <div id="fileProcessingErrors"></div>
+    </th:block>
+
+
+</div>
+
+</body>
+</html>

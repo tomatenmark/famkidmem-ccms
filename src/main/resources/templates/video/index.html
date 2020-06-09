@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="videos" type="java.util.List"*/-->
+    <!--/*@thymesVar id="video" type="de.mherrmann.famkidmem.ccms.item.Video"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+
+    <div class="feedback" th:if="${!success}">
+        <div class="failure">
+            <div>Could not get videos!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]
+        </div>
+    </div>
+
+    <th:block th:if="${success}">
+        <div id="users" th:if="${videos.size() > 0}">
+            <div class="user" th:each="video : ${videos}">
+                <span th:text="${video.title}">Titel</span>
+                <!-- TODO: show all data and add action buttons -->
+            </div>
+        </div>
+        <h2 th:if="${videos.size() <= 0}">Not yet any Videos</h2>
+    </th:block>
+
+    <a class="button" th:href="@{/video/add}">Add Video</a>
+</div>
+
+</body>
+</html>

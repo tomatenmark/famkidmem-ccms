@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragment/head">Head</th:block>
+<body>
+<th:block th:include="fragment/header">Header</th:block>
+
+<div id="main">
+
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+
+
+    <div class="feedback" th:if="${post}">
+        <div class="success" th:if="${success}">
+            Successfully replaced thumbnail.
+        </div>
+        <div class="failure" th:if="${!success}">
+            <div>Could not replaced thumbnail!</div>
+            Exception: [[${exception}]]<br>
+            Details: [[${details}]]<br>
+            <a class="button" th:href="@{'/video/replace-thumbnail/'+${title}}">Try again</a>
+        </div>
+        <p>
+            <a th:href="@{/video/index}">Back to video list</a>
+        </p>
+    </div>
+
+    <form method="post" th:if="${!post}" th:action="@{'/video/replace-thumbnail/'+${title}}" enctype="multipart/form-data">
+        Select new thumbnail file <input type="file" name="thumbnailFile" id="thumbnailFile">
+        <button type="submit">Replace Thumbnail</button>
+    </form>
+
+
+</div>
+
+</body>
+</html>

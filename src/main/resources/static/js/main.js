@@ -1,3 +1,5 @@
+/* userForms */
+
 function prepareUserForm(username, password, frontendUrl, masterKey, linkType){
     const secret = CryptoJS.enc.Utf8.parse(password);
     const loginPepper = "H8KDQYZplb7FUZLoX4lHLg==";
@@ -27,4 +29,27 @@ function createUserKey(passwordKey, masterKeyEncoded){
     const masterKey = CryptoJS.enc.Base64.parse(masterKeyEncoded);
     const encryptedMasterKey = CryptoJS.AES.encrypt(masterKey, passwordKey,{mode: CryptoJS.mode.ECB});
     return CryptoJS.enc.Base64.stringify(encryptedMasterKey.ciphertext);
+}
+
+
+
+/* videoForms */
+
+function addTsFilenamesToVideoRemoveForm(){
+    const m3u8Base64 = document.getElementById('m3u8').getAttribute('data-m3u8');
+    //TODO: decrypt m3u8, find ts filenames and add them to videoRemoveForm
+    //example for inputField for second ts file: <input type="hidden" name="tsFilename[1]" value="{FILENAME}">
+}
+
+function addVideo(){
+    /*
+        TODO:
+         * do file processing (show errors in element with id fileProcessingErrors)
+            * setup web socket for push
+            * upload files and show progress,
+            * encrypt thumbnail and show progress
+            * encrypt video and show progress
+            * add filenames, keys and ivs (given via push notification) to videoDataForm
+         * post videoDataForm (trigger submit)
+     */
 }
