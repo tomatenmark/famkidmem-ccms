@@ -36,4 +36,5 @@ public class VideoManagementTestRemove {
         //TODO: implement test (see VideoManagementTestIndex.shouldLoadIndexView)
     }
 
+    //TODO: add tests: shouldRemoveVideoVideo, shouldFailRemoveVideoCausedByBadRequestResponse, shouldFailRemoveVideoCausedByConnectionFailure
 }

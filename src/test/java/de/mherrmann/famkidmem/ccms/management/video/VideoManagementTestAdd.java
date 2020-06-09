@@ -36,4 +36,5 @@ public class VideoManagementTestAdd {
         //TODO: implement test (see VideoManagementTestIndex.shouldLoadIndexView)
     }
 
+    //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
 }

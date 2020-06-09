@@ -36,4 +36,5 @@ public class VideoManagementTestEditData {
         //TODO: implement test (see VideoManagementTestIndex.shouldLoadIndexView)
     }
 
+    //TODO: add tests: shouldEditDataVideo, shouldFailEditDataCausedByBadRequestResponse, shouldFailEditDataCausedByConnectionFailure, (maybe) shouldFailEditDataCausedByInvalidForm
 }

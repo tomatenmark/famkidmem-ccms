@@ -36,4 +36,5 @@ public class VideoManagementTestReplaceThumbnail {
         //TODO: implement test (see VideoManagementTestIndex.shouldLoadIndexView)
     }
 
+    //TODO: add tests: shouldReplaceThumbnail, shouldFailReplaceThumbnailCausedByBadRequestResponse, shouldFailReplaceThumbnailCausedByConnectionFailure
 }
