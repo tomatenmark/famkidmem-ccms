@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +88,16 @@ public class VideoController {
     public ResponseEntity<String> updateThumbnail(MultipartFile file){
         try {
             videoService.uploadThumbnail(file);
+            return ResponseEntity.ok("ok");
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/video/encrypt")
+    public ResponseEntity<String> encrypt(){
+        try {
+            videoService.encrypt();
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());

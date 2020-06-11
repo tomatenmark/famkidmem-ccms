@@ -34,8 +34,16 @@ public class PushMessage {
         this.progress = progress;
     }
 
-    public static PushMessage fileUploaProgress(int progress){
-        return new PushMessage("fileUploadProgress", progress);
+    private PushMessage(String message) {
+        this.message = message;
+    }
+
+    public static PushMessage thumbnailUploadComplete(){
+        return new PushMessage("thumbnailUploadComplete");
+    }
+
+    public static PushMessage videoUploadComplete(){
+        return new PushMessage("videoUploadComplete");
     }
 
     public static PushMessage thumbnailEncryptionProgress(int progress){

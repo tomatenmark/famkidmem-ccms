@@ -1,9 +1,12 @@
 package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
+import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Video;
+import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
+import de.mherrmann.famkidmem.ccms.service.push.PushService;
 import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +30,15 @@ public class VideoService {
 
     private final ConnectionService connectionService;
     private final ExceptionUtil exceptionUtil;
+    private final PushService pushService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
 
     @Autowired
-    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil) {
+    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService) {
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
+        this.pushService = pushService;
     }
 
     public void fillIndexModel(Model model){
@@ -93,10 +98,16 @@ public class VideoService {
 
     public void uploadThumbnail(MultipartFile file) throws FileUploadException {
         uploadFile(file, "thumbnail.png");
+        pushService.push(PushMessage.thumbnailUploadComplete());
     }
 
     public void uploadVideo(MultipartFile file) throws FileUploadException {
         uploadFile(file, "video.mp4");
+        pushService.push(PushMessage.videoUploadComplete());
+    }
+
+    public void encrypt() throws EncryptionException {
+
     }
 
     private void uploadFile(MultipartFile file, String filename) throws FileUploadException {
@@ -104,6 +115,7 @@ public class VideoService {
             File destinationFile = new File("./files/" + filename);
             InputStream inputStream = file.getInputStream();
             Files.copy(inputStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            LOGGER.info("Successfully saved file {}", filename);
         } catch(IOException ex){
             LOGGER.error("Could not save file {}. I/O Error", filename, ex);
             throw new FileUploadException("Could not save file. I/O Error");

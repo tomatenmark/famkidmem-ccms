@@ -41,27 +41,46 @@ function addTsFilenamesToVideoRemoveForm(){
     //example for inputField for second ts file: <input type="hidden" name="tsFilename[1]" value="{FILENAME}">
 }
 
-function addVideo(){
+function startAddVideo(){
+    document.getElementById('fileProcessingErrors').innerText = '';
     document.getElementById("progress").style.display = 'block';
     uploadFile("thumbnailFile", "upload thumbnail", "/video/upload-thumbnail");
-    uploadFile("videoFile", "upload video", "/video/upload-video");
+}
 
-    /*
-        TODO:
-         * do file processing (show errors in element with id fileProcessingErrors)
-            * setup web socket for push
-            * upload files and show progress,
-            * encrypt thumbnail and show progress
-            * encrypt video and show progress
-            * add filenames, keys and ivs (given via push notification) to videoDataForm
-         * post videoDataForm (trigger submit)
-     */
+function handlePush(message){
+    let messageObject = JSON.parse(message.body);
+    if(messageObject.message === 'thumbnailUploadComplete'){
+        uploadFile("videoFile", "upload video", "/video/upload-video");
+        return;
+    }
+    if(messageObject.message === 'videoUploadComplete'){
+        encrypt();
+        return;
+    }
+}
+
+function showUploadError(message){
+    document.getElementById('fileProcessingErrors').innerText = message;
+    document.getElementById('progress').style.display = 'none';
+}
+
+function encrypt(){
+    let client = new XMLHttpRequest();
+    client.onerror = function(e) {
+        console.error(e.message);
+    };
+    client.open("POST", "/video/encrypt");
+    client.send();
 }
 
 function uploadFile(fileInputId, step, target) {
+    let progress = document.getElementById("progressBar");
+    progress.value = 0;
+
     let fileList = document.getElementById(fileInputId).files;
     let file = fileList[0];
     if(!file){
+        showUploadError("No file selected. Could not do: " + step);
         return;
     }
 
@@ -69,28 +88,27 @@ function uploadFile(fileInputId, step, target) {
 
     let formData = new FormData();
     let client = new XMLHttpRequest();
-    let progress = document.getElementById("progressBar");
-    progress.value = 0;
-    progress.max = 100;
 
     formData.append("file", file);
 
-    client.onerror = function(e) {
-        alert("onError");
-    };
+    client.addEventListener("error", function(e) {
+        console.error(e.message);
+        showUploadError("Could not do: " + step);
+    });
 
-    client.onload = function(e) {
+    client.addEventListener("load", function(e) {
         progress.value = progress.max;
-    };
+    });
 
-    client.upload.onprogress = function(e) {
+    client.addEventListener("abort", function(e) {
+        console.error(e.message);
+        showUploadError("Aborted upload");
+    });
+
+    client.upload.addEventListener("progress", function(e) {
         let p = Math.round(100 / e.total * e.loaded);
-        document.getElementById("progress").value = p;
-    };
-
-    client.onabort = function(e) {
-        alert("Upload abgebrochen");
-    };
+        progress.value = p;
+    });
 
     client.open("POST", target);
     client.send(formData);

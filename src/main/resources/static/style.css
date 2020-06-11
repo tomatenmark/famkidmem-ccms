@@ -96,6 +96,6 @@ label span {
     width: 190px;
 }
 
-#progress, #fileProcessingErrors {
+#progress {
     display: none;
 }

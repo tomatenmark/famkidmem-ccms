@@ -46,20 +46,20 @@ public class PushServiceTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         stompSession.disconnect();
         stompClient.stop();
     }
 
     @Test
-    public void shouldConnectToSocket() throws Exception {
+    public void shouldConnectToSocket() {
         assertThat(stompSession.isConnected()).isTrue();
     }
 
-    //TODO: implement tests for all message types (like this test)
+
     @Test
-    public void shouldPushTestMessageFileUploadProgress() throws Exception {
-        PushMessage testMessage = PushMessage.fileUploaProgress(55);
+    public void shouldPushTestMessage() throws Exception {
+        PushMessage testMessage = PushMessage.thumbnailEncryptionProgress(55);
         CompletableFuture<String> resultKeeper = prepare();
 
         pushService.push(testMessage);
