@@ -1,15 +1,20 @@
 package de.mherrmann.famkidmem.ccms.management.video;
 
+import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
+import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -18,10 +23,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +45,9 @@ public class VideoManagementTestAdd {
 
     @MockBean
     private RestTemplate restTemplate;
+
+    @MockBean
+    private CryptoUtil cryptoUtil;
 
     @Autowired
     private MockMvc mockMvc;
@@ -98,6 +110,33 @@ public class VideoManagementTestAdd {
                 .andReturn();
 
         assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("error: Could not save file. I/O Error");
+    }
+
+    @Test
+    public void shouldEncryptCheckThumbnail() throws Exception {
+        new File("./files/thumbnail.png").createNewFile();
+        byte[] expected = new byte[]{1,2,3,4,5,6,7,8};
+        given(cryptoUtil.encrypt(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                .willReturn(expected);
+
+        this.mockMvc.perform(post("/video/encrypt"))
+                .andExpect(status().isOk());
+
+        String path = "";
+        for(String file : new File("./files/").list()){
+            if(!file.contains("thumbnail")){
+                path = file;
+            }
+        }
+        byte[] encryptedBytes = Files.readAllBytes(Paths.get("./files/"+path));
+        assertThat(encryptedBytes).isEqualTo(expected);
+    }
+
+    private static String byteToHex(byte num) {
+        char[] hexDigits = new char[2];
+        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+        hexDigits[1] = Character.forDigit((num & 0xF), 16);
+        return new String(hexDigits);
     }
 
     //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
