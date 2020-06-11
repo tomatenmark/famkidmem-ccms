@@ -49,14 +49,42 @@ function startAddVideo(){
 
 function handlePush(message){
     let messageObject = JSON.parse(message.body);
-    if(messageObject.message === 'thumbnailUploadComplete'){
-        uploadFile("videoFile", "upload video", "/video/upload-video");
-        return;
+    switch(messageObject.message){
+        case 'thumbnailUploadComplete':
+            uploadFile("videoFile", "upload video", "/video/upload-video");
+            break;
+        case 'videoUploadComplete':
+            startEncryption();
+            break;
+        case 'finishedWithThumbnail':
+            showProgress('starting...', '');
+            addFileInfoToAddVideoForm(messageObject);
+            break;
     }
-    if(messageObject.message === 'videoUploadComplete'){
-        encrypt();
-        return;
+}
+
+function startEncryption() {
+    document.getElementById('step').innerText = 'encrypt thumbnail';
+    document.getElementById('progressBar').value = '';
+    encrypt();
+}
+
+let detailsEntries = 0;
+function showProgress(details, progress){
+    document.getElementById('step').innerText = 'encrypt video';
+    document.getElementById('progressBar').value = progress;
+    if(details.substr(0, 1) === "\r"){
+        document.getElementById('ffmpegProgress').children[detailsEntries-1].innerText = details;
+    } else {
+        document.getElementById('ffmpegProgress').innerHTML += '<div>' + details + '</div>';
+        detailsEntries++;
     }
+}
+
+function addFileInfoToAddVideoForm(messageObject){
+    document.getElementById('thumbnailFilename').value = messageObject.file.filename;
+    document.getElementById('thumbnailKey').value = messageObject.file.key.key;
+    document.getElementById('thumbnailIv').value = messageObject.file.key.iv;
 }
 
 function showUploadError(message){
@@ -66,9 +94,10 @@ function showUploadError(message){
 
 function encrypt(){
     let client = new XMLHttpRequest();
-    client.onerror = function(e) {
+    client.addEventListener("error", function(e) {
+        showUploadError("error during encryption")
         console.error(e.message);
-    };
+    });
     client.open("POST", "/video/encrypt");
     client.send();
 }

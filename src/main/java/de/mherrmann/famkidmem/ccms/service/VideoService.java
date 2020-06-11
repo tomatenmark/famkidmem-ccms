@@ -4,9 +4,12 @@ import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
+import de.mherrmann.famkidmem.ccms.item.FileEntity;
+import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
 import de.mherrmann.famkidmem.ccms.service.push.PushService;
+import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VideoService {
@@ -31,14 +38,16 @@ public class VideoService {
     private final ConnectionService connectionService;
     private final ExceptionUtil exceptionUtil;
     private final PushService pushService;
+    private final CryptoUtil cryptoUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
 
     @Autowired
-    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService) {
+    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService, CryptoUtil cryptoUtil) {
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
         this.pushService = pushService;
+        this.cryptoUtil = cryptoUtil;
     }
 
     public void fillIndexModel(Model model){
@@ -107,7 +116,25 @@ public class VideoService {
     }
 
     public void encrypt() throws EncryptionException {
+        String randomName = UUID.randomUUID().toString();
+        encryptThumbnail(randomName);
+    }
 
+    private void encryptThumbnail(String name) throws EncryptionException {
+        try {
+            byte[] plain = Files.readAllBytes(Paths.get("./files/thumbnail.png"));
+            byte[] key = cryptoUtil.generateSecureRandomKeyParam();
+            byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
+            byte[] encrypted = cryptoUtil.encrypt(plain, key, iv);
+            FileOutputStream stream = new FileOutputStream("./files/"+name+".png");
+            stream.write(encrypted);
+            stream.close();
+            Key keySpec = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+            FileEntity fileEntity = new FileEntity(name+".png", keySpec);
+            pushService.push(PushMessage.finishedWithThumbnail(fileEntity));
+        } catch(GeneralSecurityException | IOException ex){
+            throw new EncryptionException("Exception during encryption: "+ex);
+        }
     }
 
     private void uploadFile(MultipartFile file, String filename) throws FileUploadException {
