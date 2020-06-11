@@ -1,6 +1,7 @@
 package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
+import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
@@ -13,6 +14,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,12 +91,23 @@ public class VideoService {
         //TODO: delete video (get names of files to delete from request)
     }
 
-    public void uploadAndEncryptThumbnail(MultipartFile file){
-        //TODO: gen key and iv, encrypt file, choose filename, send key, iv and filename via push to frontend, upload file to web-backend
+    public void uploadThumbnail(MultipartFile file) throws FileUploadException {
+        uploadFile(file, "thumbnail.png");
     }
 
-    public void uploadAndEncryptVideo(MultipartFile file){
-        //TODO: gen key and iv, encrypt video (ffmpeg, ts), choose filenames, send keys, ivs and filenames via push to frontend, upload files to web-backend
+    public void uploadVideo(MultipartFile file) throws FileUploadException {
+        uploadFile(file, "video.mp4");
+    }
+
+    private void uploadFile(MultipartFile file, String filename) throws FileUploadException {
+        try {
+            File destinationFile = new File("./files/" + filename);
+            InputStream inputStream = file.getInputStream();
+            Files.copy(inputStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch(IOException ex){
+            LOGGER.error("Could not save file {}. I/O Error", filename, ex);
+            throw new FileUploadException("Could not save file. I/O Error");
+        }
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work

@@ -88,3 +88,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* TODO: add styles for input fields, checkbox, label and other new things in the new templates (maybe initialize some elements with display:none)*/
+label {
+    display: block;
+}
+label span {
+    display: inline-block;
+    width: 190px;
+}
+
+#progress, #fileProcessingErrors {
+    display: none;
+}

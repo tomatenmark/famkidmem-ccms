@@ -2,6 +2,7 @@ package de.mherrmann.famkidmem.ccms.controller;
 
 import de.mherrmann.famkidmem.ccms.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class VideoController {
     @GetMapping(value = "/video/add")
     public String loadAddVideoView(Model model){
         model.addAttribute("post", false);
-        return "video/index";
+        return "video/add";
     }
 
     @GetMapping(value = "/video/edit-data")
@@ -73,5 +74,25 @@ public class VideoController {
     public String deleteVideo(Model model, @PathVariable String title){
         videoService.deleteVideo(model, title);
         return "video/remove";
+    }
+
+    @PostMapping(value = "/video/upload-video")
+    public ResponseEntity<String> updateVideo(MultipartFile file){
+        try {
+            videoService.uploadVideo(file);
+            return ResponseEntity.ok("ok");
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/video/upload-thumbnail")
+    public ResponseEntity<String> updateThumbnail(MultipartFile file){
+        try {
+            videoService.uploadThumbnail(file);
+            return ResponseEntity.ok("ok");
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
     }
 }
