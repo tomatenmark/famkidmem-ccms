@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,5 +131,23 @@ public class TestUtil {
 
     private ResponseBody createTestResponseBodyGetUsersError(){
         return new ResponseBodyGetUsers(new RuntimeException("testException"));
+    }
+
+    public void createFilesDirectory(){
+        File dir = new File("./files");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+    }
+
+    public void deleteFilesDirectory() {
+        File directory = new File("./files");
+        if(!directory.exists()){
+            return;
+        }
+        for (File file : directory.listFiles()) {
+            file.delete();
+        }
+        directory.delete();
     }
 }
