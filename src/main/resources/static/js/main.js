@@ -42,6 +42,10 @@ function addTsFilenamesToVideoRemoveForm(){
 }
 
 function addVideo(){
+    document.getElementById("progress").style.display = 'block';
+    uploadFile("thumbnailFile", "upload thumbnail", "/video/upload-thumbnail");
+    uploadFile("videoFile", "upload video", "/video/upload-video");
+
     /*
         TODO:
          * do file processing (show errors in element with id fileProcessingErrors)
@@ -52,4 +56,42 @@ function addVideo(){
             * add filenames, keys and ivs (given via push notification) to videoDataForm
          * post videoDataForm (trigger submit)
      */
+}
+
+function uploadFile(fileInputId, step, target) {
+    let fileList = document.getElementById(fileInputId).files;
+    let file = fileList[0];
+    if(!file){
+        return;
+    }
+
+    document.getElementById("step").innerText = step;
+
+    let formData = new FormData();
+    let client = new XMLHttpRequest();
+    let progress = document.getElementById("progressBar");
+    progress.value = 0;
+    progress.max = 100;
+
+    formData.append("file", file);
+
+    client.onerror = function(e) {
+        alert("onError");
+    };
+
+    client.onload = function(e) {
+        progress.value = progress.max;
+    };
+
+    client.upload.onprogress = function(e) {
+        let p = Math.round(100 / e.total * e.loaded);
+        document.getElementById("progress").value = p;
+    };
+
+    client.onabort = function(e) {
+        alert("Upload abgebrochen");
+    };
+
+    client.open("POST", target);
+    client.send(formData);
 }

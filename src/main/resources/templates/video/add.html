@@ -26,13 +26,11 @@
 
 
     <th:block th:if="${!post}">
-        <form method="post" th:action="@{/video/upload-video}" enctype="multipart/form-data" name="uploadVideoForm" id="uploadVideoForm">
-            Select video file<input type="file" name="videoFile" id="videoFile">
-        </form>
+        Select video file: <input type="file" name="file" id="videoFile">
+        <br>
 
-        <form method="post" th:action="@{/video/upload-thumbnail}" enctype="multipart/form-data" name="uploadThumbnailForm" id="uploadThumbnailForm">
-            Select thumbnail file<input type="file" name="thumbnailFile" id="thumbnailFile">
-        </form>
+       Select thumbnail file: <input type="file" name="file" id="thumbnailFile">
+        <br>
 
         <form method="post" th:action="@{/video/add}" name="videoDataForm" id="videoDataForm">
             <label>
@@ -60,6 +58,7 @@
             </label>
             <button type="button" onclick="addVideo();">Add Video</button>
         </form>
+        <br>
 
         <div id="progress">
             <span id="step"></span>: <progress id="progressBar" value="0" max="100"></progress><br>
