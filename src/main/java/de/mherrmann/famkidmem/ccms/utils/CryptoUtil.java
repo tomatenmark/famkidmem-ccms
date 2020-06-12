@@ -18,6 +18,11 @@ public class CryptoUtil {
         return toBase64(bytes);
     }
 
+    public String generateSecureRandomKeyParamHex() {
+        byte[] bytes = generateSecureRandomBytes(16);
+        return toHex(bytes);
+    }
+
     public byte[] generateSecureRandomKeyParam(){
         return generateSecureRandomBytes(16);
     }
@@ -51,5 +56,16 @@ public class CryptoUtil {
         byte bytes[] = new byte[length];
         random.nextBytes(bytes);
         return bytes;
+    }
+
+    private static String toHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for(byte b : bytes){
+            char[] hexDigits = new char[2];
+            hexDigits[0] = Character.forDigit((b >> 4) & 0xF, 16);
+            hexDigits[1] = Character.forDigit((b & 0xF), 16);
+            sb.append(new String(hexDigits));
+        }
+        return sb.toString();
     }
 }
