@@ -59,7 +59,7 @@ public class PushServiceTest {
 
     @Test
     public void shouldPushTestMessage() throws Exception {
-        PushMessage testMessage = PushMessage.thumbnailEncryptionProgress(55);
+        PushMessage testMessage = PushMessage.videoUploadComplete();
         CompletableFuture<String> resultKeeper = prepare();
 
         pushService.push(testMessage);

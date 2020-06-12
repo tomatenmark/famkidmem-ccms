@@ -49,15 +49,15 @@ public class FfmpegServiceTest {
         thread.start();
 
         Thread.sleep(500);
-        assertThat(PushService.getLastMessage().getProgress()).isEqualTo(33);
-        assertThat(PushService.getLastMessage().getLogLine()).isEqualTo("Opening 'crypto:fileSequence1' ");
+        assertThat(PushService.getLastMessage().getValue()).isEqualTo(33);
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Opening 'crypto:fileSequence1' ");
         Thread.sleep(5500);
-        assertThat(PushService.getLastMessage().getProgress()).isEqualTo(66);
-        assertThat(PushService.getLastMessage().getLogLine()).isEqualTo("Opening 'crypto:fileSequence2' ");
+        assertThat(PushService.getLastMessage().getValue()).isEqualTo(66);
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Opening 'crypto:fileSequence2' ");
         assertThat(PushService.getLastMessage().isOverride()).isEqualTo(true);
         Thread.sleep(5500);
-        assertThat(PushService.getLastMessage().getProgress()).isEqualTo(100);
-        assertThat(PushService.getLastMessage().getLogLine()).isEqualTo("video ");
+        assertThat(PushService.getLastMessage().getValue()).isEqualTo(100);
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("video ");
         assertThat(PushService.getLastMessage().isOverride()).isEqualTo(false);
     }
 

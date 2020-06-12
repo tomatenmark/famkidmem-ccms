@@ -1,27 +1,25 @@
 package de.mherrmann.famkidmem.ccms.service.push;
 
-import de.mherrmann.famkidmem.ccms.item.FileEntity;
+import de.mherrmann.famkidmem.ccms.item.Key;
 
 public class PushMessage {
 
     private String message;
     private String details;
-    private String logLine;
     private boolean override;
-    private FileEntity file;
-    private int tsFiles;
-    private int progress;
+    private Key key;
+    private int value;
 
-    private PushMessage(String message, String logLine, boolean override, int progress) {
+    private PushMessage(String message, String details, boolean override, int value) {
         this.message = message;
-        this.logLine = logLine;
+        this.details = details;
+        this.value = value;
         this.override = override;
-        this.progress = progress;
     }
 
-    private PushMessage(String message, FileEntity file) {
+    private PushMessage(String message, Key key) {
         this.message = message;
-        this.file = file;
+        this.key = key;
     }
 
     private PushMessage(String message, String details) {
@@ -29,15 +27,11 @@ public class PushMessage {
         this.details = details;
     }
 
-    private PushMessage(String message, FileEntity file, int tsfiles) {
+    private PushMessage(String message, Key key, String details, int tsfiles) {
         this.message = message;
-        this.file = file;
-        this.tsFiles = tsfiles;
-    }
-
-    private PushMessage(String message, int progress) {
-        this.message = message;
-        this.progress = progress;
+        this.key = key;
+        this.value = tsfiles;
+        this.details = details;
     }
 
     private PushMessage(String message) {
@@ -52,10 +46,6 @@ public class PushMessage {
         return new PushMessage("videoUploadComplete");
     }
 
-    public static PushMessage thumbnailEncryptionProgress(int progress){
-        return new PushMessage("thumbnailEncryptionProgress", progress);
-    }
-
     public static PushMessage videoEncryptionProgress(String logLine, boolean override, int progress){
         return new PushMessage("videoEncryptionProgress", logLine, override, progress);
     }
@@ -64,12 +54,12 @@ public class PushMessage {
         return new PushMessage("videoEncryptionError", details);
     }
 
-    public static PushMessage finishedWithThumbnail(FileEntity file){
-        return new PushMessage("finishedWithThumbnail", file);
+    public static PushMessage finishedWithThumbnail(Key key){
+        return new PushMessage("finishedWithThumbnail", key);
     }
 
-    public static PushMessage finishedWithVideo(FileEntity file, int tsFiles){
-        return new PushMessage("finishedWithVideo", file, tsFiles);
+    public static PushMessage finishedWithVideo(Key key, String randomName, int tsFiles){
+        return new PushMessage("finishedWithVideo", key, randomName, tsFiles);
     }
 
     public String getMessage() {
@@ -80,23 +70,15 @@ public class PushMessage {
         return details;
     }
 
-    public String getLogLine() {
-        return logLine;
-    }
-
     public boolean isOverride() {
         return override;
     }
 
-    public FileEntity getFile() {
-        return file;
+    public Key getKey() {
+        return key;
     }
 
-    public int getTsFiles() {
-        return tsFiles;
-    }
-
-    public int getProgress() {
-        return progress;
+    public int getValue() {
+        return value;
     }
 }
