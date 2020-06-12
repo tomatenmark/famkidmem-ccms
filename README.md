@@ -20,7 +20,7 @@ This repository contains the sources for the FamKidMem Control & Content Managem
 # Requirements
 ## ffmpeg
 * ffmpeg must be installed
-* The bin directory of ffmpeg must be added to the system's PATH variable
+* The bin directory of ffmpeg must be added to the systems PATH variable
 
 # settings.json
 You will need a settings.json with following format:\
@@ -40,6 +40,12 @@ You will need a settings.json with following format:\
 
 # Run
 **java -jar famkidmem-ccms...jar**
+
+# Unit Testing
+## ffmpegDummy
+If you run unit tests under non-windows-systems, you may have to run following command before:\
+**chmod a+x ffmpegDummy.sh**\
+The ffmpegDummy.sh file is a ffmpeg dummy for testing. The command allows its execution
 
 # All Repos for FamKidMem
 * Web-Backend: https://github.com/tomatenmark/famkidmem-backend
