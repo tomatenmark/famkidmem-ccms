@@ -132,6 +132,8 @@ public class VideoManagementTestAdd {
         assertThat(encryptedBytes).isEqualTo(expected);
     }
 
+    //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
+
     private static String byteToHex(byte num) {
         char[] hexDigits = new char[2];
         hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
@@ -139,5 +141,4 @@ public class VideoManagementTestAdd {
         return new String(hexDigits);
     }
 
-    //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
 }
