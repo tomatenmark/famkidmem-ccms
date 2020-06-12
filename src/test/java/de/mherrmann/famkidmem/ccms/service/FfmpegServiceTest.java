@@ -14,8 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
