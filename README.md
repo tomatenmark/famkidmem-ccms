@@ -17,6 +17,11 @@ This repository contains the sources for the FamKidMem Control & Content Managem
   * **Delete Users** (/admin)
 * **Add, update and delete Videos**
 
+# Requirements
+## ffmpeg
+* ffmpeg must be installed
+* The bin directory of ffmpeg must be added to the system's PATH variable
+
 # settings.json
 You will need a settings.json with following format:\
 {\
