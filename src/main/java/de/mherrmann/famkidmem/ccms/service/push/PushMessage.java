@@ -2,19 +2,20 @@ package de.mherrmann.famkidmem.ccms.service.push;
 
 import de.mherrmann.famkidmem.ccms.item.FileEntity;
 
-import java.util.List;
-
 public class PushMessage {
 
     private String message;
     private String details;
+    private String logLine;
+    private boolean override;
     private FileEntity file;
-    private List<String> tsFilenames;
+    private int tsFiles;
     private int progress;
 
-    private PushMessage(String message, String details, int progress) {
+    private PushMessage(String message, String logLine, boolean override, int progress) {
         this.message = message;
-        this.details = details;
+        this.logLine = logLine;
+        this.override = override;
         this.progress = progress;
     }
 
@@ -23,10 +24,15 @@ public class PushMessage {
         this.file = file;
     }
 
-    private PushMessage(String message, FileEntity file, List<String> tsFilenames) {
+    private PushMessage(String message, String details) {
+        this.message = message;
+        this.details = details;
+    }
+
+    private PushMessage(String message, FileEntity file, int tsfiles) {
         this.message = message;
         this.file = file;
-        this.tsFilenames = tsFilenames;
+        this.tsFiles = tsfiles;
     }
 
     private PushMessage(String message, int progress) {
@@ -50,16 +56,20 @@ public class PushMessage {
         return new PushMessage("thumbnailEncryptionProgress", progress);
     }
 
-    public static PushMessage videoEncryptionProgress(String details, int progress){
-        return new PushMessage("videoEncryptionProgress", details, progress);
+    public static PushMessage videoEncryptionProgress(String logLine, boolean override, int progress){
+        return new PushMessage("videoEncryptionProgress", logLine, override, progress);
+    }
+
+    public static PushMessage videoEncryptionError(String details){
+        return new PushMessage("videoEncryptionError", details);
     }
 
     public static PushMessage finishedWithThumbnail(FileEntity file){
         return new PushMessage("finishedWithThumbnail", file);
     }
 
-    public static PushMessage finishedWithVideo(FileEntity file, List<String> tsFilenames){
-        return new PushMessage("finishedWithVideo", file, tsFilenames);
+    public static PushMessage finishedWithVideo(FileEntity file, int tsFiles){
+        return new PushMessage("finishedWithVideo", file, tsFiles);
     }
 
     public String getMessage() {
@@ -70,12 +80,20 @@ public class PushMessage {
         return details;
     }
 
+    public String getLogLine() {
+        return logLine;
+    }
+
+    public boolean isOverride() {
+        return override;
+    }
+
     public FileEntity getFile() {
         return file;
     }
 
-    public List<String> getTsFilenames() {
-        return tsFilenames;
+    public int getTsFiles() {
+        return tsFiles;
     }
 
     public int getProgress() {
