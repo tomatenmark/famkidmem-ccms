@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.management.video;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.service.FfmpegService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
@@ -28,7 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,6 +53,9 @@ public class VideoManagementTestAdd {
 
     @MockBean
     private CryptoUtil cryptoUtil;
+
+    @SpyBean
+    private FfmpegService ffmpegService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -114,30 +121,33 @@ public class VideoManagementTestAdd {
     }
 
     @Test
-    public void shouldEncryptCheckThumbnail() throws Exception {
+    public void shouldEncrypt() throws Exception {
         createMediaFiles();
         byte[] expected = new byte[]{1,2,3,4,5,6,7,8};
         given(cryptoUtil.encrypt(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .willReturn(expected);
+        doNothing().when(ffmpegService).encryptVideo(any());
 
         this.mockMvc.perform(post("/video/encrypt"))
                 .andExpect(status().isOk());
 
-        String path = "";
+        String thumbnailPath = "";
+        String m3u8Path = "";
         for(String file : new File("./files/").list()){
-            if(!file.contains("thumbnail")){
-                path = file;
+            if(!file.contains("thumbnail") && file.contains(".png")){
+                thumbnailPath = file;
+            }
+            if(!file.contains("index") && file.contains(".m3u8")){
+                m3u8Path = file;
             }
         }
-        byte[] encryptedBytes = Files.readAllBytes(Paths.get("./files/"+path));
-        assertThat(encryptedBytes).isEqualTo(expected);
+        byte[] encryptedBytesThumbnail = Files.readAllBytes(Paths.get("./files/"+thumbnailPath));
+        byte[] encryptedBytesM3u8 = Files.readAllBytes(Paths.get("./files/"+m3u8Path));
+        assertThat(encryptedBytesThumbnail).isEqualTo(expected);
+        assertThat(encryptedBytesM3u8).isEqualTo(expected);
     }
 
-    @Test
-    public void shouldEncryptCheckVideo() throws Exception {
-        createMediaFiles();
-        //TODO: implement test
-    }
+
 
     //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
 
