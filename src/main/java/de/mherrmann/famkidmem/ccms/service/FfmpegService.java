@@ -23,10 +23,10 @@ public class FfmpegService {
         this.cryptoUtil = cryptoUtil;
     }
 
-    int encryptVideo(String name) throws EncryptionException {
+    void encryptVideo(String name) throws EncryptionException {
         try {
             Process process = buildFfmpegProcess(name);
-            return handleFfmpeg(process);
+            handleFfmpeg(process);
         } catch(IOException ex){
             throw new EncryptionException("Exception during video encryption (ffmpegDummy.sh): "+ex);
         }
@@ -48,7 +48,7 @@ public class FfmpegService {
         return runtime.exec(commands);
     }
 
-    private int handleFfmpeg(Process process) throws IOException {
+    private void handleFfmpeg(Process process) throws IOException {
         updateKeyFilesForFfmpeg();
 
         //ffmpeg outputs all to stderr ^^
@@ -59,8 +59,6 @@ public class FfmpegService {
         while ((line = stdError.readLine()) != null) {
             handleFfmpegLine(line, state);
         }
-
-        return state.tsFiles;
     }
 
     private void handleFfmpegLine(String line, State state) throws IOException {

@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.service.push.PushService;
+import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,9 @@ public class FfmpegServiceTest {
 
     @Autowired
     private FfmpegService ffmpegService;
+
+    @Autowired
+    private CryptoUtil cryptoUtil;
 
     @Autowired
     private TestUtil testUtil;
@@ -76,13 +80,6 @@ public class FfmpegServiceTest {
     }
 
     @Test
-    public void shouldRunCheckTsFilesCount() {
-        int tsFiles = ffmpegService.encryptVideo("");
-
-        assertThat(tsFiles).isEqualTo(3);
-    }
-
-    @Test
     public void shouldRunCheckCall() throws Exception {
         String expectedCall = "-y -i ./files/video.mp4 -hls_time 10 -hls_flags periodic_rekey -hls_key_info_file " +
                 "./files/enc.keyinfo -hls_playlist_type vod -hls_segment_filename \"./files/.%d.ts\" ./files/index.m3u8";
@@ -116,8 +113,8 @@ public class FfmpegServiceTest {
         byte[] encKeyBytesPrev = Files.readAllBytes(Paths.get("./files/enc.key.prev"));
         byte[] encKeyInfoBytesPrev = Files.readAllBytes(Paths.get("./files/enc.keyinfo.prev"));
 
-        assertThat(encKeyBytes).isNotEqualTo(encKeyBytesPrev);
-        assertThat(encKeyInfoBytes).isNotEqualTo(encKeyInfoBytesPrev);
+        assertThat(cryptoUtil.toBase64(encKeyBytes)).isNotEqualTo(cryptoUtil.toBase64(encKeyBytesPrev));
+        assertThat(cryptoUtil.toBase64(encKeyInfoBytes)).isNotEqualTo(cryptoUtil.toBase64(encKeyInfoBytesPrev));
 
         FileOutputStream stream = new FileOutputStream("./files/enc.key.prev");
         stream.write(encKeyBytes);

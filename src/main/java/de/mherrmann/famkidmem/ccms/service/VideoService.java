@@ -4,7 +4,6 @@ import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
-import de.mherrmann.famkidmem.ccms.item.FileEntity;
 import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
@@ -20,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -39,15 +35,18 @@ public class VideoService {
     private final ExceptionUtil exceptionUtil;
     private final PushService pushService;
     private final CryptoUtil cryptoUtil;
+    private final FfmpegService ffmpegService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
 
     @Autowired
-    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService, CryptoUtil cryptoUtil) {
+    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService,
+                        CryptoUtil cryptoUtil, FfmpegService ffmpegService) {
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
         this.pushService = pushService;
         this.cryptoUtil = cryptoUtil;
+        this.ffmpegService = ffmpegService;
     }
 
     public void fillIndexModel(Model model){
@@ -118,20 +117,37 @@ public class VideoService {
     public void encrypt() throws EncryptionException {
         String randomName = UUID.randomUUID().toString();
         encryptThumbnail(randomName);
+        encryptVideo(randomName);
     }
 
     private void encryptThumbnail(String name) throws EncryptionException {
+        byte[] key = cryptoUtil.generateSecureRandomKeyParam();
+        byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
+        encryptFile(name, "thumbnail.png", "png", key, iv);
+        Key keySpec = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+        pushService.push(PushMessage.finishedWithThumbnail(keySpec));
+    }
+
+    private void encryptVideo(String name) throws EncryptionException {
+        ffmpegService.encryptVideo(name);
+        Key key= encryptM3u8(name);
+        pushService.push(PushMessage.finishedWithVideo(key));
+    }
+
+    private Key encryptM3u8(String name){
+        byte[] key = cryptoUtil.generateSecureRandomKeyParam();
+        byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
+        encryptFile(name, "index.m3u8", "m3u8", key, iv);
+        return new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+    }
+
+    private void encryptFile(String randomName, String filename, String extension, byte[] key, byte[] iv) throws EncryptionException {
         try {
-            byte[] plain = Files.readAllBytes(Paths.get("./files/thumbnail.png"));
-            byte[] key = cryptoUtil.generateSecureRandomKeyParam();
-            byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
+            byte[] plain = Files.readAllBytes(Paths.get("./files/"+filename));
             byte[] encrypted = cryptoUtil.encrypt(plain, key, iv);
-            FileOutputStream stream = new FileOutputStream("./files/"+name+".png");
+            FileOutputStream stream = new FileOutputStream("./files/"+randomName+"."+extension);
             stream.write(encrypted);
             stream.close();
-            Key keySpec = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
-            FileEntity fileEntity = new FileEntity(name+".png", keySpec);
-            pushService.push(PushMessage.finishedWithThumbnail(fileEntity));
         } catch(GeneralSecurityException | IOException ex){
             throw new EncryptionException("Exception during encryption: "+ex);
         }

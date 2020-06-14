@@ -27,13 +27,6 @@ public class PushMessage {
         this.details = details;
     }
 
-    private PushMessage(String message, Key key, String details, int tsfiles) {
-        this.message = message;
-        this.key = key;
-        this.value = tsfiles;
-        this.details = details;
-    }
-
     private PushMessage(String message) {
         this.message = message;
     }
@@ -58,8 +51,8 @@ public class PushMessage {
         return new PushMessage("finishedWithThumbnail", key);
     }
 
-    public static PushMessage finishedWithVideo(Key key, String randomName, int tsFiles){
-        return new PushMessage("finishedWithVideo", key, randomName, tsFiles);
+    public static PushMessage finishedWithVideo(Key key){
+        return new PushMessage("finishedWithVideo", key);
     }
 
     public String getMessage() {

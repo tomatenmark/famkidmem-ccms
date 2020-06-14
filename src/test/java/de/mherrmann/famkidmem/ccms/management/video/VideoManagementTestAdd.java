@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -114,7 +115,7 @@ public class VideoManagementTestAdd {
 
     @Test
     public void shouldEncryptCheckThumbnail() throws Exception {
-        new File("./files/thumbnail.png").createNewFile();
+        createMediaFiles();
         byte[] expected = new byte[]{1,2,3,4,5,6,7,8};
         given(cryptoUtil.encrypt(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .willReturn(expected);
@@ -132,6 +133,12 @@ public class VideoManagementTestAdd {
         assertThat(encryptedBytes).isEqualTo(expected);
     }
 
+    @Test
+    public void shouldEncryptCheckVideo() throws Exception {
+        createMediaFiles();
+        //TODO: implement test
+    }
+
     //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
 
     private static String byteToHex(byte num) {
@@ -139,6 +146,11 @@ public class VideoManagementTestAdd {
         hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
         hexDigits[1] = Character.forDigit((num & 0xF), 16);
         return new String(hexDigits);
+    }
+
+    private void createMediaFiles() throws IOException {
+        new File("./files/thumbnail.png").createNewFile();
+        new File("./files/index.m3u8").createNewFile();
     }
 
 }
