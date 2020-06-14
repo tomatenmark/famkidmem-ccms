@@ -66,7 +66,7 @@ function handlePush(message){
             showVideoEncryptionError(messageObject);
             break;
         case 'finishedWithVideo':
-            console.log("video encryption completed")
+            console.log("video encryption completed");
             break;
     }
 }
@@ -98,17 +98,19 @@ function showVideoEncryptionError(messageObject){
     document.getElementById('ffmpegProgress').innerHTML += '<div class="error">' + messageObject.details + '</div>';
 }
 
-function showUploadError(message){
+function showError(message){
     document.getElementById('fileProcessingErrors').innerText = message;
-    document.getElementById('progress').style.display = 'none';
+    document.getElementById('progressBar').value = 0;
+}
+
+function handleError(e){
+    showError("error. see console and/or log for details");
+    console.error(JSON.stringify(e));
 }
 
 function encrypt(){
     let client = new XMLHttpRequest();
-    client.addEventListener("error", function(e) {
-        showUploadError("error during encryption");
-        console.error(e.message);
-    });
+    client.addEventListener("error", handleError);
     client.open("POST", "/video/encrypt");
     client.send();
 }
@@ -120,7 +122,7 @@ function uploadFile(fileInputId, step, target) {
     let fileList = document.getElementById(fileInputId).files;
     let file = fileList[0];
     if(!file){
-        showUploadError("No file selected. Could not do: " + step);
+        showError("No file selected. Could not do: " + step);
         return;
     }
 
@@ -131,10 +133,7 @@ function uploadFile(fileInputId, step, target) {
 
     formData.append("file", file);
 
-    client.addEventListener("error", function(e) {
-        console.error(e.message);
-        showUploadError("Could not do: " + step);
-    });
+    client.addEventListener("error", handleError);
 
     client.addEventListener("load", function(e) {
         progress.value = progress.max;
@@ -142,7 +141,7 @@ function uploadFile(fileInputId, step, target) {
 
     client.addEventListener("abort", function(e) {
         console.error(e.message);
-        showUploadError("Aborted upload");
+        showError("Aborted upload");
     });
 
     client.upload.addEventListener("progress", function(e) {

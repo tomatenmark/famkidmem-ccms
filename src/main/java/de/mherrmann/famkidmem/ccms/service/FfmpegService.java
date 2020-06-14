@@ -65,8 +65,9 @@ public class FfmpegService {
         }
 
         if(state.isErrorState()){
-            LOGGER.error("Ffmpeg Error. See previous log entries for details");
-            throw new EncryptionException("Ffmpeg Error. See log box for details");
+            LOGGER.error("Ffmpeg Error(s). See previous log entries for details");
+            pushService.push(PushMessage.videoEncryptionError("Ffmpeg Error(s)."));
+            throw new EncryptionException("Ffmpeg Error(s).");
         }
 
         LOGGER.info("Ffmpeg successfully encrypted the video.");
@@ -79,7 +80,7 @@ public class FfmpegService {
         if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
             state.tsFilesExpected = calculateTsFilesExpected(line);
         }
-        if(line.matches("^.*Opening\\s'crypto:fileSequence.*$") || line.startsWith("video")){
+        if(line.matches("^.*Opening\\s'crypto:.*$") || line.startsWith("video")){
             state.tsFiles++;
             updateKeyFilesForFfmpeg();
         }
