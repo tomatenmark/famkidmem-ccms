@@ -13,7 +13,3 @@ echo Opening 'crypto:fileSequence2' 1>&2
 ping /n 5 localhost >nul
 
 echo video 1>&2
-
-ping /n 5 localhost >nul
-
-echo %* 1>&2
