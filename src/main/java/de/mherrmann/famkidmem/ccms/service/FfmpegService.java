@@ -27,10 +27,10 @@ public class FfmpegService {
         this.cryptoUtil = cryptoUtil;
     }
 
-    public void encryptVideo(String name) throws EncryptionException {
+    public int encryptVideo(String name) throws EncryptionException {
         try {
             Process process = buildFfmpegProcess(name);
-            handleFfmpeg(process);
+            return handleFfmpeg(process);
         } catch(EncryptionException | IOException ex){
             throw new EncryptionException("Exception during video encryption (ffmpeg): " + ex);
         }
@@ -52,7 +52,7 @@ public class FfmpegService {
         return runtime.exec(commands);
     }
 
-    private void handleFfmpeg(Process process) throws IOException, EncryptionException {
+    private int handleFfmpeg(Process process) throws IOException, EncryptionException {
         updateKeyFilesForFfmpeg();
 
         //ffmpeg outputs all to stderr ^^
@@ -70,15 +70,17 @@ public class FfmpegService {
         }
 
         LOGGER.info("Ffmpeg successfully encrypted the video.");
+
+        return state.tsFiles;
     }
 
     private void handleFfmpegLine(String line, State state) throws IOException {
         String possibleBeginningsPattern = "^(ffmpeg|\\s|\\[|Input|Stream|Press|Output|video|frame|$).*$";
         if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
-            state.setTsFilesExpected(calculateTsFilesExpected(line));
+            state.tsFilesExpected = calculateTsFilesExpected(line);
         }
         if(line.matches("^.*Opening\\s'crypto:fileSequence.*$") || line.startsWith("video")){
-            state.countTsFile();
+            state.tsFiles++;
             updateKeyFilesForFfmpeg();
         }
         if(!line.matches(possibleBeginningsPattern) || line.contains("error")){
@@ -117,7 +119,7 @@ public class FfmpegService {
     private void sendProgress(String line, State state){
         LOGGER.debug("Ffmpeg says: " + line);
         pushService.push(PushMessage.videoEncryptionProgress(line, state.frameLineBefore, state.getPercentage()));
-        state.setFrameLineBefore(line.startsWith("frame"));
+        state.frameLineBefore = line.startsWith("frame");
     }
 
     private void handleError(String line){
@@ -131,18 +133,6 @@ public class FfmpegService {
         boolean frameLineBefore;
         boolean errorState;
 
-        void countTsFile() {
-            tsFiles++;
-        }
-
-        void setTsFilesExpected(int tsFilesExpected) {
-            this.tsFilesExpected = tsFilesExpected;
-        }
-
-        void setFrameLineBefore(boolean frameLineBefore) {
-            this.frameLineBefore = frameLineBefore;
-        }
-
         int getPercentage() {
             if(tsFilesExpected == 0){
                 return 0;
@@ -154,7 +144,7 @@ public class FfmpegService {
             return percentage;
         }
 
-        public boolean isErrorState() {
+        boolean isErrorState() {
             return errorState || tsFiles < tsFilesExpected;
         }
     }

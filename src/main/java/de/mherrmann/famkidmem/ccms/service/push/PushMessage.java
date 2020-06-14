@@ -1,13 +1,10 @@
 package de.mherrmann.famkidmem.ccms.service.push;
 
-import de.mherrmann.famkidmem.ccms.item.Key;
-
 public class PushMessage {
 
     private String message;
     private String details;
     private boolean override;
-    private Key key;
     private int value;
 
     private PushMessage(String message, String details, boolean override, int value) {
@@ -15,11 +12,6 @@ public class PushMessage {
         this.details = details;
         this.value = value;
         this.override = override;
-    }
-
-    private PushMessage(String message, Key key) {
-        this.message = message;
-        this.key = key;
     }
 
     private PushMessage(String message, String details) {
@@ -47,12 +39,12 @@ public class PushMessage {
         return new PushMessage("videoEncryptionError", details);
     }
 
-    public static PushMessage finishedWithThumbnail(Key key){
-        return new PushMessage("finishedWithThumbnail", key);
+    public static PushMessage finishedWithThumbnail(){
+        return new PushMessage("finishedWithThumbnail");
     }
 
-    public static PushMessage finishedWithVideo(Key key){
-        return new PushMessage("finishedWithVideo", key);
+    public static PushMessage finishedWithVideo(){
+        return new PushMessage("finishedWithVideo");
     }
 
     public String getMessage() {
@@ -65,10 +57,6 @@ public class PushMessage {
 
     public boolean isOverride() {
         return override;
-    }
-
-    public Key getKey() {
-        return key;
     }
 
     public int getValue() {

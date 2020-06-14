@@ -54,10 +54,10 @@ public class FfmpegServiceTest {
 
         Thread.sleep(500);
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(33);
-        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Opening 'crypto:fileSequence1' ");
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo(" Opening 'crypto:fileSequence1' ");
         Thread.sleep(5500);
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(66);
-        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Opening 'crypto:fileSequence2' ");
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo(" Opening 'crypto:fileSequence2' ");
         assertThat(PushService.getLastMessage().isOverride()).isEqualTo(true);
         Thread.sleep(5500);
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(100);
@@ -77,6 +77,13 @@ public class FfmpegServiceTest {
         checkKeyInfoFiles();
         Thread.sleep(5500);
         checkKeyInfoFiles();
+    }
+
+    @Test
+    public void shouldRunCheckTsFilesCount() {
+        int tsFiles = ffmpegService.encryptVideo("");
+
+        assertThat(tsFiles).isEqualTo(3);
     }
 
     @Test

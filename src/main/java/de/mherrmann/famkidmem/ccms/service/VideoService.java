@@ -37,6 +37,8 @@ public class VideoService {
     private final CryptoUtil cryptoUtil;
     private final FfmpegService ffmpegService;
 
+    private State state = new State();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
 
     @Autowired
@@ -118,6 +120,7 @@ public class VideoService {
 
     public void encrypt() throws EncryptionException {
         String randomName = UUID.randomUUID().toString();
+        state.randomName = randomName;
         encryptThumbnail(randomName);
         encryptVideo(randomName);
     }
@@ -126,15 +129,16 @@ public class VideoService {
         byte[] key = cryptoUtil.generateSecureRandomKeyParam();
         byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
         encryptFile(name, "thumbnail.png", "png", key, iv);
-        Key keySpec = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
-        pushService.push(PushMessage.finishedWithThumbnail(keySpec));
+        state.thumbnailKey = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+        pushService.push(PushMessage.finishedWithThumbnail());
         LOGGER.info("Successfully encrypted thumbnail.");
     }
 
     private void encryptVideo(String name) throws EncryptionException {
-        ffmpegService.encryptVideo(name);
-        Key key = encryptM3u8(name);
-        pushService.push(PushMessage.finishedWithVideo(key));
+        int tsFiles = ffmpegService.encryptVideo(name);
+        state.m3u8Key = encryptM3u8(name);
+        state.tsFiles = tsFiles;
+        pushService.push(PushMessage.finishedWithVideo());
         LOGGER.info("Successfully encrypted video.");
     }
 
@@ -176,5 +180,12 @@ public class VideoService {
             return response.getBody().getVideos();
         }
         throw new WebBackendException(response.getBody());
+    }
+
+    private class State {
+        String randomName;
+        Key thumbnailKey;
+        Key m3u8Key;
+        int tsFiles;
     }
 }
