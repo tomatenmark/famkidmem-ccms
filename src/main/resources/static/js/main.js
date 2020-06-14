@@ -57,8 +57,18 @@ function handlePush(message){
             startEncryption();
             break;
         case 'finishedWithThumbnail':
-            showProgress('starting...', '');
-            addFileInfoToAddVideoForm(messageObject);
+            startShowVideoEncryption();
+            addKeyInfoToVideoAddForm(messageObject, "thumbnail");
+            break;
+        case 'videoEncryptionProgress':
+            showProgress(messageObject);
+            break;
+        case 'videoEncryptionError':
+            showVideoEncryptionError(messageObject);
+            break;
+        case 'finishedWithVideo':
+            document.getElementById('ffmpegProgress').innerHTML = '';
+            addKeyInfoToVideoAddForm(messageObject, 'video');
             break;
     }
 }
@@ -69,22 +79,30 @@ function startEncryption() {
     encrypt();
 }
 
-let detailsEntries = 0;
-function showProgress(details, progress){
+function startShowVideoEncryption() {
     document.getElementById('step').innerText = 'encrypt video';
-    document.getElementById('progressBar').value = progress;
-    if(details.substr(0, 1) === "\r"){
-        document.getElementById('ffmpegProgress').children[detailsEntries-1].innerText = details;
+    document.getElementById('progressBar').value = '';
+    document.getElementById('ffmpegProgress').innerHTML = '<div>starting...</div>';
+}
+
+function showProgress(messageObject){
+    document.getElementById('progressBar').value = messageObject.value;
+    if(messageObject.override){
+        let entries = document.getElementById('ffmpegProgress').children.length;
+        document.getElementById('ffmpegProgress').children[entries-1].innerText = messageObject.details;
     } else {
-        document.getElementById('ffmpegProgress').innerHTML += '<div>' + details + '</div>';
-        detailsEntries++;
+        document.getElementById('ffmpegProgress').innerHTML += '<div>' + messageObject.details + '</div>';
     }
 }
 
-function addFileInfoToAddVideoForm(messageObject){
-    document.getElementById('thumbnailFilename').value = messageObject.file.filename;
-    document.getElementById('thumbnailKey').value = messageObject.file.key.key;
-    document.getElementById('thumbnailIv').value = messageObject.file.key.iv;
+function showVideoEncryptionError(messageObject){
+    document.getElementById('progressBar').value = 0;
+    document.getElementById('ffmpegProgress').innerHTML += '<div class="error">' + messageObject.details + '</div>';
+}
+
+function addKeyInfoToVideoAddForm(messageObject, file){
+    document.getElementById(file+'Key').value = messageObject.key.key;
+    document.getElementById(file+'Iv').value = messageObject.key.iv;
 }
 
 function showUploadError(message){
@@ -95,7 +113,7 @@ function showUploadError(message){
 function encrypt(){
     let client = new XMLHttpRequest();
     client.addEventListener("error", function(e) {
-        showUploadError("error during encryption")
+        showUploadError("error during encryption");
         console.error(e.message);
     });
     client.open("POST", "/video/encrypt");
