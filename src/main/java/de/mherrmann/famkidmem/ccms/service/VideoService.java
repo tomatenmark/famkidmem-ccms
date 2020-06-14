@@ -107,11 +107,13 @@ public class VideoService {
     public void uploadThumbnail(MultipartFile file) throws FileUploadException {
         uploadFile(file, "thumbnail.png");
         pushService.push(PushMessage.thumbnailUploadComplete());
+        LOGGER.info("Successfully uploaded thumbnail to ccms.");
     }
 
     public void uploadVideo(MultipartFile file) throws FileUploadException {
         uploadFile(file, "video.mp4");
         pushService.push(PushMessage.videoUploadComplete());
+        LOGGER.info("Successfully uploaded video to ccms.");
     }
 
     public void encrypt() throws EncryptionException {
@@ -126,12 +128,14 @@ public class VideoService {
         encryptFile(name, "thumbnail.png", "png", key, iv);
         Key keySpec = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
         pushService.push(PushMessage.finishedWithThumbnail(keySpec));
+        LOGGER.info("Successfully encrypted thumbnail.");
     }
 
     private void encryptVideo(String name) throws EncryptionException {
         ffmpegService.encryptVideo(name);
-        Key key= encryptM3u8(name);
+        Key key = encryptM3u8(name);
         pushService.push(PushMessage.finishedWithVideo(key));
+        LOGGER.info("Successfully encrypted video.");
     }
 
     private Key encryptM3u8(String name){

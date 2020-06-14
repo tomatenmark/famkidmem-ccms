@@ -4,6 +4,8 @@ import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
 import de.mherrmann.famkidmem.ccms.service.push.PushService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +19,20 @@ public class FfmpegService {
     private final PushService pushService;
     private final CryptoUtil cryptoUtil;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FfmpegService.class);
+
     @Autowired
     public FfmpegService(PushService pushService, CryptoUtil cryptoUtil) {
         this.pushService = pushService;
         this.cryptoUtil = cryptoUtil;
     }
 
-    void encryptVideo(String name) throws EncryptionException {
+    public void encryptVideo(String name) throws EncryptionException {
         try {
             Process process = buildFfmpegProcess(name);
             handleFfmpeg(process);
-        } catch(IOException ex){
-            throw new EncryptionException("Exception during video encryption (ffmpegDummy.sh): "+ex);
+        } catch(EncryptionException | IOException ex){
+            throw new EncryptionException("Exception during video encryption (ffmpeg): " + ex);
         }
     }
 
@@ -48,7 +52,7 @@ public class FfmpegService {
         return runtime.exec(commands);
     }
 
-    private void handleFfmpeg(Process process) throws IOException {
+    private void handleFfmpeg(Process process) throws IOException, EncryptionException {
         updateKeyFilesForFfmpeg();
 
         //ffmpeg outputs all to stderr ^^
@@ -59,6 +63,13 @@ public class FfmpegService {
         while ((line = stdError.readLine()) != null) {
             handleFfmpegLine(line, state);
         }
+
+        if(state.isErrorState()){
+            LOGGER.error("Ffmpeg Error. See previous log entries for details");
+            throw new EncryptionException("Ffmpeg Error. See log box for details");
+        }
+
+        LOGGER.info("Ffmpeg successfully encrypted the video.");
     }
 
     private void handleFfmpegLine(String line, State state) throws IOException {
@@ -71,7 +82,8 @@ public class FfmpegService {
             updateKeyFilesForFfmpeg();
         }
         if(!line.matches(possibleBeginningsPattern) || line.contains("error")){
-            sendError(line);
+            state.errorState = true;
+            handleError(line);
         }
         if(!line.isEmpty()){
             sendProgress(line, state);
@@ -103,11 +115,13 @@ public class FfmpegService {
     }
 
     private void sendProgress(String line, State state){
+        LOGGER.debug("Ffmpeg says: " + line);
         pushService.push(PushMessage.videoEncryptionProgress(line, state.frameLineBefore, state.getPercentage()));
         state.setFrameLineBefore(line.startsWith("frame"));
     }
 
-    private void sendError(String line){
+    private void handleError(String line){
+        LOGGER.error("Ffmpeg Error: " + line);
         pushService.push(PushMessage.videoEncryptionError(line));
     }
 
@@ -115,6 +129,7 @@ public class FfmpegService {
         int tsFiles;
         int tsFilesExpected;
         boolean frameLineBefore;
+        boolean errorState;
 
         void countTsFile() {
             tsFiles++;
@@ -137,6 +152,10 @@ public class FfmpegService {
                 percentage = 100;
             }
             return percentage;
+        }
+
+        public boolean isErrorState() {
+            return errorState || tsFiles < tsFilesExpected;
         }
     }
 
