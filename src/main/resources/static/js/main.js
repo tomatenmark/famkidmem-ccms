@@ -85,11 +85,15 @@ function startShowVideoEncryption() {
 
 function showProgress(messageObject){
     document.getElementById('progressBar').value = messageObject.value;
+    let logBox = document.getElementById('ffmpegProgress');
     if(messageObject.override){
-        let entries = document.getElementById('ffmpegProgress').children.length;
-        document.getElementById('ffmpegProgress').children[entries-1].innerText = messageObject.details;
+        let entries = logBox.children.length;
+        logBox.children[entries-1].innerText = messageObject.details;
     } else {
-        document.getElementById('ffmpegProgress').innerHTML += '<div>' + messageObject.details + '</div>';
+        logBox.innerHTML += '<div>' + messageObject.details + '</div>';
+    }
+    if(document.getElementById("autoScroll").checked){
+        logBox.scrollTop = logBox.scrollHeight;
     }
 }
 
