@@ -76,20 +76,36 @@ public class FfmpegService {
     }
 
     private void handleFfmpegLine(String line, State state) throws IOException {
+        LOGGER.debug("Ffmpeg says: " + line);
+        handleFfmpegSpecialLine(line, state);
         String possibleBeginningsPattern = "^(ffmpeg|\\s|\\[|Input|Stream|Press|Output|video|frame|$).*$";
-        if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
-            state.tsFilesExpected = calculateTsFilesExpected(line);
-        }
-        if(line.matches("^.*Opening\\s'crypto:.*$") || line.startsWith("video")){
-            state.tsFiles++;
-            updateKeyFilesForFfmpeg();
-        }
         if(!line.matches(possibleBeginningsPattern) || line.contains("error")){
             state.errorState = true;
             handleError(line);
+            return;
         }
-        if(!line.isEmpty()){
+        if(line.matches("^(.*Opening\\s'crypto:.*|(video|frame).*)$")){
             sendProgress(line, state);
+        }
+    }
+
+    private void handleFfmpegSpecialLine(String line, State state) throws IOException {
+        if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
+            setSeconds(state, line);
+            setTsFilesExpected(state);
+        }
+        if(line.matches("^(.*Opening\\s'crypto:.*|video.*)$")){
+            state.tsFiles++;
+            updateKeyFilesForFfmpeg();
+        }
+        if(line.startsWith("video")){
+            state.finished = true;
+        }
+        if(line.matches("^\\s*Stream.*?Video.*$")){
+            setFramesExpected(state, line);
+        }
+        if(line.startsWith("frame")){
+            setFrames(state, line);
         }
     }
 
@@ -105,22 +121,46 @@ public class FfmpegService {
         stream.close();
     }
 
-    private int calculateTsFilesExpected(String line){
-        String pattern = "^\\s*Duration:\\s(\\d+):(\\d+):(\\d+).*$";
+    private void setFramesExpected(State state, String line){
+        String pattern = "^\\s*Stream.*?Video.*?,\\s(\\d+)\\sfps,.*$";
+        int framesPerSecond = Integer.valueOf(line.replaceFirst(pattern, "$1"));
+        state.framesExpected = (int) Math.floor(state.seconds * framesPerSecond);
+    }
+
+    private void setFrames(State state, String line){
+        String pattern = "^frame\\s*=\\s*(\\d+)\\s*fps.*$";
+        state.frames = Integer.valueOf(line.replaceFirst(pattern, "$1"));
+    }
+
+
+    private void setSeconds(State state, String line){
+        state.seconds = calculateSeconds(line);
+    }
+
+    private double calculateSeconds(String line){
+        String pattern = "^\\s*Duration:\\s(\\d+):(\\d+):(\\d+\\.\\d+).*$";
         int hours = Integer.valueOf(line.replaceFirst(pattern, "$1"));
         int minutes = Integer.valueOf(line.replaceFirst(pattern, "$2")) + hours*60;
-        int seconds = Integer.valueOf(line.replaceFirst(pattern, "$3")) + minutes*60;
-        int tsFiles = seconds / 10;
-        if((seconds % 10) != 0){
-            tsFiles++;
-        }
-        return tsFiles;
+        return Double.valueOf(line.replaceFirst(pattern, "$3")) + minutes*60;
+    }
+
+    private void setTsFilesExpected(State state){
+        state.tsFilesExpected = (int) Math.ceil(state.seconds / 10);
     }
 
     private void sendProgress(String line, State state){
-        LOGGER.debug("Ffmpeg says: " + line);
-        pushService.push(PushMessage.videoEncryptionProgress(line, state.frameLineBefore, state.getPercentage()));
+        String logLine = extractRelevantAndBeautify(line, state);
+        pushService.push(PushMessage.videoEncryptionProgress(logLine, state.frameLineBefore, state.getPercentage()));
         state.frameLineBefore = line.startsWith("frame");
+    }
+
+    private String extractRelevantAndBeautify(String line, State state){
+        switch(line.substring(0, 5)){
+            case "[hls ": return String.format("Chunk %d/%d", state.tsFiles, state.tsFilesExpected);
+            case "frame": return String.format("Frame %d/%d", state.frames, state.framesExpected);
+            case "video": return "Finished";
+        }
+        return "";
     }
 
     private void handleError(String line){
@@ -129,24 +169,28 @@ public class FfmpegService {
     }
 
     private class State {
+        double seconds;
+        int frames;
+        int framesExpected;
         int tsFiles;
         int tsFilesExpected;
         boolean frameLineBefore;
         boolean errorState;
+        boolean finished;
 
         int getPercentage() {
-            if(tsFilesExpected == 0){
+            if(framesExpected == 0){
                 return 0;
             }
-            int percentage = 100 / tsFilesExpected * tsFiles;
-            if (tsFiles >= tsFilesExpected) {
+            int percentage = (int) Math.round(100.0 / framesExpected * frames);
+            if (frames >= framesExpected) {
                 percentage = 100;
             }
             return percentage;
         }
 
         boolean isErrorState() {
-            return errorState || tsFiles < tsFilesExpected;
+            return errorState || !finished;
         }
     }
 
