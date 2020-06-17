@@ -111,7 +111,7 @@ label span {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE 10+ */
-    margin-top: 15px;
+    margin: 20px 0;
     display: none;
 }
 
