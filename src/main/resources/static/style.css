@@ -101,11 +101,20 @@ label span {
     width: 190px;
 }
 
-#progress {
+#progress, #subProgress {
     display: none;
 }
 
 #ffmpegProgress {
     max-height: 600px;
+    overflow-x: hidden;
     overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+    margin-top: 15px;
+    display: none;
+}
+
+#ffmpegProgress::-webkit-scrollbar {
+    display: none;  /* Chrome Safari */
 }

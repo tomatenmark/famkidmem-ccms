@@ -44,14 +44,14 @@ function addTsFilenamesToVideoRemoveForm(){
 function startAddVideo(){
     document.getElementById('fileProcessingErrors').innerText = '';
     document.getElementById("progress").style.display = 'block';
-    uploadFile("thumbnailFile", "upload thumbnail", "/video/upload-thumbnail");
+    uploadFile("thumbnailFile", "Step 1/6: upload thumbnail", "/video/upload-thumbnail");
 }
 
 function handlePush(message){
     let messageObject = JSON.parse(message.body);
     switch(messageObject.message){
         case 'thumbnailUploadComplete':
-            uploadFile("videoFile", "upload video", "/video/upload-video");
+            uploadFile("videoFile", "Step 2/6: upload video", "/video/upload-video");
             break;
         case 'videoUploadComplete':
             startEncryption();
@@ -72,15 +72,16 @@ function handlePush(message){
 }
 
 function startEncryption() {
-    document.getElementById('step').innerText = 'encrypt thumbnail';
+    document.getElementById('step').innerText = 'Step 3/6: encrypt thumbnail';
     document.getElementById('progressBar').value = '';
     encrypt();
 }
 
 function startShowVideoEncryption() {
-    document.getElementById('step').innerText = 'encrypt video';
+    document.getElementById('step').innerText = 'Step 4/6: encrypt video';
     document.getElementById('progressBar').value = '';
     document.getElementById('ffmpegProgress').innerHTML = '<div>starting...</div>';
+    document.getElementById('ffmpegProgress').style.display = 'block';
 }
 
 function showProgress(messageObject){
