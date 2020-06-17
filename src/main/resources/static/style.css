@@ -91,6 +91,11 @@ h1, h2, h3, h4, h5, h6 {
 label {
     display: block;
 }
+
+label.inline {
+    display: inline;
+}
+
 label span {
     display: inline-block;
     width: 190px;

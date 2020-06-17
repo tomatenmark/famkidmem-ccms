@@ -50,12 +50,12 @@
                 <input type="checkbox" name="recordedInCologne"> Cologne
                 <input type="checkbox" name="recordedInGardelegen"> Gardelegen
             </label>
-            <label>
-                <span>Recorded when?</span>
-                <input name="year" type="number" min="1994" max="2999" required> Year
-                <input name="month" type="number" min="0" max="12"> Month (0 means unknown)
-                <input name="day" type="number" min="0" max="31" required> Day (0 means unknown)
-            </label>
+            <div>
+                <div>Recorded when?</div>
+                <label class="inline"><input name="year" type="number" min="1994" max="2999" required> Year</label>
+                <label class="inline"><input name="month" type="number" min="0" max="12"> Month (0 means unknown)</label>
+                <label class="inline"><input name="day" type="number" min="0" max="31" required> Day (0 means unknown)</label>
+            </div>
 
             <button type="button" onclick="startAddVideo();">Add Video</button>
         </form>
