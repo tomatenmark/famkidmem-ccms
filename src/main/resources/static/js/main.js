@@ -82,6 +82,7 @@ function startShowVideoEncryption() {
     document.getElementById('progressBar').value = '';
     document.getElementById('ffmpegProgress').innerHTML = '<div>starting...</div>';
     document.getElementById('ffmpegProgress').style.display = 'block';
+    document.getElementById('autoScrollLabel').style.display = 'inline';
 }
 
 function showProgress(messageObject){

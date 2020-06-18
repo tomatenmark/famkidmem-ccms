@@ -62,12 +62,10 @@
         <br>
 
         <div id="progress">
-            <span id="step"></span>: <progress id="progressBar" value="0" max="100"></progress>
-            <div id="subProgress">
-                <span id="subStep"></span>: <progress id="subProgressBar" value="0" max="100"></progress>
-            </div>
+            <!-- TODO: maybe beautify progress bar and show percentage (ideas? -> https://www.w3schools.com/bootstrap/bootstrap_progressbars.asp) -->
+            <span id="step"></span>: <progress id="progressBar" value="0" max="100" ></progress>
             <div id="ffmpegProgress"></div>
-            <label><input type="checkbox" id="autoScroll" checked> Auto scroll log box</label>
+            <label id="autoScrollLabel"><input type="checkbox" id="autoScroll" checked> Auto scroll log box</label>
         </div>
 
         <div id="fileProcessingErrors"></div>

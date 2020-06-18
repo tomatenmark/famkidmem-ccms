@@ -101,8 +101,17 @@ label span {
     width: 190px;
 }
 
-#progress, #subProgress {
+
+
+#progress {
     display: none;
+}
+
+progress {
+    text-align: center;
+}
+progress:after {
+    content: attr(value)'%';
 }
 
 #ffmpegProgress {
@@ -117,4 +126,8 @@ label span {
 
 #ffmpegProgress::-webkit-scrollbar {
     display: none;  /* Chrome Safari */
+}
+
+#autoScrollLabel {
+    display: none;
 }
