@@ -56,11 +56,11 @@ public class FfmpegService {
         updateKeyFilesForFfmpeg();
 
         //ffmpeg outputs all to stderr ^^
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        BufferedReader bR = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
         String line;
         State state = new State();
-        while ((line = stdError.readLine()) != null) {
+        while ((line = bR.readLine()) != null) {
             handleFfmpegLine(line, state);
         }
 
