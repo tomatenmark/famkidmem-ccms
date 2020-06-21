@@ -3,7 +3,9 @@ package de.mherrmann.famkidmem.ccms.management.video;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.service.FfmpegService;
+import de.mherrmann.famkidmem.ccms.service.VideoService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -16,8 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +32,7 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,6 +49,7 @@ public class VideoManagementTestAdd {
     private static final String TEST_CONTENT = "Content";
     private static final String TEST_NAME = "test.txt";
     private static final String TEST_DIRECTORY = "./files/";
+    private static final String RANDOM_NAME = "randomName";
 
     @MockBean
     private RestTemplate restTemplate;
@@ -62,6 +65,9 @@ public class VideoManagementTestAdd {
 
     @Autowired
     private TestUtil testUtil;
+
+    @Autowired
+    private VideoService videoService;
 
     @Before
     public void setUp(){
@@ -147,6 +153,37 @@ public class VideoManagementTestAdd {
         assertThat(encryptedBytesM3u8).isEqualTo(expected);
     }
 
+    @Test
+    public void shouldUploadToWeb() throws Exception {
+        videoService.getState().randomName = RANDOM_NAME;
+        videoService.getState().tsFiles = 3;
+        createEncryptedMediaFiles();
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
+                .willReturn(ResponseEntity.ok("ok"));
+
+        this.mockMvc.perform(post("/video/upload-web"))
+                .andExpect(status().isOk());
+
+        assertThat(new File("./files/").list().length).isEqualTo(0);
+    }
+
+    @Test
+    public void shouldFailUploadToWebAndRollback() throws Exception {
+        videoService.getState().randomName = RANDOM_NAME;
+        videoService.getState().tsFiles = 3;
+        createEncryptedMediaFiles();
+        new File("./files/"+RANDOM_NAME+".2.ts").delete();
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
+                .willReturn(ResponseEntity.ok("ok"));
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/delete/"+RANDOM_NAME+".png"), eq(HttpMethod.DELETE), ArgumentMatchers.any(), eq(ResponseBody.class)))
+                .willThrow(new RuntimeException("thrown while rollback"));
+
+        MvcResult result = this.mockMvc.perform(post("/video/upload-web"))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertThat(result.getResponse().getContentAsString()).isEqualTo("error: thrown while rollback");
+    }
 
 
     //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
@@ -161,6 +198,14 @@ public class VideoManagementTestAdd {
     private void createMediaFiles() throws IOException {
         new File("./files/thumbnail.png").createNewFile();
         new File("./files/index.m3u8").createNewFile();
+    }
+
+    private void createEncryptedMediaFiles() throws IOException {
+        new File("./files/"+RANDOM_NAME+".png").createNewFile();
+        new File("./files/"+RANDOM_NAME+".m3u8").createNewFile();
+        new File("./files/"+RANDOM_NAME+".0.ts").createNewFile();
+        new File("./files/"+RANDOM_NAME+".1.ts").createNewFile();
+        new File("./files/"+RANDOM_NAME+".2.ts").createNewFile();
     }
 
 }
