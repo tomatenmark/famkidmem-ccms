@@ -103,4 +103,14 @@ public class VideoController {
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());
         }
     }
+
+    @PostMapping(value = "/video/upload-web")
+    public ResponseEntity<String> uploadToWebBackend(){
+        try {
+            videoService.uploadToWebBackend();
+            return ResponseEntity.ok("ok");
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
+    }
 }

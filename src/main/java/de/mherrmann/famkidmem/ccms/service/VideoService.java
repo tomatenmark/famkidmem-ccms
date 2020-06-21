@@ -1,5 +1,6 @@
 package de.mherrmann.famkidmem.ccms.service;
 
+import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
@@ -13,17 +14,24 @@ import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -118,6 +126,79 @@ public class VideoService {
         LOGGER.info("Successfully uploaded video to ccms.");
     }
 
+    public void uploadToWebBackend(){
+        int files = 0;
+        List<String> filesList = getFilesToUploadList();
+        try {
+            for(String path : filesList){
+                uploadFileToWebBackend(path);
+                int percentage = (int) Math.round(100.0 / filesList.size() * ++files);
+                pushService.push(PushMessage.webBackendUploadProgress(percentage));
+            }
+            pushService.push(PushMessage.finishedWithWebUpload());
+            LOGGER.info("Successfully uploaded video files to web-backend.");
+            cleanUpFilesDirectory();
+        } catch(IOException | RestClientException | WebBackendException ex){
+            LOGGER.error("Error during file upload to web-backend.", ex);
+            if(files > 0){
+                rollbackWebBackendUpload(filesList.subList(0, files-1));
+            }
+            String errorMessage = "Error during file upload to web-backend. See logs for details";
+            pushService.push(PushMessage.error(errorMessage));
+            throw new FileUploadException(errorMessage);
+        }
+    }
+
+    private void cleanUpFilesDirectory(){
+        File directory = new File("./files");
+        if(!directory.exists()){
+            return;
+        }
+        for (File file : directory.listFiles()) {
+            file.delete();
+        }
+    }
+
+    private void rollbackWebBackendUpload(List<String> filesList){
+        for(String path : filesList){
+            String filename = new File(path).getName();
+            ResponseEntity<ResponseBody> response = connectionService.doDeleteRequest("/ccms/delete/"+filename);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                LOGGER.error("Fatal Error: Could not rollback web-backend upload for file {}. Try to delete manually.", filename);
+            }
+        }
+    }
+
+    private List<String> getFilesToUploadList(){
+        String dirPath = "./files";
+        List<String> filesList = new ArrayList<>();
+        filesList.add(String.format("%s/%s.png", dirPath, state.randomName));
+        filesList.add(String.format("%s/%s.m3u8", dirPath, state.randomName));
+        for(int i = 0; i < state.tsFiles; i++){
+            filesList.add(String.format("%s/%s.%s.ts", dirPath, state.randomName, i));
+        }
+        return filesList;
+    }
+
+    private void uploadFileToWebBackend(String path) throws IOException, WebBackendException, RestClientException {
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        ByteArrayResource resource = buildByteArrayResource(path);
+        body.add("file", resource);
+        ResponseEntity<ResponseBody> response = connectionService.doUploadRequest(body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new WebBackendException(response.getBody());
+        }
+    }
+
+    private ByteArrayResource buildByteArrayResource(String path) throws IOException {
+        return new ByteArrayResource(Files.readAllBytes(Paths.get(path))) {
+            @Override
+            public String getFilename() {
+                return new File(path).getName();
+            }
+        };
+    }
+
     public void encrypt() throws EncryptionException {
         String randomName = UUID.randomUUID().toString();
         state.randomName = randomName;
@@ -182,10 +263,14 @@ public class VideoService {
         throw new WebBackendException(response.getBody());
     }
 
-    private class State {
-        String randomName;
-        Key thumbnailKey;
-        Key m3u8Key;
-        int tsFiles;
+    public State getState(){
+        return state;
+    }
+
+    public class State {
+        public String randomName;
+        public Key thumbnailKey;
+        public Key m3u8Key;
+        public int tsFiles;
     }
 }
