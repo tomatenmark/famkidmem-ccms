@@ -66,7 +66,17 @@ function handlePush(message){
             showVideoEncryptionError(messageObject);
             break;
         case 'finishedWithVideo':
-            console.log("video encryption completed");
+            startShowWebUploadProgress();
+            break;
+        case 'webBackendUploadProgress':
+            document.getElementById('progressBar').value = messageObject.value;
+            break;
+        case 'finishedWithWebUpload':
+            //document.getElementById('progressBar').value = '';
+            alert('gut');
+            break;
+        case 'error':
+            document.getElementById('fileProcessingErrors').innerText = messageObject.details;
             break;
     }
 }
@@ -83,6 +93,14 @@ function startShowVideoEncryption() {
     document.getElementById('ffmpegProgress').innerHTML = '<div>starting...</div>';
     document.getElementById('ffmpegProgress').style.display = 'block';
     document.getElementById('autoScrollLabel').style.display = 'inline';
+}
+
+function startShowWebUploadProgress() {
+    document.getElementById('step').innerText = 'Step 5/6: upload files to web-backend';
+    document.getElementById('progressBar').value = '';
+    document.getElementById('ffmpegProgress').style.display = 'none';
+    document.getElementById('autoScrollLabel').style.display = 'none';
+    uploadToWebBackend();
 }
 
 function showProgress(messageObject){
@@ -118,6 +136,13 @@ function encrypt(){
     let client = new XMLHttpRequest();
     client.addEventListener("error", handleError);
     client.open("POST", "/video/encrypt");
+    client.send();
+}
+
+function uploadToWebBackend(){
+    let client = new XMLHttpRequest();
+    client.addEventListener("error", handleError);
+    client.open("POST", "/video/upload-web");
     client.send();
 }
 

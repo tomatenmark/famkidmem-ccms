@@ -43,7 +43,7 @@ a:active {
     color: green;
 }
 
-.failure div, .error {
+.failure div, .error, #fileProcessingErrors {
     color: #a00;
 }
 
