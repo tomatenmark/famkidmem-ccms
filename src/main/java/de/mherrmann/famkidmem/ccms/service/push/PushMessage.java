@@ -19,6 +19,11 @@ public class PushMessage {
         this.details = details;
     }
 
+    private PushMessage(String message, int value) {
+        this.message = message;
+        this.value = value;
+    }
+
     private PushMessage(String message) {
         this.message = message;
     }
@@ -45,6 +50,18 @@ public class PushMessage {
 
     public static PushMessage finishedWithVideo(){
         return new PushMessage("finishedWithVideo");
+    }
+
+    public static PushMessage finishedWithWebUpload(){
+        return new PushMessage("finishedWithWebUpload");
+    }
+
+    public static PushMessage error(String details){
+        return new PushMessage("error", details);
+    }
+
+    public static PushMessage webBackendUploadProgress(int progress){
+        return new PushMessage("webBackendUploadProgress", progress);
     }
 
     public String getMessage() {
