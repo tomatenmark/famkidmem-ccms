@@ -184,7 +184,7 @@ public class VideoService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         ByteArrayResource resource = buildByteArrayResource(path);
         body.add("file", resource);
-        ResponseEntity<ResponseBody> response = connectionService.doUploadRequest(body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA);
+        ResponseEntity<ResponseBody> response = connectionService.doUploadRequest(body);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
         }

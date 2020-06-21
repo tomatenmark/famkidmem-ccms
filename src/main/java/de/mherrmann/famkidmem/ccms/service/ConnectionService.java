@@ -26,8 +26,8 @@ public class ConnectionService {
         return doRequest(HttpMethod.POST, body, path, mediaType, ResponseBody.class);
     }
 
-    ResponseEntity doUploadRequest(Object body, String path, MediaType mediaType) throws RestClientException {
-        return doRequest(HttpMethod.POST, body, path, mediaType, String.class);
+    ResponseEntity doUploadRequest(Object body) throws RestClientException {
+        return doRequest(HttpMethod.POST, body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA, String.class);
     }
 
     ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
