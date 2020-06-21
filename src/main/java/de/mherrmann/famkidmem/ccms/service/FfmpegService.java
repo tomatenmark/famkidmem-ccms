@@ -156,7 +156,7 @@ public class FfmpegService {
 
     private String extractRelevantAndBeautify(String line, State state){
         switch(line.substring(0, 5)){
-            case "[hls ": return String.format("Chunk %d/%d", state.tsFiles, state.tsFilesExpected);
+            case "[hls ": return String.format("Chunk %d/%d", state.tsFiles+1, state.tsFilesExpected);
             case "frame": return String.format("Frame %d/%d", state.frames, state.framesExpected);
             case "video": return "Finished";
         }
@@ -172,7 +172,7 @@ public class FfmpegService {
         double seconds;
         int frames;
         int framesExpected;
-        int tsFiles;
+        int tsFiles = -1;
         int tsFilesExpected;
         boolean frameLineBefore;
         boolean errorState;
