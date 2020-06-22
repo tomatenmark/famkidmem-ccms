@@ -68,7 +68,7 @@ public class TestUtil {
         settings.setBackendUrl("");
         settings.setFrontendUrl("");
         settings.setApiKey("");
-        settings.setMasterKey("");
+        settings.setMasterKey("QUJDREVGR0hJSktMTU5PUA==");
         Application.setSettings(settings);
     }
 

@@ -1,6 +1,8 @@
 package de.mherrmann.famkidmem.ccms.util;
 
+import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,14 @@ public class CryptoUtilTest {
     @Autowired
     private CryptoUtil cryptoUtil;
 
+    @Autowired
+    private TestUtil testUtil;
+
+    @Before
+    public void setUp(){
+        testUtil.createTestSettings();
+    }
+
     @Test
     public void shouldGetSecureRandomCredential(){
         String credential = cryptoUtil.generateSecureRandomCredential();
@@ -24,10 +34,33 @@ public class CryptoUtilTest {
     }
 
     @Test
+    public void shouldGetSecureRandomKeyParamHex(){
+        String keyParamHex = cryptoUtil.generateSecureRandomKeyParamHex();
+
+        assertThat(keyParamHex).matches("^[a-fA-F0-9]{32}$");
+    }
+
+    @Test
+    public void shouldConvertToBase64(){
+        String base64 = cryptoUtil.toBase64(new byte[]{65,66,67});
+
+        assertThat(base64).isEqualTo("QUJD");
+    }
+
+    @Test
     public void shouldGetSecureRandomKeyParam(){
         byte[] bytes = cryptoUtil.generateSecureRandomKeyParam();
 
         assertThat(bytes.length).isEqualTo(16);
+    }
+
+    @Test
+    public void shouldEncryptKey() throws Exception {
+        byte[] key = new byte[]{1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1};
+
+        String encrypted = cryptoUtil.encryptKey(key);
+
+        assertThat(encrypted).isEqualTo("I5rhW38NabfonlaCPAztPQ==");
     }
 
     @Test
@@ -63,15 +96,6 @@ public class CryptoUtilTest {
         byte[] encrypted = cryptoUtil.encrypt(hexStringToByteArray(plainHex), hexStringToByteArray(keyHex), hexStringToByteArray(ivHex));
 
         assertThat(encrypted).isEqualTo(hexStringToByteArray(expectedEncryptedHex));
-    }
-
-
-
-    public static void main(String[] args) {
-        byte[] test = new byte[]{-46, -106, -51, -108, -62, -52, -49, -118, 58, -122, 48, 40, -75, -31, -36, 10, 117, -122, 96, 45, 37, 60, -1, -7, 27, -126, 102, -66, -90, -42, 26, -79, -68, -3, -127, 2, 34, 2, 54, 107, -34, 109, -46, 96, -95, 88, 65, -95};
-        for(byte b : test){
-            System.out.print(byteToHex(b));
-        }
     }
 
     private static byte[] hexStringToByteArray(String s) {
