@@ -2,6 +2,7 @@ package de.mherrmann.famkidmem.ccms.management.video;
 
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
+import de.mherrmann.famkidmem.ccms.body.RequestBodyAddVideo;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.service.FfmpegService;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,10 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,7 +55,7 @@ public class VideoManagementTestAdd {
     @MockBean
     private CryptoUtil cryptoUtil;
 
-    @SpyBean
+    @MockBean
     private FfmpegService ffmpegService;
 
     @Autowired
@@ -132,7 +130,7 @@ public class VideoManagementTestAdd {
         byte[] expected = new byte[]{1,2,3,4,5,6,7,8};
         given(cryptoUtil.encrypt(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .willReturn(expected);
-        doNothing().when(ffmpegService).encryptVideo(any());
+        given(ffmpegService.encryptVideo(ArgumentMatchers.any())).willReturn(FfmpegService.getDummyState());
 
         this.mockMvc.perform(post("/video/encrypt"))
                 .andExpect(status().isOk());
@@ -185,6 +183,164 @@ public class VideoManagementTestAdd {
         assertThat(result.getResponse().getContentAsString()).isEqualTo("error: thrown while rollback");
     }
 
+    @Test
+    public void shouldAddVideoTwoPersons1999MarchSecondCologne() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestTwoPersons1999March2Cologne();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1,person2")
+                .param("recordedInCologne", "cologne")
+                .param("year", "1999")
+                .param("month", "3")
+                .param("day", "2"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoTwoPersons1999December31Gardelegen() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestTwoPersons1999December31Gardelegen();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1,person2")
+                .param("recordedInGardelegen", "gardelegen")
+                .param("year", "1999")
+                .param("month", "12")
+                .param("day", "31"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoOnePerson1999December31Silvester() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestOnePerson1999December31Silvester();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1")
+                .param("year", "1999")
+                .param("month", "12")
+                .param("day", "31")
+                .param("silvester", "silvester"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoOnePerson2000January11Silvester() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestOnePerson2000January1Silvester();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1")
+                .param("year", "2000")
+                .param("month", "1")
+                .param("day", "1")
+                .param("silvester", "silvester"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoOnePerson2000January11() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestOnePerson2000January1();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1")
+                .param("year", "2000")
+                .param("month", "1")
+                .param("day", "1"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoOnePerson2003May() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestOnePerson2003May();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1")
+                .param("year", "2003")
+                .param("month", "5")
+                .param("day", "0"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    @Test
+    public void shouldAddVideoOnePerson2005CologneAndGardelegen() throws Exception {
+        prepareAddVideoTest();
+        RequestBodyAddVideo addVideoRequest = testUtil.createAddVideoRequestOnePerson2005CologneAndGardelegen();
+
+        this.mockMvc.perform(post("/video/add")
+                .param("title", "title")
+                .param("description", "description")
+                .param("persons", "person1")
+                .param("recordedInCologne", "cologne")
+                .param("recordedInGardelegen", "gardelegen")
+                .param("year", "2005")
+                .param("month", "0")
+                .param("day", "0"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("success", Matchers.equalTo(true)))
+                .andExpect(model().attribute("post", Matchers.equalTo(true)))
+                .andExpect(model().attribute("addVideoRequest", Matchers.equalTo(addVideoRequest)));
+    }
+
+    private void prepareAddVideoTest() throws Exception {
+        byte[] keyDummy = new byte[]{0,0,0,0,0,0,0,0};
+        byte[] encryptedTitleDummy = new byte[]{1,1,1,1,1,1,1,1};
+        byte[] encryptedDescriptionDummy = new byte[]{2,2,2,2,2,2,2,2};
+        videoService.getState().randomName = RANDOM_NAME;
+        videoService.getState().tsFiles = 3;
+        videoService.getState().seconds = 24;
+        videoService.getState().thumbnailKey = new Key("thumbnailKey", "thumbnailIv");
+        videoService.getState().m3u8Key = new Key("videoKey", "videoIv");
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/edit/video/add"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(ResponseBody.class)))
+                .willReturn(testUtil.createTestResponseEntityStatusOk());
+        given(cryptoUtil.generateSecureRandomKeyParam())
+                .willReturn(keyDummy);
+        given(cryptoUtil.encrypt(ArgumentMatchers.eq("title".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                .willReturn(encryptedTitleDummy);
+        given(cryptoUtil.encrypt(ArgumentMatchers.eq("description".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                .willReturn(encryptedDescriptionDummy);
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedTitleDummy)))
+                .willReturn("titleEncrypted");
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedDescriptionDummy)))
+                .willReturn("descriptionEncrypted");
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(keyDummy)))
+                .willReturn("iv");
+        given(cryptoUtil.encryptKey(ArgumentMatchers.eq(keyDummy)))
+                .willReturn("keyEncrypted");
+    }
 
     //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
 

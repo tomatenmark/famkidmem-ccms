@@ -41,10 +41,21 @@ function addTsFilenamesToVideoRemoveForm(){
     //example for inputField for second ts file: <input type="hidden" name="tsFilename[1]" value="{FILENAME}">
 }
 
-function startAddVideo(){
+let submit = false;
+
+function addVideo(){
+    if(submit){
+        submit = false;
+        let filesHtml = document.getElementById('files').innerHTML;
+        document.getElementById('files').innerHTML = '';
+        document.getElementById('formDummy').innerText = filesHtml;
+        return true;
+    }
+    submit = true;
     document.getElementById('fileProcessingErrors').innerText = '';
     document.getElementById("progress").style.display = 'block';
     uploadFile("thumbnailFile", "Step 1/6: upload thumbnail", "/video/upload-thumbnail");
+    return false;
 }
 
 function handlePush(message){
@@ -72,13 +83,18 @@ function handlePush(message){
             document.getElementById('progressBar').value = messageObject.value;
             break;
         case 'finishedWithWebUpload':
-            //document.getElementById('progressBar').value = '';
-            alert('gut');
+            submitAddVideo();
             break;
         case 'error':
             document.getElementById('fileProcessingErrors').innerText = messageObject.details;
             break;
     }
+}
+
+function submitAddVideo(){
+    document.getElementById('progressBar').value = 99.9;
+    document.getElementById('step').innerText = 'Step 6/6: save video';
+    document.videoDataForm.submit();
 }
 
 function startEncryption() {
@@ -182,4 +198,11 @@ function uploadFile(fileInputId, step, target) {
 
     client.open("POST", target);
     client.send(formData);
+}
+
+function checkSilvester(){
+    let month = parseInt(document.getElementById('month').value);
+    let day = parseInt(document.getElementById('day').value);
+    let maybeSilvester = (month === 12 && day === 31) || (month === 1 && day === 1);
+    document.getElementById('silvesterToggle').style.display = maybeSilvester ? 'inline' : 'none';
 }

@@ -101,12 +101,6 @@ label span {
     width: 190px;
 }
 
-
-
-#progress {
-    display: none;
-}
-
 progress {
     text-align: center;
 }
@@ -121,13 +115,8 @@ progress:after {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE 10+ */
     margin: 20px 0;
-    display: none;
 }
 
-#ffmpegProgress::-webkit-scrollbar {
-    display: none;  /* Chrome Safari */
-}
-
-#autoScrollLabel {
+#progress, #ffmpegProgress, #ffmpegProgress::-webkit-scrollbar /*Chrome Safari*/, #autoScrollLabel, #silvesterToggle {
     display: none;
 }

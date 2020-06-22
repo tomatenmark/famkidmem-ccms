@@ -1,5 +1,6 @@
 package de.mherrmann.famkidmem.ccms.service;
 
+import de.mherrmann.famkidmem.ccms.body.RequestBodyAddVideo;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
@@ -27,14 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 
 @Service
 public class VideoService {
@@ -61,7 +59,7 @@ public class VideoService {
 
     public void fillIndexModel(Model model){
         try {
-            model.addAttribute("users", getVideos());
+            model.addAttribute("videos", getVideos());
             model.addAttribute("success", true);
         } catch(Exception ex){
             exceptionUtil.handleException(ex, model, LOGGER);
@@ -98,9 +96,7 @@ public class VideoService {
          */
     }
 
-    public void addVideo(HttpServletRequest request, Model model){
-        //TODO: save video attributes including keys ivs and filenames (included in request)
-    }
+
 
     public void replaceThumbnail(MultipartFile file, Model model, String title){
         //TODO:  save file to files folder locally, encrypt it and then upload it to web backend
@@ -149,6 +145,105 @@ public class VideoService {
         }
     }
 
+    @SuppressWarnings("unchecked") //we know, the assignment will work
+    public void addVideo(HttpServletRequest request, Model model){
+        model.addAttribute("post", true);
+        try {
+            RequestBodyAddVideo addVideoRequest = buildAddVideoRequest(request);
+            ResponseEntity<ResponseBody> response = connectionService.doPostRequest(addVideoRequest, "/ccms/edit/video/add", MediaType.APPLICATION_JSON);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                throw new WebBackendException(response.getBody());
+            }
+            model.addAttribute("success", true);
+            model.addAttribute("addVideoRequest", addVideoRequest);
+            LOGGER.info("Successfully added video. Encrypted title: {}.", addVideoRequest.getTitle());
+        } catch(WebBackendException | GeneralSecurityException | UnsupportedEncodingException ex){
+            LOGGER.error("Error. Could not save video", ex);
+            exceptionUtil.handleException(ex, model, LOGGER);
+        }
+    }
+
+    private RequestBodyAddVideo buildAddVideoRequest(HttpServletRequest request) throws GeneralSecurityException, UnsupportedEncodingException {
+        RequestBodyAddVideo addVideoRequest = new RequestBodyAddVideo();
+        addEncryptedVideoMeta(addVideoRequest, request);
+        addVideoRequest.setDurationInSeconds(state.seconds);
+        addVideoRequest.setPersons(getPersonsList(request.getParameter("persons")));
+        addVideoRequest.setYears(getYearsList(request));
+        addVideoRequest.setTimestamp(getTimestamp(request));
+        addVideoRequest.setShowDateValues(getShowDateValues(request));
+        addVideoRequest.setM3u8Filename(state.randomName+".m3u8");
+        addVideoRequest.setM3u8Key(state.m3u8Key.getKey());
+        addVideoRequest.setM3u8Iv(state.m3u8Key.getIv());
+        addVideoRequest.setThumbnailFilename(state.randomName+".png");
+        addVideoRequest.setThumbnailKey(state.thumbnailKey.getKey());
+        addVideoRequest.setThumbnailIv(state.thumbnailKey.getIv());
+        addVideoRequest.setRecordedInCologne("cologne".equals(request.getParameter("recordedInCologne")));
+        addVideoRequest.setRecordedInGardelegen("gardelegen".equals(request.getParameter("recordedInGardelegen")));
+        return addVideoRequest;
+    }
+
+    private void addEncryptedVideoMeta(RequestBodyAddVideo addVideoRequest, HttpServletRequest request) throws GeneralSecurityException, UnsupportedEncodingException {
+        byte[] key = cryptoUtil.generateSecureRandomKeyParam();
+        byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
+        byte[] title = request.getParameter("title").getBytes("UTF-8");
+        byte[] description = request.getParameter("description").getBytes("UTF-8");
+        byte[] titleEncrypted = cryptoUtil.encrypt(title, key, iv);
+        byte[] descriptionEncrypted = cryptoUtil.encrypt(description, key, iv);
+        addVideoRequest.setTitle(cryptoUtil.toBase64(titleEncrypted));
+        addVideoRequest.setDescription(cryptoUtil.toBase64(descriptionEncrypted));
+        addVideoRequest.setKey(cryptoUtil.encryptKey(key));
+        addVideoRequest.setIv(cryptoUtil.toBase64(iv));
+    }
+
+    private List<String> getPersonsList(String personsFieldValue){
+        String sanitizedPersonsFieldValue = personsFieldValue.replace(" ", "").replaceAll("(^,|,$)", "");
+        String[] personsArray = sanitizedPersonsFieldValue.split(",");
+        return Arrays.asList(personsArray);
+    }
+
+    private List<Integer> getYearsList(HttpServletRequest request){
+        List<Integer> yearsList = new ArrayList<>();
+        Integer year = Integer.valueOf(request.getParameter("year"));
+        Integer month = Integer.valueOf(request.getParameter("month"));
+        boolean silvester = "silvester".equals(request.getParameter("silvester"));
+        yearsList.add(year);
+        if(silvester && month == 12){
+            yearsList.add(year+1);
+        }
+        if(silvester && month == 1){
+            yearsList.add(0, year-1);
+        }
+        return yearsList;
+    }
+
+    private long getTimestamp(HttpServletRequest request){
+        Integer year = Integer.valueOf(request.getParameter("year"));
+        Integer month = Integer.valueOf(request.getParameter("month"));
+        Integer day = Integer.valueOf(request.getParameter("day"));
+        if(month < 1){
+            month = 1;
+        }
+        if(day < 1){
+            day = 1;
+        }
+        LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
+        ZonedDateTime zonedDateTime = date.atZone(ZoneId.of("Europe/Paris"));
+        return zonedDateTime.toInstant().toEpochMilli();
+    }
+
+    private int getShowDateValues(HttpServletRequest request){
+        int showDateValues = 4;
+        Integer month = Integer.valueOf(request.getParameter("month"));
+        Integer day = Integer.valueOf(request.getParameter("day"));
+        if(month > 0){
+            showDateValues += 2;
+        }
+        if(day > 0){
+            showDateValues += 1;
+        }
+        return  showDateValues;
+    }
+
     private void cleanUpFilesDirectory(){
         File directory = new File("./files");
         if(!directory.exists()){
@@ -159,6 +254,7 @@ public class VideoService {
         }
     }
 
+    @SuppressWarnings("unchecked") //we know, the assignment will work
     private void rollbackWebBackendUpload(List<String> filesList){
         for(String path : filesList){
             String filename = new File(path).getName();
@@ -180,6 +276,7 @@ public class VideoService {
         return filesList;
     }
 
+    @SuppressWarnings("unchecked") //we know, the assignment will work
     private void uploadFileToWebBackend(String path) throws IOException, WebBackendException, RestClientException {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         ByteArrayResource resource = buildByteArrayResource(path);
@@ -199,35 +296,42 @@ public class VideoService {
         };
     }
 
-    public void encrypt() throws EncryptionException {
-        String randomName = UUID.randomUUID().toString();
-        state.randomName = randomName;
-        encryptThumbnail(randomName);
-        encryptVideo(randomName);
+    public void encrypt() throws EncryptionException, GeneralSecurityException {
+        try {
+            String randomName = UUID.randomUUID().toString();
+            state.randomName = randomName;
+            encryptThumbnail(randomName);
+            encryptVideo(randomName);
+        } catch(EncryptionException | GeneralSecurityException ex){
+            LOGGER.error("Error during encryption.", ex);
+            pushService.push(PushMessage.error(ex.getMessage()));
+            throw ex;
+        }
     }
 
-    private void encryptThumbnail(String name) throws EncryptionException {
+    private void encryptThumbnail(String name) throws EncryptionException, GeneralSecurityException {
         byte[] key = cryptoUtil.generateSecureRandomKeyParam();
         byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
         encryptFile(name, "thumbnail.png", "png", key, iv);
-        state.thumbnailKey = new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+        state.thumbnailKey = new Key(cryptoUtil.encryptKey(key), cryptoUtil.toBase64(iv));
         pushService.push(PushMessage.finishedWithThumbnail());
         LOGGER.info("Successfully encrypted thumbnail.");
     }
 
-    private void encryptVideo(String name) throws EncryptionException {
-        int tsFiles = ffmpegService.encryptVideo(name);
+    private void encryptVideo(String name) throws EncryptionException, GeneralSecurityException {
+        FfmpegService.State ffmpegState = ffmpegService.encryptVideo(name);
         state.m3u8Key = encryptM3u8(name);
-        state.tsFiles = tsFiles;
+        state.tsFiles = ffmpegState.tsFiles;
+        state.seconds = (int) Math.floor(ffmpegState.seconds);
         pushService.push(PushMessage.finishedWithVideo());
         LOGGER.info("Successfully encrypted video.");
     }
 
-    private Key encryptM3u8(String name){
+    private Key encryptM3u8(String name) throws GeneralSecurityException {
         byte[] key = cryptoUtil.generateSecureRandomKeyParam();
         byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
         encryptFile(name, "index.m3u8", "m3u8", key, iv);
-        return new Key(cryptoUtil.toBase64(key), cryptoUtil.toBase64(iv));
+        return new Key(cryptoUtil.encryptKey(key), cryptoUtil.toBase64(iv));
     }
 
     private void encryptFile(String randomName, String filename, String extension, byte[] key, byte[] iv) throws EncryptionException {
@@ -256,7 +360,7 @@ public class VideoService {
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private List<Video> getVideos() throws Exception {
-        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetRequest( "/ccms/edit/video/get/");
+        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetRequest( "/ccms/edit/video/get");
         if(response.getStatusCode().is2xxSuccessful()){
             return response.getBody().getVideos();
         }
@@ -272,5 +376,6 @@ public class VideoService {
         public Key thumbnailKey;
         public Key m3u8Key;
         public int tsFiles;
+        public int seconds;
     }
 }

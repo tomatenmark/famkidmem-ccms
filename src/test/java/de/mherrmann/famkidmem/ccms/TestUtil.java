@@ -11,7 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -89,6 +95,112 @@ public class TestUtil {
         RequestBodyDeleteUser removeUserRequest = new RequestBodyDeleteUser();
         removeUserRequest.setUsername("testUserName");
         return removeUserRequest;
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestTwoPersons1999March2Cologne() {
+        return createAddVideoRequest(
+                Arrays.asList("person1", "person2"),
+                Collections.singletonList(1999),
+                true,
+                false,
+                getTimestamp(1999, 3, 2),
+                7
+                );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestTwoPersons1999December31Gardelegen() {
+        return createAddVideoRequest(
+                Arrays.asList("person1", "person2"),
+                Collections.singletonList(1999),
+                false,
+                true,
+                getTimestamp(1999, 12, 31),
+                7
+        );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestOnePerson1999December31Silvester() {
+        return createAddVideoRequest(
+                Collections.singletonList("person1"),
+                Arrays.asList(1999,2000),
+                false,
+                false,
+                getTimestamp(1999, 12, 31),
+                7
+        );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestOnePerson2000January1Silvester() {
+        return createAddVideoRequest(
+                Collections.singletonList("person1"),
+                Arrays.asList(1999,2000),
+                false,
+                false,
+                getTimestamp(2000, 1, 1),
+                7
+        );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestOnePerson2000January1() {
+        return createAddVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2000),
+                false,
+                false,
+                getTimestamp(2000, 1, 1),
+                7
+        );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestOnePerson2003May() {
+        return createAddVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2003),
+                false,
+                false,
+                getTimestamp(2003, 5, 1),
+                6
+        );
+    }
+
+    public RequestBodyAddVideo createAddVideoRequestOnePerson2005CologneAndGardelegen() {
+        return createAddVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2005),
+                true,
+                true,
+                getTimestamp(2005, 1, 1),
+                4
+        );
+    }
+
+    private RequestBodyAddVideo createAddVideoRequest(List<String> persons, List<Integer> years,
+                            boolean recordedInCologne, boolean recordedInGardelegen, long time, int showDateValues) {
+
+        RequestBodyAddVideo addVideoRequest = new RequestBodyAddVideo();
+        addVideoRequest.setTitle("titleEncrypted");
+        addVideoRequest.setDescription("descriptionEncrypted");
+        addVideoRequest.setKey("keyEncrypted");
+        addVideoRequest.setIv("iv");
+        addVideoRequest.setM3u8Filename("m3u8");
+        addVideoRequest.setM3u8Key("m3u8Key");
+        addVideoRequest.setM3u8Iv("m3u8Iv");
+        addVideoRequest.setThumbnailFilename("thumbnail");
+        addVideoRequest.setThumbnailKey("thumbnailKey");
+        addVideoRequest.setThumbnailIv("thumbnailIv");
+        addVideoRequest.setPersons(persons);
+        addVideoRequest.setYears(years);
+        addVideoRequest.setRecordedInCologne(recordedInCologne);
+        addVideoRequest.setRecordedInGardelegen(recordedInGardelegen);
+        addVideoRequest.setTimestamp(time);
+        addVideoRequest.setShowDateValues(showDateValues);
+        return addVideoRequest;
+    }
+
+    private long getTimestamp(int year, int month, int day){
+        LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
+        ZonedDateTime zonedDateTime = date.atZone(ZoneId.of("Europe/Paris"));
+        return zonedDateTime.toInstant().toEpochMilli();
     }
 
     public List<User> createUsersList(){
