@@ -19,6 +19,8 @@ public class FfmpegService {
     private final PushService pushService;
     private final CryptoUtil cryptoUtil;
 
+    private static State state;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FfmpegService.class);
 
     @Autowired
@@ -27,13 +29,20 @@ public class FfmpegService {
         this.cryptoUtil = cryptoUtil;
     }
 
-    public int encryptVideo(String name) throws EncryptionException {
+    public State encryptVideo(String name) throws EncryptionException {
         try {
             Process process = buildFfmpegProcess(name);
             return handleFfmpeg(process);
         } catch(EncryptionException | IOException ex){
             throw new EncryptionException("Exception during video encryption (ffmpeg): " + ex);
         }
+    }
+
+    public static State getDummyState(){
+        state = new State();
+        state.tsFiles = 3;
+        state.seconds = 24.0;
+        return state;
     }
 
     private Process buildFfmpegProcess(String name) throws IOException {
@@ -52,16 +61,16 @@ public class FfmpegService {
         return runtime.exec(commands);
     }
 
-    private int handleFfmpeg(Process process) throws IOException, EncryptionException {
+    private State handleFfmpeg(Process process) throws IOException, EncryptionException {
         updateKeyFilesForFfmpeg();
 
         //ffmpeg outputs all to stderr ^^
         BufferedReader bR = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
         String line;
-        State state = new State();
+        state = new State();
         while ((line = bR.readLine()) != null) {
-            handleFfmpegLine(line, state);
+            handleFfmpegLine(line);
         }
 
         if(state.isErrorState()){
@@ -72,12 +81,12 @@ public class FfmpegService {
 
         LOGGER.info("Ffmpeg successfully encrypted the video.");
 
-        return state.tsFiles;
+        return state;
     }
 
-    private void handleFfmpegLine(String line, State state) throws IOException {
+    private void handleFfmpegLine(String line) throws IOException {
         LOGGER.debug("Ffmpeg says: " + line);
-        handleFfmpegSpecialLine(line, state);
+        handleFfmpegSpecialLine(line);
         String possibleBeginningsPattern = "^(ffmpeg|\\s|\\[|Input|Stream|Press|Output|video|frame|$).*$";
         if(!line.matches(possibleBeginningsPattern) || line.contains("error")){
             state.errorState = true;
@@ -85,14 +94,14 @@ public class FfmpegService {
             return;
         }
         if(line.matches("^(.*Opening\\s'crypto:.*|(video|frame).*)$")){
-            sendProgress(line, state);
+            sendProgress(line);
         }
     }
 
-    private void handleFfmpegSpecialLine(String line, State state) throws IOException {
+    private void handleFfmpegSpecialLine(String line) throws IOException {
         if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
-            setSeconds(state, line);
-            setTsFilesExpected(state);
+            setSeconds(line);
+            setTsFilesExpected();
         }
         if(line.matches("^(.*Opening\\s'crypto:.*|video.*)$")){
             state.tsFiles++;
@@ -102,10 +111,10 @@ public class FfmpegService {
             state.finished = true;
         }
         if(line.matches("^\\s*Stream.*?Video.*$")){
-            setFramesExpected(state, line);
+            setFramesExpected(line);
         }
         if(line.startsWith("frame")){
-            setFrames(state, line);
+            setFrames(line);
         }
     }
 
@@ -121,19 +130,19 @@ public class FfmpegService {
         stream.close();
     }
 
-    private void setFramesExpected(State state, String line){
+    private void setFramesExpected(String line){
         String pattern = "^\\s*Stream.*?Video.*?,\\s(\\d+)\\sfps,.*$";
         int framesPerSecond = Integer.valueOf(line.replaceFirst(pattern, "$1"));
         state.framesExpected = (int) Math.floor(state.seconds * framesPerSecond);
     }
 
-    private void setFrames(State state, String line){
+    private void setFrames(String line){
         String pattern = "^frame\\s*=\\s*(\\d+)\\s*fps.*$";
         state.frames = Integer.valueOf(line.replaceFirst(pattern, "$1"));
     }
 
 
-    private void setSeconds(State state, String line){
+    private void setSeconds(String line){
         state.seconds = calculateSeconds(line);
     }
 
@@ -144,17 +153,17 @@ public class FfmpegService {
         return Double.valueOf(line.replaceFirst(pattern, "$3")) + minutes*60;
     }
 
-    private void setTsFilesExpected(State state){
+    private void setTsFilesExpected(){
         state.tsFilesExpected = (int) Math.ceil(state.seconds / 10);
     }
 
-    private void sendProgress(String line, State state){
-        String logLine = extractRelevantAndBeautify(line, state);
+    private void sendProgress(String line){
+        String logLine = extractRelevantAndBeautify(line);
         pushService.push(PushMessage.videoEncryptionProgress(logLine, state.frameLineBefore, state.getPercentage()));
         state.frameLineBefore = line.startsWith("frame");
     }
 
-    private String extractRelevantAndBeautify(String line, State state){
+    private String extractRelevantAndBeautify(String line){
         switch(line.substring(0, 5)){
             case "[hls ": return String.format("Chunk %d/%d", state.tsFiles+1, state.tsFilesExpected);
             case "frame": return String.format("Frame %d/%d", state.frames, state.framesExpected);
@@ -168,7 +177,7 @@ public class FfmpegService {
         pushService.push(PushMessage.videoEncryptionError(line));
     }
 
-    private class State {
+    static class State {
         double seconds;
         int frames;
         int framesExpected;
