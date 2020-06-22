@@ -51,7 +51,7 @@ public class VideoManagementTestIndex {
                 .willReturn(testUtil.createTestResponseEntityGetVideos(videos));
 
 
-        this.mockMvc.perform(get("/user/index"))
+        this.mockMvc.perform(get("/video/index"))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(model().attribute("videos", Matchers.equalTo(videos)))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));

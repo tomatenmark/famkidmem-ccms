@@ -4,73 +4,85 @@
 <body>
 <th:block th:include="fragment/header">Header</th:block>
 
-<div id="main">
+    <div id="main">
 
-    <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
-    <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
+        <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
+        <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
 
-    <div class="feedback" th:if="${post}">
-        <div class="success" th:if="${success}">
-            Successfully added video.
+        <div class="feedback" th:if="${post}">
+            <div class="success" th:if="${success}">
+                Successfully added video.
+            </div>
+            <div class="failure" th:if="${!success}">
+                <div>Could not add Video!</div>
+                Exception: [[${exception}]]<br>
+                Details: [[${details}]]<br>
+                <a class="button" th:href="@{/video/add}">Try again</a>
+            </div>
+            <p>
+                <a th:href="@{/video/index}">Back to video list</a>
+            </p>
         </div>
-        <div class="failure" th:if="${!success}">
-            <div>Could not add Video!</div>
-            Exception: [[${exception}]]<br>
-            Details: [[${details}]]<br>
-            <a class="button" th:href="@{/video/add}">Try again</a>
-        </div>
-        <p>
-            <a th:href="@{/video/index}">Back to video list</a>
-        </p>
+
+
+        <th:block th:if="${!post}">
+
+            <div id="formDummy"></div>
+
+            <form method="post" th:action="@{/video/add}" name="videoDataForm" id="videoDataForm" onsubmit="return addVideo();">
+                <div id="files">
+                    <label>
+                        Select video file: <input type="file" name="file" id="videoFile" required>
+                    </label>
+                    <label>
+                        Select thumbnail file: <input type="file" name="file" id="thumbnailFile" required>
+                    </label>
+                </div>
+                <label>
+                    <span>Title</span>
+                    <input type="text" name="title" required>
+                </label>
+                <label>
+                    <span>Description</span>
+                    <textarea name="description" required></textarea>
+                </label>
+                <label>
+                    <span>Persons (comma-separated)</span>
+                    <input type="text" name="persons">
+                </label>
+                <label>
+                    <span>Recorded where?</span>
+                    <input type="checkbox" name="recordedInCologne" value="cologne"> Cologne
+                    <input type="checkbox" name="recordedInGardelegen" value="gardelegen"> Gardelegen
+                </label>
+                <div>
+                    <div>Recorded when?</div>
+                    <label class="inline"><input name="year" type="number" min="1994" max="2999" required> Year</label>
+                    <label class="inline"><input name="month" id="month" type="number" min="0" max="12"
+                                                 onchange="checkSilvester();" required> Month (0 means unknown)</label>
+                    <label class="inline"><input name="day" id="day" type="number" min="0" max="31"
+                                                 onchange="checkSilvester();" required> Day (0 means unknown)</label>
+                    <label class="inline" id="silvesterToggle"><input name="silvester" type="checkbox" value="silvester">
+                        Silvester</label>
+                </div>
+                <button type="submit">Add Video</button>
+            </form>
+            <br>
+
+            <div id="progress">
+                <!-- TODO: maybe beautify progress bar and show percentage (ideas? -> https://www.w3schools.com/bootstrap/bootstrap_progressbars.asp) -->
+                <span id="step"></span>:
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div id="ffmpegProgress"></div>
+                <label id="autoScrollLabel"><input type="checkbox" id="autoScroll" checked> Auto scroll log box</label>
+            </div>
+
+            <div id="fileProcessingErrors"></div>
+
+            <script>connectPush();</script>
+        </th:block>
+    
+
     </div>
-
-
-    <th:block th:if="${!post}">
-        <form method="post" th:action="@{/video/upload-video}" enctype="multipart/form-data" name="uploadVideoForm" id="uploadVideoForm">
-            Select video file<input type="file" name="videoFile" id="videoFile">
-        </form>
-
-        <form method="post" th:action="@{/video/upload-thumbnail}" enctype="multipart/form-data" name="uploadThumbnailForm" id="uploadThumbnailForm">
-            Select thumbnail file<input type="file" name="thumbnailFile" id="thumbnailFile">
-        </form>
-
-        <form method="post" th:action="@{/video/add}" name="videoDataForm" id="videoDataForm">
-            <label>
-                <span>Title</span>
-                <input type="text" name="title">
-            </label>
-            <label>
-                <span>Description</span>
-                <textarea name="description"></textarea>
-            </label>
-            <label>
-                <span>Persons (comma-separated)</span>
-                <input type="text" name="persons">
-            </label>
-            <label>
-                <span>Recorded where?</span>
-                <input type="checkbox" name="recordedInCologne"> Cologne
-                <input type="checkbox" name="recordedInGardelegen"> Gardelegen
-            </label>
-            <label>
-                <span>Recorded when?</span>
-                <input name="year" type="number" min="1994" max="2999" required> Year
-                <input name="month" type="number" min="0" max="12"> Month (0 means unknown)
-                <input name="day" type="number" min="0" max="31" required> Day (0 means unknown)
-            </label>
-            <button type="button" onclick="addVideo();">Add Video</button>
-        </form>
-
-        <div id="progress">
-            <span id="step"></span>: <progress id="progressBar" value="0" max="100"></progress><br>
-            <div id="ffmpegProgress"></div>
-        </div>
-
-        <div id="fileProcessingErrors"></div>
-    </th:block>
-
-
-</div>
-
 </body>
 </html>

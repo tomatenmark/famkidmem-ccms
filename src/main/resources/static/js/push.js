@@ -12,5 +12,5 @@ function connectPush() {
 }
 
 async function handleMessage(message){
-    //TODO: handle messages
+    handlePush(message);
 }

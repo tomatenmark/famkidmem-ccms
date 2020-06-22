@@ -5,6 +5,13 @@ public class Key {
     private String key;
     private String iv;
 
+    private Key(){}
+
+    public Key(String key, String iv){
+        this.key = key;
+        this.iv = iv;
+    }
+
     public String getKey() {
         return key;
     }

@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+
 @SpringBootApplication
 public class Application {
 
@@ -14,6 +16,7 @@ public class Application {
 
     public static void main(String[] args) {
         setSettings(SettingsReader.readSettings());
+        createFilesDir();
         SpringApplication.run(Application.class, args);
     }
 
@@ -25,6 +28,12 @@ public class Application {
         return settings;
     }
 
+    private static void createFilesDir(){
+        File dir = new File("./files");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+    }
 
     @Bean
     public RestTemplate restTemplate() {

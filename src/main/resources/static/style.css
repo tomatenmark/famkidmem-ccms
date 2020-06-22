@@ -43,7 +43,7 @@ a:active {
     color: green;
 }
 
-.failure div {
+.failure div, .error, #fileProcessingErrors {
     color: #a00;
 }
 
@@ -88,3 +88,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* TODO: add styles for input fields, checkbox, label and other new things in the new templates (maybe initialize some elements with display:none)*/
+label {
+    display: block;
+}
+
+label.inline {
+    display: inline;
+}
+
+label span {
+    display: inline-block;
+    width: 190px;
+}
+
+progress {
+    text-align: center;
+}
+progress:after {
+    content: attr(value)'%';
+}
+
+#ffmpegProgress {
+    max-height: 600px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+    margin: 20px 0;
+}
+
+#progress, #ffmpegProgress, #ffmpegProgress::-webkit-scrollbar /*Chrome Safari*/, #autoScrollLabel, #silvesterToggle {
+    display: none;
+}
