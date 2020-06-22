@@ -80,10 +80,11 @@ public class FfmpegServiceTest {
     }
 
     @Test
-    public void shouldRunCheckTsFilesCount() {
-        int tsFiles = ffmpegService.encryptVideo("");
+    public void shouldRunCheckTsFilesAndSeconds() {
+        FfmpegService.State state = ffmpegService.encryptVideo("");
 
-        assertThat(tsFiles).isEqualTo(3);
+        assertThat(state.tsFiles).isEqualTo(3);
+        assertThat(state.seconds).isEqualTo(24.0);
     }
 
     @Test
