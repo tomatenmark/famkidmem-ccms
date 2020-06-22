@@ -342,15 +342,6 @@ public class VideoManagementTestAdd {
                 .willReturn("keyEncrypted");
     }
 
-    //TODO: add tests: shouldAddVideo, shouldFailAddVideoCausedByBadRequestResponse, shouldFailAddVideoCausedByConnectionFailure, (maybe) shouldFailAddVideoCausedByInvalidForm
-
-    private static String byteToHex(byte num) {
-        char[] hexDigits = new char[2];
-        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
-        hexDigits[1] = Character.forDigit((num & 0xF), 16);
-        return new String(hexDigits);
-    }
-
     private void createMediaFiles() throws IOException {
         new File("./files/thumbnail.png").createNewFile();
         new File("./files/index.m3u8").createNewFile();
