@@ -1,6 +1,7 @@
 package de.mherrmann.famkidmem.ccms.controller;
 
-import de.mherrmann.famkidmem.ccms.service.VideoService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,16 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class VideoController {
 
-    private final VideoService videoService;
+    private final VideoAddService videoAddService;
+    private final VideoIndexService videoIndexService;
 
     @Autowired
-    public VideoController(VideoService videoService) {
-        this.videoService = videoService;
+    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService) {
+        this.videoAddService = videoAddService;
+        this.videoIndexService = videoIndexService;
     }
 
     @GetMapping(value = "/video/index")
     public String loadIndexView(Model model){
-        videoService.fillIndexModel(model);
+        videoIndexService.fillIndexModel(model);
         return "video/index";
     }
 
@@ -34,50 +37,50 @@ public class VideoController {
 
     @GetMapping(value = "/video/edit-data")
     public String loadEditDataView(Model model){
-        videoService.fillEditDataModel(model);
+        //videoAddService.fillEditDataModel(model); TODO: fix to VideoEditService
         return "video/index";
     }
 
     @GetMapping(value = "/video/replace-thumbnail")
     public String loadReplaceThumbnailView(Model model){
-        videoService.fillReplaceThumbnailModel(model);
+        //videoAddService.fillReplaceThumbnailModel(model); TODO: fix to VideoEditService
         return "video/index";
     }
 
     @GetMapping(value = "/video/remove")
     public String loadRemoveVideoView(Model model){
-        videoService.fillRemoveVideoModel(model);
+        //videoAddService.fillRemoveVideoModel(model); TODO: fix to VideoDeleteService
         return "video/index";
     }
 
     @PostMapping(value = "/video/add")
     public String addVideo(HttpServletRequest request, Model model){
-        videoService.addVideo(request, model);
+        videoAddService.addVideo(request, model);
         return "video/add";
     }
 
     @PostMapping(value = "/video/edit-data/{title}")
     public String editData(HttpServletRequest request, Model model, @PathVariable String title){
-        videoService.editData(request, model, title);
+        //videoAddService.editData(request, model, title); TODO: fix to VideoEditService
         return "video/edit-data";
     }
 
     @PostMapping(value = "/video/replace-thumbnail/{title}")
     public String replaceThumbnail(MultipartFile file, Model model, @PathVariable String title){
-        videoService.replaceThumbnail(file, model, title);
+        //videoAddService.replaceThumbnail(file, model, title); TODO: fix to VideoEditService
         return "video/replace-thumbnail";
     }
 
     @PostMapping(value = "/video/remove/{title}")
     public String deleteVideo(Model model, @PathVariable String title){
-        videoService.deleteVideo(model, title);
+        //videoAddService.deleteVideo(model, title); TODO: fix to VideoDeleteService
         return "video/remove";
     }
 
     @PostMapping(value = "/video/upload-video")
     public ResponseEntity<String> updateVideo(MultipartFile file){
         try {
-            videoService.uploadVideo(file);
+            videoAddService.uploadVideo(file);
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());
@@ -87,7 +90,7 @@ public class VideoController {
     @PostMapping(value = "/video/upload-thumbnail")
     public ResponseEntity<String> updateThumbnail(MultipartFile file){
         try {
-            videoService.uploadThumbnail(file);
+            videoAddService.uploadThumbnail(file);
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());
@@ -97,7 +100,7 @@ public class VideoController {
     @PostMapping(value = "/video/encrypt")
     public ResponseEntity<String> encrypt(){
         try {
-            videoService.encrypt();
+            videoAddService.encrypt();
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());
@@ -107,7 +110,7 @@ public class VideoController {
     @PostMapping(value = "/video/upload-web")
     public ResponseEntity<String> uploadToWebBackend(){
         try {
-            videoService.uploadToWebBackend();
+            videoAddService.uploadToWebBackend();
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());

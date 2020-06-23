@@ -18,23 +18,23 @@ public class ConnectionService {
         this.restTemplate = restTemplate;
     }
 
-    ResponseEntity doGetRequest(String path) throws RestClientException {
+    public ResponseEntity doGetRequest(String path) throws RestClientException {
         return doRequest(HttpMethod.GET, null, path, null, ResponseBody.class);
     }
 
-    ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {
+    public ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {
         return doRequest(HttpMethod.POST, body, path, mediaType, ResponseBody.class);
     }
 
-    ResponseEntity doUploadRequest(Object body) throws RestClientException {
+    public ResponseEntity doUploadRequest(Object body) throws RestClientException {
         return doRequest(HttpMethod.POST, body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA, String.class);
     }
 
-    ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
+    public ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
         return doRequest(HttpMethod.DELETE, body, path, mediaType, ResponseBody.class);
     }
 
-    ResponseEntity doDeleteRequest(String path) throws RestClientException {
+    public ResponseEntity doDeleteRequest(String path) throws RestClientException {
         return doRequest(HttpMethod.DELETE, null, path, null, ResponseBody.class);
     }
 
