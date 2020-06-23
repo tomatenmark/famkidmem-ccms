@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.management.video;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class VideoManagementTestIndex {
     @Test
     public void shouldLoadIndexView() throws Exception {
         List<Video> videos = testUtil.createVideosList();
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
                 .willReturn(testUtil.createTestResponseEntityGetVideos(videos));
 
 

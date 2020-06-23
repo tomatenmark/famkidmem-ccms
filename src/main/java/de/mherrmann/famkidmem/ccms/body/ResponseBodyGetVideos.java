@@ -1,6 +1,5 @@
 package de.mherrmann.famkidmem.ccms.body;
 
-import de.mherrmann.famkidmem.ccms.item.User;
 import de.mherrmann.famkidmem.ccms.item.Video;
 
 import java.util.List;

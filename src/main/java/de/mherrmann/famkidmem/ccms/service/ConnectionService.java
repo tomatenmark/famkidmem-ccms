@@ -2,6 +2,8 @@ package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,12 @@ public class ConnectionService {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity doGetRequest(String path) throws RestClientException {
-        return doRequest(HttpMethod.GET, null, path, null, ResponseBody.class);
+    public ResponseEntity doGetUsersRequest() throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/admin/user/get", null, ResponseBodyGetUsers.class);
+    }
+
+    public ResponseEntity doGetVideosRequest() throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/get", null, ResponseBodyGetVideos.class);
     }
 
     public ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {

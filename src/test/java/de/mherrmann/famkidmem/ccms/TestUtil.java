@@ -31,11 +31,11 @@ public class TestUtil {
         return ResponseEntity.badRequest().body(createTestResponseBodyError());
     }
 
-    public ResponseEntity<ResponseBody> createTestResponseEntityGetUsers(List<User> users){
+    public ResponseEntity<ResponseBodyGetUsers> createTestResponseEntityGetUsers(List<User> users){
         return ResponseEntity.ok(createTestResponseBodyGetUsers(users));
     }
 
-    public ResponseEntity<ResponseBody> createTestResponseEntityGetVideos(List<Video> videos){
+    public ResponseEntity<ResponseBodyGetVideos> createTestResponseEntityGetVideos(List<Video> videos){
         return ResponseEntity.ok(createTestResponseBodyGetVideos(videos));
     }
 
@@ -233,11 +233,11 @@ public class TestUtil {
         return new ResponseBody("error", "testErrorDetails", new RuntimeException());
     }
 
-    private ResponseBody createTestResponseBodyGetUsers(List<User> users){
+    private ResponseBodyGetUsers createTestResponseBodyGetUsers(List<User> users){
         return new ResponseBodyGetUsers(users);
     }
 
-    private ResponseBody createTestResponseBodyGetVideos(List<Video> videos){
+    private ResponseBodyGetVideos createTestResponseBodyGetVideos(List<Video> videos){
         return new ResponseBodyGetVideos(videos);
     }
 

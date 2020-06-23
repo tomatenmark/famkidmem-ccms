@@ -12,8 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class VideoIndexService {
@@ -39,9 +42,30 @@ public class VideoIndexService {
         }
     }
 
+    public String getFormattedDate(Video video){
+        LocalDateTime date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(video.getTimestamp().getTime()),
+                        TimeZone.getDefault().toZoneId());
+        String dateFormatted = String.valueOf(date.getYear());
+        if(video.getShowDateValues() >= 6){
+            dateFormatted += "-" + String.valueOf(date.getMonth());
+        }
+        if(video.getShowDateValues() == 7){
+            dateFormatted += "-" + String.valueOf(date.getDayOfMonth());
+        }
+        return dateFormatted;
+    }
+
+    public String getShortDescription(String description){
+        description = description.substring(0,10);
+        description = description.replaceAll("\\s+[^\\s]*$", "");
+        description = description.trim();
+        return description + "...";
+    }
+
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private List<Video> getVideos() throws Exception {
-        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetRequest( "/ccms/edit/video/get");
+        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetVideosRequest();
         if(response.getStatusCode().is2xxSuccessful()){
             return response.getBody().getVideos();
         }

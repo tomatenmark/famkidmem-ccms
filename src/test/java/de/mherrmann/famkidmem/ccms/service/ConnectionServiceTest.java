@@ -3,6 +3,10 @@ package de.mherrmann.famkidmem.ccms.service;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
+import de.mherrmann.famkidmem.ccms.item.User;
+import de.mherrmann.famkidmem.ccms.item.Video;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -37,14 +47,35 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void shouldReturnResponseBodyGet(){
+    public void shouldReturnResponseBodyGetUsers(){
+        List<User> testList = new ArrayList<>();
+        User user = new User();
+        user.setUsername("testUser");
+        testList.add(user);
         given(
-                this.restTemplate.exchange(Application.getSettings().getBackendUrl(), HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
-                .willReturn(testUtil.createTestResponseEntityStatusOk());
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetUsers.class))
+                .willReturn(testUtil.createTestResponseEntityGetUsers(testList));
 
-        ResponseEntity<ResponseBody> body = connectionService.doGetRequest("");
+        ResponseEntity<ResponseBodyGetUsers> body = connectionService.doGetUsersRequest();
 
-        assertThat(body.getBody().getDetails()).isEqualTo("testDetails");
+        assertThat(body.getBody().getDetails()).isEqualTo("Successfully get users");
+        assertThat(body.getBody().getUsers()).isEqualTo(testList);
+    }
+
+    @Test
+    public void shouldReturnResponseBodyGetVideos(){
+        List<Video> testList = new ArrayList<>();
+        Video video = new Video();
+        video.setTitle("testVideo");
+        testList.add(video);
+        given(
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
+                .willReturn(testUtil.createTestResponseEntityGetVideos(testList));
+
+        ResponseEntity<ResponseBodyGetVideos> body = connectionService.doGetVideosRequest();
+
+        assertThat(body.getBody().getDetails()).isEqualTo("Successfully get videos");
+        assertThat(body.getBody().getVideos()).isEqualTo(testList);
     }
 
     @Test
@@ -67,6 +98,17 @@ public class ConnectionServiceTest {
         ResponseEntity<ResponseBody> body = connectionService.doDeleteRequest("", "", MediaType.APPLICATION_JSON);
 
         assertThat(body.getBody().getDetails()).isEqualTo("testDetails");
+    }
+
+    @Test
+    public void shouldReturnResponseBodyUpload(){
+        given(
+                this.restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), any(), eq(String.class)))
+                .willReturn(ResponseEntity.ok("ok"));
+
+        ResponseEntity<ResponseBody> body = connectionService.doUploadRequest(null);
+
+        assertThat(body.getBody()).isEqualTo("ok");
     }
 
 }
