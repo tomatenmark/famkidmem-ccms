@@ -5,9 +5,8 @@
 <th:block th:include="fragment/header">Header</th:block>
 
 <div id="main">
-
-    <!--/*@thymesVar id="videos" type="java.util.List"*/-->
-    <!--/*@thymesVar id="video" type="de.mherrmann.famkidmem.ccms.item.Video"*/-->
+    <!--/*@thymesVar id="videosJson" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="videosCount" type="java.lang.Integer"*/-->
     <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
 
     <div class="feedback" th:if="${!success}">
@@ -19,13 +18,9 @@
     </div>
 
     <th:block th:if="${success}">
-        <div id="users" th:if="${videos.size() > 0}">
-            <div class="user" th:each="video : ${videos}">
-                <span th:text="${video.title}">Titel</span>
-                <!-- TODO: show all data and add action buttons -->
-            </div>
-        </div>
-        <h2 th:if="${videos.size() <= 0}">Not yet any Videos</h2>
+        <div id="videos" th:if="${videosCount > 0}" th:attrappend="data-raw=${videosJson}"></div>
+        <h2 th:if="${videosCount <= 0}">Not yet any Videos</h2>
+        <script>buildIndex();</script>
     </th:block>
 
     <a class="button" th:href="@{/video/add}">Add Video</a>
