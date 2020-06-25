@@ -2,6 +2,7 @@ package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class ConnectionService {
 
     public ResponseEntity doGetVideosRequest() throws RestClientException {
         return doRequest(HttpMethod.GET, null, "/ccms/edit/video/get", null, ResponseBodyGetVideos.class);
+    }
+
+    public ResponseEntity doGetBase64(String filename) throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/base64/"+filename, null, ResponseBodyContentFileBase64.class);
     }
 
     public ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {

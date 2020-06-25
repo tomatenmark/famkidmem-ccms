@@ -2,12 +2,10 @@ package de.mherrmann.famkidmem.ccms.service.video;
 
 import de.mherrmann.famkidmem.ccms.body.RequestBodyAddVideo;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
-import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Key;
-import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.service.ConnectionService;
 import de.mherrmann.famkidmem.ccms.service.FfmpegService;
 import de.mherrmann.famkidmem.ccms.service.push.PushMessage;

@@ -27,6 +27,30 @@ function createLink(username, password, frontendUrl, linkType){
 
 function createUserKey(passwordKey, masterKeyEncoded){
     const masterKey = CryptoJS.enc.Base64.parse(masterKeyEncoded);
-    const encryptedMasterKey = CryptoJS.AES.encrypt(masterKey, passwordKey,{mode: CryptoJS.mode.ECB});
+    const encryptedMasterKey = CryptoJS.AES.encrypt(masterKey, passwordKey,{mode:CryptoJS.mode.ECB, padding: CryptoJS.pad.NoPadding});
     return CryptoJS.enc.Base64.stringify(encryptedMasterKey.ciphertext);
+}
+
+function decryptFromBase64String(ciphertextBase64, keyBase64, ivBase64){
+    let ciphertext = CryptoJS.enc.Base64.parse(ciphertextBase64);
+    let key = CryptoJS.enc.Base64.parse(keyBase64);
+    let iv = CryptoJS.enc.Base64.parse(ivBase64);
+    return CryptoJS.AES.decrypt({ciphertext:ciphertext}, key, {iv:iv});
+}
+
+function decryptToUtf8String(ciphertextBase64, keyBase64, ivBase64){
+    let plaintext = decryptFromBase64String(ciphertextBase64, keyBase64, ivBase64);
+    return CryptoJS.enc.Utf8.stringify(plaintext);
+}
+
+function decryptToBase64String(ciphertextBase64, keyBase64, ivBase64){
+    let plaintext = decryptFromBase64String(ciphertextBase64, keyBase64, ivBase64);
+    return CryptoJS.enc.Base64.stringify(plaintext);
+}
+
+function decryptKey(encryptedKeyBase64, masterKeyBase64){
+    let encryptedKey = CryptoJS.enc.Base64.parse(encryptedKeyBase64);
+    let masterKey = CryptoJS.enc.Base64.parse(masterKeyBase64);
+    let key = CryptoJS.AES.decrypt({ciphertext:encryptedKey}, masterKey, {mode:CryptoJS.mode.ECB, padding: CryptoJS.pad.NoPadding});
+    return CryptoJS.enc.Base64.stringify(key);
 }

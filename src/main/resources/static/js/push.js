@@ -14,5 +14,6 @@ function connectPush(type) {
 async function handleMessage(message, type){
     switch (type){
         case "add":handlePushAdd(message); break;
+        case "index":loadThumbnail(message); break;
     }
 }

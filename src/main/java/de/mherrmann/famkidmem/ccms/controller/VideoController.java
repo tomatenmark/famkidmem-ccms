@@ -29,6 +29,16 @@ public class VideoController {
         return "video/index";
     }
 
+    @GetMapping(value = "/video/file/base64/{filename}")
+    public ResponseEntity<String> getBase64FromFile(@PathVariable String filename){
+        try {
+            videoIndexService.getBase64FromFile(filename);
+            return ResponseEntity.ok("ok");
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
+    }
+
     @GetMapping(value = "/video/add")
     public String loadAddVideoView(Model model){
         model.addAttribute("post", false);

@@ -1,10 +1,14 @@
 package de.mherrmann.famkidmem.ccms.service.video;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mherrmann.famkidmem.ccms.Application;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.service.ConnectionService;
+import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
+import de.mherrmann.famkidmem.ccms.service.push.PushService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
@@ -22,15 +26,15 @@ public class VideoIndexService {
 
     private final ConnectionService connectionService;
     private final ExceptionUtil exceptionUtil;
-    private final CryptoUtil cryptoUtil;
+    private final PushService pushService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoIndexService.class);
 
     @Autowired
-    public VideoIndexService(ConnectionService connectionService, ExceptionUtil exceptionUtil, CryptoUtil cryptoUtil) {
+    public VideoIndexService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService) {
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
-        this.cryptoUtil = cryptoUtil;
+        this.pushService = pushService;
     }
 
     public void fillIndexModel(Model model){
@@ -38,11 +42,20 @@ public class VideoIndexService {
             List<Video> videos = getVideos();
             model.addAttribute("videosJson", asJsonString(videos));
             model.addAttribute("videosCount", videos.size());
+            model.addAttribute("masterKey", Application.getSettings().getMasterKey());
             model.addAttribute("success", true);
         } catch(Exception ex){
             exceptionUtil.handleException(ex, model, LOGGER);
             model.addAttribute("users", Collections.emptyList());
         }
+    }
+
+    public void getBase64FromFile(String filename) throws Exception {
+        ResponseEntity<ResponseBodyContentFileBase64> response = connectionService.doGetBase64(filename);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new WebBackendException(response.getBody());
+        }
+        pushService.push(PushMessage.base64(filename, response.getBody().getBase64()));
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work

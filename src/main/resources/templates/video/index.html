@@ -6,6 +6,7 @@
 
 <div id="main">
     <!--/*@thymesVar id="videosJson" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="masterKey" type="java.lang.String"*/-->
     <!--/*@thymesVar id="videosCount" type="java.lang.Integer"*/-->
     <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
 
@@ -18,9 +19,14 @@
     </div>
 
     <th:block th:if="${success}">
-        <div id="videos" th:if="${videosCount > 0}" th:attrappend="data-raw=${videosJson}"></div>
+        <div id="videos" th:if="${videosCount > 0}" th:attrappend="data-raw=${videosJson}">
+            <span th:attrappend="data-masterKey=${masterKey}"></span>
+        </div>
         <h2 th:if="${videosCount <= 0}">Not yet any Videos</h2>
-        <script>buildIndex();</script>
+        <script>
+            connectPush("index");
+            buildIndex();
+        </script>
     </th:block>
 
     <a class="button" th:href="@{/video/add}">Add Video</a>
