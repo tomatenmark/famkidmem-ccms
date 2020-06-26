@@ -7,7 +7,7 @@ public abstract class ResponseBodyContent extends ResponseBody {
     protected ResponseBodyContent(){}
 
     public ResponseBodyContent(String masterKey){
-        super("ok", "Successfully got content.");
+        super("ok", "Successfully got content");
         this.masterKey = masterKey;
     }
 
