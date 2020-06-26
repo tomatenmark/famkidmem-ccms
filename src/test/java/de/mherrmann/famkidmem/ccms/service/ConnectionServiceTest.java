@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.service;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.item.User;
@@ -76,6 +77,19 @@ public class ConnectionServiceTest {
 
         assertThat(body.getBody().getDetails()).isEqualTo("Successfully get videos");
         assertThat(body.getBody().getVideos()).isEqualTo(testList);
+    }
+
+    @Test
+    public void shouldReturnResponseBodyContentFileBase64(){
+        String testBase64 = "YmFzZTY0";
+        given(
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/base64/filename", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyContentFileBase64.class))
+                .willReturn(testUtil.createTestResponseEntityContentFileBase64(testBase64));
+
+        ResponseEntity<ResponseBodyContentFileBase64> body = connectionService.doGetBase64("filename");
+
+        assertThat(body.getBody().getDetails()).isEqualTo("Successfully got content");
+        assertThat(body.getBody().getBase64()).isEqualTo(testBase64);
     }
 
     @Test
