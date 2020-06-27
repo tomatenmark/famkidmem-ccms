@@ -1,8 +1,10 @@
 package de.mherrmann.famkidmem.ccms;
 
 import de.mherrmann.famkidmem.ccms.body.*;
+import de.mherrmann.famkidmem.ccms.item.Person;
 import de.mherrmann.famkidmem.ccms.item.User;
 import de.mherrmann.famkidmem.ccms.item.Video;
+import de.mherrmann.famkidmem.ccms.item.Year;
 import de.mherrmann.famkidmem.ccms.settings.Settings;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -220,13 +223,31 @@ public class TestUtil {
 
     public List<Video> createVideosList(){
         List<Video> videos = new ArrayList<>();
-        Video video1 = new Video();
+        Video video1 = createFullDataVideo();
         Video video2 = new Video();
-        video1.setTitle("video1");
         video2.setTitle("video2");
         videos.add(video1);
         videos.add(video2);
         return videos;
+    }
+
+    private Video createFullDataVideo(){
+        Video video = new Video();
+        video.setTitle("video1");
+        video.setDescription("Description");
+        Person person1 = new Person();
+        Person person2 = new Person();
+        person1.setName("person1");
+        person2.setName("person2");
+        video.setPersons(Arrays.asList(person1, person2));
+        Year year1 = new Year();
+        Year year2 = new Year();
+        year1.setValue(1994);
+        year2.setValue(1995);
+        video.setYears(Arrays.asList(year1, year2));
+        video.setTimestamp(new Timestamp(788896800000L));
+        video.setShowDateValues(7);
+        return video;
     }
 
     private ResponseBody createTestResponseBodyOk(){

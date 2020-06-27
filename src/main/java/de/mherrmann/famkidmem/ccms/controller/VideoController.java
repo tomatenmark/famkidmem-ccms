@@ -1,6 +1,7 @@
 package de.mherrmann.famkidmem.ccms.controller;
 
 import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoEditService;
 import de.mherrmann.famkidmem.ccms.service.video.VideoIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -17,11 +18,13 @@ public class VideoController {
 
     private final VideoAddService videoAddService;
     private final VideoIndexService videoIndexService;
+    private final VideoEditService videoEditService;
 
     @Autowired
-    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService) {
+    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService, VideoEditService videoEditService) {
         this.videoAddService = videoAddService;
         this.videoIndexService = videoIndexService;
+        this.videoEditService = videoEditService;
     }
 
     @GetMapping(value = "/video/index")
@@ -57,7 +60,7 @@ public class VideoController {
 
     @GetMapping(value = "/video/edit-data")
     public String loadEditDataView(Model model){
-        //videoAddService.fillEditDataModel(model); TODO: fix to VideoEditService
+        videoEditService.fillEditDataModel(model);
         return "video/index";
     }
 

@@ -83,7 +83,7 @@ public class VideoIndexService {
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
-    private List<Video> getVideos() throws Exception {
+    List<Video> getVideos() throws Exception {
         ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetVideosRequest();
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
