@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -90,6 +91,18 @@ public class ConnectionServiceTest {
 
         assertThat(body.getBody().getDetails()).isEqualTo("Successfully got content");
         assertThat(body.getBody().getBase64()).isEqualTo(testBase64);
+    }
+
+    @Test
+    public void shouldReturnResponseBodyTsFile(){
+        String testTs = "sequence.ts";
+        given(
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/ts/"+testTs, HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ByteArrayResource.class))
+                .willReturn(ResponseEntity.ok(new ByteArrayResource(testTs.getBytes())));
+
+        ResponseEntity<ByteArrayResource> body = connectionService.doGetTs(testTs);
+
+        assertThat(new String(body.getBody().getByteArray())).isEqualTo(testTs);
     }
 
     @Test

@@ -23,6 +23,8 @@
             <span th:attrappend="data-masterKey=${masterKey}"></span>
         </div>
         <h2 th:if="${videosCount <= 0}">Not yet any Videos</h2>
+        <div id="overlayBackground" onclick="closeVideo();"></div>
+        <video id="video" autoplay controls></video>
         <script>
             connectPush("index");
             buildIndex();

@@ -14,6 +14,7 @@ import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -50,12 +51,35 @@ public class VideoIndexService {
         }
     }
 
+    @SuppressWarnings("unchecked") //we know, the assignment will work
     public void getBase64FromFile(String filename) throws Exception {
-        ResponseEntity<ResponseBodyContentFileBase64> response = connectionService.doGetBase64(filename);
-        if(!response.getStatusCode().is2xxSuccessful()){
-            throw new WebBackendException(response.getBody());
+        try {
+            ResponseEntity<ResponseBodyContentFileBase64> response = connectionService.doGetBase64(filename);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                throw new WebBackendException(response.getBody());
+            }
+            LOGGER.info("successfully get base64 of file {}", filename);
+            pushService.push(PushMessage.base64(filename, response.getBody().getBase64()));
+        } catch (Exception ex){
+            LOGGER.error("could not get base64 of file {}", filename, ex);
+            throw ex;
         }
-        pushService.push(PushMessage.base64(filename, response.getBody().getBase64()));
+    }
+
+    @SuppressWarnings("unchecked") //we know, the assignment will work
+    public ResponseEntity<ByteArrayResource> getTsFile(String filename) throws Exception {
+        try {
+            ResponseEntity<ByteArrayResource> response = connectionService.doGetTs(filename);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                throw new WebBackendException();
+            }
+            LOGGER.info("successfully get ts file {}", filename);
+            return response;
+        } catch (Exception ex){
+            LOGGER.error("could not get ts file {}", filename, ex);
+            throw ex;
+        }
+
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work

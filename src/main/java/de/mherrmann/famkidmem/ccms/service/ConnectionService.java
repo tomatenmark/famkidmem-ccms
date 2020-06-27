@@ -6,6 +6,7 @@ import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -31,6 +32,10 @@ public class ConnectionService {
 
     public ResponseEntity doGetBase64(String filename) throws RestClientException {
         return doRequest(HttpMethod.GET, null, "/ccms/edit/video/base64/"+filename, null, ResponseBodyContentFileBase64.class);
+    }
+
+    public ResponseEntity doGetTs(String filename) throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/ts/"+filename, null, ByteArrayResource.class);
     }
 
     public ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {

@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.controller;
 import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
 import de.mherrmann.famkidmem.ccms.service.video.VideoIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +37,15 @@ public class VideoController {
             return ResponseEntity.ok("ok");
         } catch(Exception ex){
             return ResponseEntity.badRequest().body("error: " + ex.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/video/file/ts/{filename}")
+    public ResponseEntity<ByteArrayResource> getTsFile(@PathVariable String filename){
+        try {
+            return videoIndexService.getTsFile(filename);
+        } catch(Exception ex){
+            return ResponseEntity.badRequest().build();
         }
     }
 
