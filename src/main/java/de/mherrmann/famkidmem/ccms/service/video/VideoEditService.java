@@ -1,5 +1,6 @@
 package de.mherrmann.famkidmem.ccms.service.video;
 
+import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Person;
@@ -44,6 +45,7 @@ public class VideoEditService {
             model.addAttribute("year", getYearFromTimestamp(video.getTimestamp()));
             model.addAttribute("month", getMonthFromTimestamp(video.getTimestamp(), video.getShowDateValues()));
             model.addAttribute("day", getDayFromTimestamp(video.getTimestamp(), video.getShowDateValues()));
+            model.addAttribute("masterKey", Application.getSettings().getMasterKey());
             model.addAttribute("success", true);
         } catch (Exception ex){
             exceptionUtil.handleException(ex, model, LOGGER);

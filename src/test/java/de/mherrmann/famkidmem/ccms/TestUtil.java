@@ -1,10 +1,7 @@
 package de.mherrmann.famkidmem.ccms;
 
 import de.mherrmann.famkidmem.ccms.body.*;
-import de.mherrmann.famkidmem.ccms.item.Person;
-import de.mherrmann.famkidmem.ccms.item.User;
-import de.mherrmann.famkidmem.ccms.item.Video;
-import de.mherrmann.famkidmem.ccms.item.Year;
+import de.mherrmann.famkidmem.ccms.item.*;
 import de.mherrmann.famkidmem.ccms.settings.Settings;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.yaml.snakeyaml.tokens.Token.ID.Key;
 
 @Service
 public class TestUtil {
@@ -247,6 +246,10 @@ public class TestUtil {
         video.setYears(Arrays.asList(year1, year2));
         video.setTimestamp(new Timestamp(788896800000L));
         video.setShowDateValues(7);
+        Key key = new Key("key", "iv");
+        Key thumbnailKey = new Key("thumbnailKey", "thumbnailIv");
+        video.setThumbnail(new FileEntity("thumbnail", thumbnailKey));
+        video.setKey(key);
         return video;
     }
 

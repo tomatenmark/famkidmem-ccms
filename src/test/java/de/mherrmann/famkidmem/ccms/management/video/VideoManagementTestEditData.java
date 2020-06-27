@@ -64,6 +64,7 @@ public class VideoManagementTestEditData {
                 .andExpect(model().attribute("year", Matchers.equalTo(1994)))
                 .andExpect(model().attribute("month", Matchers.equalTo(12)))
                 .andExpect(model().attribute("day", Matchers.equalTo(31)))
+                .andExpect(model().attribute("masterKey", Matchers.equalTo(Application.getSettings().getMasterKey())))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));
     }
 
@@ -87,6 +88,7 @@ public class VideoManagementTestEditData {
                 .andExpect(model().attribute("year", Matchers.equalTo(1995)))
                 .andExpect(model().attribute("month", Matchers.equalTo(5)))
                 .andExpect(model().attribute("day", Matchers.equalTo(0)))
+                .andExpect(model().attribute("masterKey", Matchers.equalTo(Application.getSettings().getMasterKey())))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));
     }
 
@@ -113,6 +115,7 @@ public class VideoManagementTestEditData {
                 .andExpect(model().attribute("year", Matchers.equalTo(2000)))
                 .andExpect(model().attribute("month", Matchers.equalTo(0)))
                 .andExpect(model().attribute("day", Matchers.equalTo(0)))
+                .andExpect(model().attribute("masterKey", Matchers.equalTo(Application.getSettings().getMasterKey())))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));
     }
 
