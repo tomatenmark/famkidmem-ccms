@@ -131,6 +131,9 @@ function handleFileReadError(e){
 }
 
 function getDescriptionShort(description){
+    if(description.length <= 300){
+        return description;
+    }
     description = description.substr(0, 300);
     description = description.replace(/\s+\S*$/g, '');
     description = description.trim();
