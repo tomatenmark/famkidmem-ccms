@@ -2,7 +2,11 @@ package de.mherrmann.famkidmem.ccms.service;
 
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -18,23 +22,35 @@ public class ConnectionService {
         this.restTemplate = restTemplate;
     }
 
-    ResponseEntity doGetRequest(String path) throws RestClientException {
-        return doRequest(HttpMethod.GET, null, path, null, ResponseBody.class);
+    public ResponseEntity doGetUsersRequest() throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/admin/user/get", null, ResponseBodyGetUsers.class);
     }
 
-    ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {
+    public ResponseEntity doGetVideosRequest() throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/get", null, ResponseBodyGetVideos.class);
+    }
+
+    public ResponseEntity doGetBase64(String filename) throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/base64/"+filename, null, ResponseBodyContentFileBase64.class);
+    }
+
+    public ResponseEntity doGetTs(String filename) throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/ts/"+filename, null, ByteArrayResource.class);
+    }
+
+    public ResponseEntity doPostRequest(Object body, String path, MediaType mediaType) throws RestClientException {
         return doRequest(HttpMethod.POST, body, path, mediaType, ResponseBody.class);
     }
 
-    ResponseEntity doUploadRequest(Object body) throws RestClientException {
+    public ResponseEntity doUploadRequest(Object body) throws RestClientException {
         return doRequest(HttpMethod.POST, body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA, String.class);
     }
 
-    ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
+    public ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
         return doRequest(HttpMethod.DELETE, body, path, mediaType, ResponseBody.class);
     }
 
-    ResponseEntity doDeleteRequest(String path) throws RestClientException {
+    public ResponseEntity doDeleteRequest(String path) throws RestClientException {
         return doRequest(HttpMethod.DELETE, null, path, null, ResponseBody.class);
     }
 

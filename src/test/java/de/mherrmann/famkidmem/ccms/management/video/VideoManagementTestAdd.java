@@ -6,7 +6,7 @@ import de.mherrmann.famkidmem.ccms.body.RequestBodyAddVideo;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.service.FfmpegService;
-import de.mherrmann.famkidmem.ccms.service.VideoService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -65,7 +65,7 @@ public class VideoManagementTestAdd {
     private TestUtil testUtil;
 
     @Autowired
-    private VideoService videoService;
+    private VideoAddService videoAddService;
 
     @Before
     public void setUp(){
@@ -153,8 +153,8 @@ public class VideoManagementTestAdd {
 
     @Test
     public void shouldUploadToWeb() throws Exception {
-        videoService.getState().randomName = RANDOM_NAME;
-        videoService.getState().tsFiles = 3;
+        videoAddService.getState().randomName = RANDOM_NAME;
+        videoAddService.getState().tsFiles = 3;
         createEncryptedMediaFiles();
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
                 .willReturn(ResponseEntity.ok("ok"));
@@ -167,8 +167,8 @@ public class VideoManagementTestAdd {
 
     @Test
     public void shouldFailUploadToWebAndRollback() throws Exception {
-        videoService.getState().randomName = RANDOM_NAME;
-        videoService.getState().tsFiles = 3;
+        videoAddService.getState().randomName = RANDOM_NAME;
+        videoAddService.getState().tsFiles = 3;
         createEncryptedMediaFiles();
         new File("./files/"+RANDOM_NAME+".2.ts").delete();
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
@@ -319,11 +319,11 @@ public class VideoManagementTestAdd {
         byte[] keyDummy = new byte[]{0,0,0,0,0,0,0,0};
         byte[] encryptedTitleDummy = new byte[]{1,1,1,1,1,1,1,1};
         byte[] encryptedDescriptionDummy = new byte[]{2,2,2,2,2,2,2,2};
-        videoService.getState().randomName = RANDOM_NAME;
-        videoService.getState().tsFiles = 3;
-        videoService.getState().seconds = 24;
-        videoService.getState().thumbnailKey = new Key("thumbnailKey", "thumbnailIv");
-        videoService.getState().m3u8Key = new Key("videoKey", "videoIv");
+        videoAddService.getState().randomName = RANDOM_NAME;
+        videoAddService.getState().tsFiles = 3;
+        videoAddService.getState().seconds = 24;
+        videoAddService.getState().thumbnailKey = new Key("thumbnailKey", "thumbnailIv");
+        videoAddService.getState().m3u8Key = new Key("videoKey", "videoIv");
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/edit/video/add"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(ResponseBody.class)))
                 .willReturn(testUtil.createTestResponseEntityStatusOk());
         given(cryptoUtil.generateSecureRandomKeyParam())

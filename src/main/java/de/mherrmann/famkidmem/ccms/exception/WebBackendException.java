@@ -12,6 +12,11 @@ public class WebBackendException extends Exception {
         this.exception = body.getException();
     }
 
+    public WebBackendException(){
+        this.details = "unknown. see logs of web-backend";
+        this.exception = "unknown. see logs of web-backend";
+    }
+
     public String getDetails() {
         return details;
     }

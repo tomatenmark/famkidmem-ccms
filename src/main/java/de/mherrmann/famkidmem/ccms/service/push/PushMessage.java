@@ -64,6 +64,10 @@ public class PushMessage {
         return new PushMessage("webBackendUploadProgress", progress);
     }
 
+    public static PushMessage base64(String filename, String base64){
+        return new PushMessage(filename, base64);
+    }
+
     public String getMessage() {
         return message;
     }

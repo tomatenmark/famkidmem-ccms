@@ -113,7 +113,7 @@ public class UserService {
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private List<User> getUsers() throws Exception {
-        ResponseEntity<ResponseBodyGetUsers> response = connectionService.doGetRequest( "/ccms/admin/user/get");
+        ResponseEntity<ResponseBodyGetUsers> response = connectionService.doGetUsersRequest( );
         if(response.getStatusCode().is2xxSuccessful()){
             return response.getBody().getUsers();
         }

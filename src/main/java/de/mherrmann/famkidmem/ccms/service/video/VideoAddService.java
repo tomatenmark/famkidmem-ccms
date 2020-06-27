@@ -1,13 +1,13 @@
-package de.mherrmann.famkidmem.ccms.service;
+package de.mherrmann.famkidmem.ccms.service.video;
 
 import de.mherrmann.famkidmem.ccms.body.RequestBodyAddVideo;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
-import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.EncryptionException;
 import de.mherrmann.famkidmem.ccms.exception.FileUploadException;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Key;
-import de.mherrmann.famkidmem.ccms.item.Video;
+import de.mherrmann.famkidmem.ccms.service.ConnectionService;
+import de.mherrmann.famkidmem.ccms.service.FfmpegService;
 import de.mherrmann.famkidmem.ccms.service.push.PushMessage;
 import de.mherrmann.famkidmem.ccms.service.push.PushService;
 import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
@@ -35,7 +35,7 @@ import java.time.*;
 import java.util.*;
 
 @Service
-public class VideoService {
+public class VideoAddService {
 
     private final ConnectionService connectionService;
     private final ExceptionUtil exceptionUtil;
@@ -45,11 +45,11 @@ public class VideoService {
 
     private State state = new State();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoAddService.class);
 
     @Autowired
-    public VideoService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService,
-                        CryptoUtil cryptoUtil, FfmpegService ffmpegService) {
+    public VideoAddService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService,
+                           CryptoUtil cryptoUtil, FfmpegService ffmpegService) {
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
         this.pushService = pushService;
@@ -57,16 +57,7 @@ public class VideoService {
         this.ffmpegService = ffmpegService;
     }
 
-    public void fillIndexModel(Model model){
-        try {
-            model.addAttribute("videos", getVideos());
-            model.addAttribute("success", true);
-        } catch(Exception ex){
-            exceptionUtil.handleException(ex, model, LOGGER);
-            model.addAttribute("users", Collections.emptyList());
-        }
-    }
-
+    //TODO: move to VideoEditService
     public void fillEditDataModel(Model model){
         /* TODO: fill:
             * video
@@ -79,6 +70,7 @@ public class VideoService {
          */
     }
 
+    //TODO: move to VideoEditService
     public void fillReplaceThumbnailModel(Model model){
         /* TODO: fill:
          * post=false
@@ -86,6 +78,7 @@ public class VideoService {
          */
     }
 
+    //TODO: move to VideoDeleteService
     public void fillRemoveVideoModel(Model model){
         /* TODO: fill:
          * post=false
@@ -356,15 +349,6 @@ public class VideoService {
             LOGGER.error("Could not save file {}. I/O Error", filename, ex);
             throw new FileUploadException("Could not save file. I/O Error");
         }
-    }
-
-    @SuppressWarnings("unchecked") //we know, the assignment will work
-    private List<Video> getVideos() throws Exception {
-        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetRequest( "/ccms/edit/video/get");
-        if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody().getVideos();
-        }
-        throw new WebBackendException(response.getBody());
     }
 
     public State getState(){

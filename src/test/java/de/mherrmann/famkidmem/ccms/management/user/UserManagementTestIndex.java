@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.management.user;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.ResponseBody;
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetUsers;
 import de.mherrmann.famkidmem.ccms.item.User;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class UserManagementTestIndex {
     @Test
     public void shouldLoadIndexView() throws Exception {
         List<User> users = testUtil.createUsersList();
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetUsers.class))
                 .willReturn(testUtil.createTestResponseEntityGetUsers(users));
 
 
@@ -61,7 +62,7 @@ public class UserManagementTestIndex {
     @Test
     public void shouldLoadIndexViewEmpty() throws Exception {
         List<User> users = Collections.emptyList();
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetUsers.class))
                 .willReturn(testUtil.createTestResponseEntityGetUsers(users));
 
 

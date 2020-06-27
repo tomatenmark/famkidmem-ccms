@@ -177,11 +177,11 @@ public class FfmpegService {
         pushService.push(PushMessage.videoEncryptionError(line));
     }
 
-    static class State {
-        double seconds;
+    public static class State {
+        public double seconds;
         int frames;
         int framesExpected;
-        int tsFiles = -1;
+        public int tsFiles = -1;
         int tsFilesExpected;
         boolean frameLineBefore;
         boolean errorState;
