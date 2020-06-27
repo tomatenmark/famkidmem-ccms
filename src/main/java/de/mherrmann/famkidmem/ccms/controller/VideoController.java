@@ -61,7 +61,7 @@ public class VideoController {
     @GetMapping(value = "/video/edit-data/{title}")
     public String loadEditDataView(Model model, @PathVariable String title){
         videoEditService.fillEditDataModel(model, title);
-        return "video/index";
+        return "video/edit-data";
     }
 
     @GetMapping(value = "/video/replace-thumbnail")
