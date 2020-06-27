@@ -39,6 +39,10 @@ public class TestUtil {
         return ResponseEntity.ok(createTestResponseBodyGetVideos(videos));
     }
 
+    public ResponseEntity<ResponseBodyContentFileBase64> createTestResponseEntityContentFileBase64(String base64){
+        return ResponseEntity.ok(createTestResponseBodyContentFileBase64(base64));
+    }
+
     public ResponseEntity<ResponseBody> createTestResponseEntityGetUsersError(){
         return ResponseEntity.badRequest().body(createTestResponseBodyGetUsersError());
     }
@@ -239,6 +243,10 @@ public class TestUtil {
 
     private ResponseBodyGetVideos createTestResponseBodyGetVideos(List<Video> videos){
         return new ResponseBodyGetVideos(videos);
+    }
+
+    private ResponseBodyContentFileBase64 createTestResponseBodyContentFileBase64(String base64){
+        return new ResponseBodyContentFileBase64(null, base64);
     }
 
     private ResponseBody createTestResponseBodyGetUsersError(){
