@@ -58,9 +58,9 @@ public class VideoController {
         return "video/add";
     }
 
-    @GetMapping(value = "/video/edit-data")
-    public String loadEditDataView(Model model){
-        videoEditService.fillEditDataModel(model);
+    @GetMapping(value = "/video/edit-data/{title}")
+    public String loadEditDataView(Model model, @PathVariable String title){
+        videoEditService.fillEditDataModel(model, title);
         return "video/index";
     }
 

@@ -52,11 +52,11 @@ public class VideoManagementTestEditData {
     @Test
     public void shouldLoadEditDataViewSilvester1994December31() throws Exception {
         List<Video> videos = testUtil.createVideosList();
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get/video1", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
                 .willReturn(testUtil.createTestResponseEntityGetVideos(videos));
 
 
-        this.mockMvc.perform(get("/video/edit-data"))
+        this.mockMvc.perform(get("/video/edit-data/video1"))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(model().attribute("video", Matchers.equalTo(videos.get(0))))
                 .andExpect(model().attribute("persons", Matchers.equalTo("person1,person2")))
@@ -75,11 +75,11 @@ public class VideoManagementTestEditData {
         videos.get(0).setYears(Collections.singletonList(year));
         videos.get(0).setShowDateValues(6);
         videos.get(0).setTimestamp(new Timestamp(799347600000L));
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get/video1", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
                 .willReturn(testUtil.createTestResponseEntityGetVideos(videos));
 
 
-        this.mockMvc.perform(get("/video/edit-data"))
+        this.mockMvc.perform(get("/video/edit-data/video1"))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(model().attribute("video", Matchers.equalTo(videos.get(0))))
                 .andExpect(model().attribute("persons", Matchers.equalTo("person1,person2")))
@@ -101,11 +101,11 @@ public class VideoManagementTestEditData {
         videos.get(0).setPersons(Collections.singletonList(person));
         videos.get(0).setShowDateValues(4);
         videos.get(0).setTimestamp(new Timestamp(946749600000L));
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/edit/video/get/video1", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetVideos.class))
                 .willReturn(testUtil.createTestResponseEntityGetVideos(videos));
 
 
-        this.mockMvc.perform(get("/video/edit-data"))
+        this.mockMvc.perform(get("/video/edit-data/video1"))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(model().attribute("video", Matchers.equalTo(videos.get(0))))
                 .andExpect(model().attribute("persons", Matchers.equalTo("Max")))

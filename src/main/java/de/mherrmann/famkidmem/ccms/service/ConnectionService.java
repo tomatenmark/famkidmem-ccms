@@ -30,6 +30,10 @@ public class ConnectionService {
         return doRequest(HttpMethod.GET, null, "/ccms/edit/video/get", null, ResponseBodyGetVideos.class);
     }
 
+    public ResponseEntity doGetSingleVideoRequest(String title) throws RestClientException {
+        return doRequest(HttpMethod.GET, null, "/ccms/edit/video/get/"+title, null, ResponseBodyGetVideos.class);
+    }
+
     public ResponseEntity doGetBase64(String filename) throws RestClientException {
         return doRequest(HttpMethod.GET, null, "/ccms/edit/video/base64/"+filename, null, ResponseBodyContentFileBase64.class);
     }

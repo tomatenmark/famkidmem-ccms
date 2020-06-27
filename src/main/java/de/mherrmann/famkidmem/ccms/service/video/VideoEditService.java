@@ -1,5 +1,7 @@
 package de.mherrmann.famkidmem.ccms.service.video;
 
+import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
+import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
 import de.mherrmann.famkidmem.ccms.item.Person;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.item.Year;
@@ -7,6 +9,7 @@ import de.mherrmann.famkidmem.ccms.service.ConnectionService;
 import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,11 +34,10 @@ public class VideoEditService {
         this.exceptionUtil = exceptionUtil;
     }
 
-    public void fillEditDataModel(Model model){
+    public void fillEditDataModel(Model model, String title){
         model.addAttribute("post", false);
         try {
-            List<Video> videos = videoIndexService.getVideos();
-            Video video = videos.get(0);
+            Video video = getVideo(title);
             model.addAttribute("video", video);
             model.addAttribute("persons", getPersonsStringifiedList(video.getPersons()));
             model.addAttribute("years", getYearsStringifiedList(video.getYears()));
@@ -62,6 +64,15 @@ public class VideoEditService {
 
     public void editData(HttpServletRequest request, Model model, String title){
         //TODO: save new video attributes (maybe get old via web-backend get video request)
+    }
+
+    @SuppressWarnings("unchecked") //we know, the assignment will work
+    Video getVideo(String title) throws Exception {
+        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetSingleVideoRequest(title);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new WebBackendException(response.getBody());
+        }
+        return response.getBody().getVideos().get(0);
     }
 
     private Integer getYearFromTimestamp(Timestamp timestamp){
