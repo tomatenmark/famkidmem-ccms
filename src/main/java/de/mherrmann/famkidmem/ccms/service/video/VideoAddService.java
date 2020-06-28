@@ -37,6 +37,7 @@ import java.util.*;
 @Service
 public class VideoAddService {
 
+    private final VideoDataService videoDataService;
     private final ConnectionService connectionService;
     private final ExceptionUtil exceptionUtil;
     private final PushService pushService;
@@ -48,8 +49,9 @@ public class VideoAddService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoAddService.class);
 
     @Autowired
-    public VideoAddService(ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService,
+    public VideoAddService(VideoDataService videoDataService, ConnectionService connectionService, ExceptionUtil exceptionUtil, PushService pushService,
                            CryptoUtil cryptoUtil, FfmpegService ffmpegService) {
+        this.videoDataService = videoDataService;
         this.connectionService = connectionService;
         this.exceptionUtil = exceptionUtil;
         this.pushService = pushService;
@@ -130,12 +132,12 @@ public class VideoAddService {
 
     private RequestBodyAddVideo buildAddVideoRequest(HttpServletRequest request) throws GeneralSecurityException, UnsupportedEncodingException {
         RequestBodyAddVideo addVideoRequest = new RequestBodyAddVideo();
-        addEncryptedVideoMeta(addVideoRequest, request);
+        videoDataService.addEncryptedVideoMeta(addVideoRequest, request);
         addVideoRequest.setDurationInSeconds(state.seconds);
-        addVideoRequest.setPersons(getPersonsList(request.getParameter("persons")));
-        addVideoRequest.setYears(getYearsList(request));
-        addVideoRequest.setTimestamp(getTimestamp(request));
-        addVideoRequest.setShowDateValues(getShowDateValues(request));
+        addVideoRequest.setPersons(videoDataService.getPersonsList(request.getParameter("persons")));
+        addVideoRequest.setYears(videoDataService.getYearsList(request));
+        addVideoRequest.setTimestamp(videoDataService.getTimestamp(request));
+        addVideoRequest.setShowDateValues(videoDataService.getShowDateValues(request));
         addVideoRequest.setM3u8Filename(state.randomName+".m3u8");
         addVideoRequest.setM3u8Key(state.m3u8Key.getKey());
         addVideoRequest.setM3u8Iv(state.m3u8Key.getIv());
@@ -145,68 +147,6 @@ public class VideoAddService {
         addVideoRequest.setRecordedInCologne("cologne".equals(request.getParameter("recordedInCologne")));
         addVideoRequest.setRecordedInGardelegen("gardelegen".equals(request.getParameter("recordedInGardelegen")));
         return addVideoRequest;
-    }
-
-    private void addEncryptedVideoMeta(RequestBodyAddVideo addVideoRequest, HttpServletRequest request) throws GeneralSecurityException, UnsupportedEncodingException {
-        byte[] key = cryptoUtil.generateSecureRandomKeyParam();
-        byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
-        byte[] title = request.getParameter("title").getBytes("UTF-8");
-        byte[] description = request.getParameter("description").getBytes("UTF-8");
-        byte[] titleEncrypted = cryptoUtil.encrypt(title, key, iv);
-        byte[] descriptionEncrypted = cryptoUtil.encrypt(description, key, iv);
-        addVideoRequest.setTitle(cryptoUtil.toBase64(titleEncrypted));
-        addVideoRequest.setDescription(cryptoUtil.toBase64(descriptionEncrypted));
-        addVideoRequest.setKey(cryptoUtil.encryptKey(key));
-        addVideoRequest.setIv(cryptoUtil.toBase64(iv));
-    }
-
-    private List<String> getPersonsList(String personsFieldValue){
-        String sanitizedPersonsFieldValue = personsFieldValue.replace(" ", "").replaceAll("(^,|,$)", "");
-        String[] personsArray = sanitizedPersonsFieldValue.split(",");
-        return Arrays.asList(personsArray);
-    }
-
-    private List<Integer> getYearsList(HttpServletRequest request){
-        List<Integer> yearsList = new ArrayList<>();
-        Integer year = Integer.valueOf(request.getParameter("year"));
-        Integer month = Integer.valueOf(request.getParameter("month"));
-        boolean silvester = "silvester".equals(request.getParameter("silvester"));
-        yearsList.add(year);
-        if(silvester && month == 12){
-            yearsList.add(year+1);
-        }
-        if(silvester && month == 1){
-            yearsList.add(0, year-1);
-        }
-        return yearsList;
-    }
-
-    private long getTimestamp(HttpServletRequest request){
-        Integer year = Integer.valueOf(request.getParameter("year"));
-        Integer month = Integer.valueOf(request.getParameter("month"));
-        Integer day = Integer.valueOf(request.getParameter("day"));
-        if(month < 1){
-            month = 1;
-        }
-        if(day < 1){
-            day = 1;
-        }
-        LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
-        ZonedDateTime zonedDateTime = date.atZone(ZoneId.of("Europe/Paris"));
-        return zonedDateTime.toInstant().toEpochMilli();
-    }
-
-    private int getShowDateValues(HttpServletRequest request){
-        int showDateValues = 4;
-        Integer month = Integer.valueOf(request.getParameter("month"));
-        Integer day = Integer.valueOf(request.getParameter("day"));
-        if(month > 0){
-            showDateValues += 2;
-        }
-        if(day > 0){
-            showDateValues += 1;
-        }
-        return  showDateValues;
     }
 
     private void cleanUpFilesDirectory(){
