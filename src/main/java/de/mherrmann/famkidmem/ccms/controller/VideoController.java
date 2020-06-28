@@ -82,9 +82,9 @@ public class VideoController {
         return "video/add";
     }
 
-    @PostMapping(value = "/video/edit-data/{title}")
-    public String editData(HttpServletRequest request, Model model, @PathVariable String title){
-        //videoAddService.editData(request, model, title); TODO: fix to VideoEditService
+    @PostMapping(value = "/video/edit-data/{designator}")
+    public String editData(HttpServletRequest request, Model model, @PathVariable String designator){
+        videoEditService.editData(model, request, designator);
         return "video/edit-data";
     }
 
