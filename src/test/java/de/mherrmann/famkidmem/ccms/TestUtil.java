@@ -45,7 +45,7 @@ public class TestUtil {
         return ResponseEntity.ok(createTestResponseBodyContentFileBase64(base64));
     }
 
-    public ResponseEntity<ResponseBody> createTestResponseEntityGetUsersError(){
+    public ResponseEntity<ResponseBodyGetUsers> createTestResponseEntityGetUsersError(){
         return ResponseEntity.badRequest().body(createTestResponseBodyGetUsersError());
     }
 
@@ -180,6 +180,83 @@ public class TestUtil {
         );
     }
 
+    public RequestBodyUpdateVideo createUpdateVideoRequestTwoPersons1999March2Cologne() {
+        return createUpdateVideoRequest(
+                Arrays.asList("person1", "person2"),
+                Collections.singletonList(1999),
+                true,
+                false,
+                getTimestamp(1999, 3, 2),
+                7
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestTwoPersons1999December31Gardelegen() {
+        return createUpdateVideoRequest(
+                Arrays.asList("person1", "person2"),
+                Collections.singletonList(1999),
+                false,
+                true,
+                getTimestamp(1999, 12, 31),
+                7
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestOnePerson1999December31Silvester() {
+        return createUpdateVideoRequest(
+                Collections.singletonList("person1"),
+                Arrays.asList(1999,2000),
+                false,
+                false,
+                getTimestamp(1999, 12, 31),
+                7
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestOnePerson2000January1Silvester() {
+        return createUpdateVideoRequest(
+                Collections.singletonList("person1"),
+                Arrays.asList(1999,2000),
+                false,
+                false,
+                getTimestamp(2000, 1, 1),
+                7
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestOnePerson2000January1() {
+        return createUpdateVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2000),
+                false,
+                false,
+                getTimestamp(2000, 1, 1),
+                7
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestOnePerson2003May() {
+        return createUpdateVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2003),
+                false,
+                false,
+                getTimestamp(2003, 5, 1),
+                6
+        );
+    }
+
+    public RequestBodyUpdateVideo createUpdateVideoRequestOnePerson2005CologneAndGardelegen() {
+        return createUpdateVideoRequest(
+                Collections.singletonList("person1"),
+                Collections.singletonList(2005),
+                true,
+                true,
+                getTimestamp(2005, 1, 1),
+                4
+        );
+    }
+
     private RequestBodyAddVideo createAddVideoRequest(List<String> persons, List<Integer> years,
                             boolean recordedInCologne, boolean recordedInGardelegen, long time, int showDateValues) {
 
@@ -203,6 +280,25 @@ public class TestUtil {
         return addVideoRequest;
     }
 
+    private RequestBodyUpdateVideo createUpdateVideoRequest(List<String> persons, List<Integer> years,
+                                                      boolean recordedInCologne, boolean recordedInGardelegen, long time, int showDateValues) {
+
+        RequestBodyUpdateVideo updateVideoRequest = new RequestBodyUpdateVideo();
+        updateVideoRequest.setTitle("titleEncrypted");
+        updateVideoRequest.setDescription("descriptionEncrypted");
+        updateVideoRequest.setKey("keyEncrypted");
+        updateVideoRequest.setIv("iv");
+        updateVideoRequest.setThumbnailKey("thumbnailKey");
+        updateVideoRequest.setThumbnailIv("thumbnailIv");
+        updateVideoRequest.setPersons(persons);
+        updateVideoRequest.setYears(years);
+        updateVideoRequest.setRecordedInCologne(recordedInCologne);
+        updateVideoRequest.setRecordedInGardelegen(recordedInGardelegen);
+        updateVideoRequest.setTimestamp(time);
+        updateVideoRequest.setShowDateValues(showDateValues);
+        return updateVideoRequest;
+    }
+
     private long getTimestamp(int year, int month, int day){
         LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
         ZonedDateTime zonedDateTime = date.atZone(ZoneId.of("Europe/Paris"));
@@ -222,17 +318,14 @@ public class TestUtil {
 
     public List<Video> createVideosList(){
         List<Video> videos = new ArrayList<>();
-        Video video1 = createFullDataVideo();
-        Video video2 = new Video();
-        video2.setTitle("video2");
-        videos.add(video1);
-        videos.add(video2);
+        videos.add(createFullDataVideo("video1"));
+        videos.add(createFullDataVideo("video2"));
         return videos;
     }
 
-    private Video createFullDataVideo(){
+    private Video createFullDataVideo(String title){
         Video video = new Video();
-        video.setTitle("video1");
+        video.setTitle(title);
         video.setDescription("Description");
         Person person1 = new Person();
         Person person2 = new Person();
@@ -273,7 +366,7 @@ public class TestUtil {
         return new ResponseBodyContentFileBase64(null, base64);
     }
 
-    private ResponseBody createTestResponseBodyGetUsersError(){
+    private ResponseBodyGetUsers createTestResponseBodyGetUsersError(){
         return new ResponseBodyGetUsers(new RuntimeException("testException"));
     }
 

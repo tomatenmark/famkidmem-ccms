@@ -1,8 +1,8 @@
 package de.mherrmann.famkidmem.ccms.management.video;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
-import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import org.hamcrest.Matchers;
@@ -54,8 +54,16 @@ public class VideoManagementTestIndex {
 
         this.mockMvc.perform(get("/video/index"))
                 .andExpect(status().is(HttpStatus.OK.value()))
-                .andExpect(model().attribute("videos", Matchers.equalTo(videos)))
+                .andExpect(model().attribute("videosJson", Matchers.equalTo(asJsonString(videos))))
+                .andExpect(model().attribute("videosCount", Matchers.equalTo(2)))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));
     }
 
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
