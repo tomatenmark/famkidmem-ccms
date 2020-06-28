@@ -47,7 +47,6 @@ public class VideoIndexService {
             model.addAttribute("success", true);
         } catch(Exception ex){
             exceptionUtil.handleException(ex, model, LOGGER);
-            model.addAttribute("users", Collections.emptyList());
         }
     }
 
@@ -83,7 +82,7 @@ public class VideoIndexService {
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
-    List<Video> getVideos() throws Exception {
+    private List<Video> getVideos() throws Exception {
         ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetVideosRequest();
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
