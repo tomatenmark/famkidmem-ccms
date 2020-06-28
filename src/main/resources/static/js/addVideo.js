@@ -163,10 +163,3 @@ function uploadFile(fileInputId, step, target) {
     client.open("POST", target);
     client.send(formData);
 }
-
-function checkSilvester(){
-    let month = parseInt(document.getElementById('month').value);
-    let day = parseInt(document.getElementById('day').value);
-    let maybeSilvester = (month === 12 && day === 31) || (month === 1 && day === 1);
-    document.getElementById('silvesterToggle').style.display = maybeSilvester ? 'inline' : 'none';
-}

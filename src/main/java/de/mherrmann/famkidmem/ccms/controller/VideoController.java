@@ -1,6 +1,7 @@
 package de.mherrmann.famkidmem.ccms.controller;
 
 import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoEditService;
 import de.mherrmann.famkidmem.ccms.service.video.VideoIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -17,11 +18,13 @@ public class VideoController {
 
     private final VideoAddService videoAddService;
     private final VideoIndexService videoIndexService;
+    private final VideoEditService videoEditService;
 
     @Autowired
-    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService) {
+    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService, VideoEditService videoEditService) {
         this.videoAddService = videoAddService;
         this.videoIndexService = videoIndexService;
+        this.videoEditService = videoEditService;
     }
 
     @GetMapping(value = "/video/index")
@@ -55,10 +58,10 @@ public class VideoController {
         return "video/add";
     }
 
-    @GetMapping(value = "/video/edit-data")
-    public String loadEditDataView(Model model){
-        //videoAddService.fillEditDataModel(model); TODO: fix to VideoEditService
-        return "video/index";
+    @GetMapping(value = "/video/edit-data/{title}")
+    public String loadEditDataView(Model model, @PathVariable String title){
+        videoEditService.fillEditDataModel(model, title);
+        return "video/edit-data";
     }
 
     @GetMapping(value = "/video/replace-thumbnail")
@@ -79,9 +82,9 @@ public class VideoController {
         return "video/add";
     }
 
-    @PostMapping(value = "/video/edit-data/{title}")
-    public String editData(HttpServletRequest request, Model model, @PathVariable String title){
-        //videoAddService.editData(request, model, title); TODO: fix to VideoEditService
+    @PostMapping(value = "/video/edit-data/{designator}")
+    public String editData(HttpServletRequest request, Model model, @PathVariable String designator){
+        videoEditService.editData(model, request, designator);
         return "video/edit-data";
     }
 

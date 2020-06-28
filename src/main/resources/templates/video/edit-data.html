@@ -7,6 +7,7 @@
 <div id="main">
 
     <!--/*@thymesVar id="video" type="de.mherrmann.famkidmem.ccms.item.Video"*/-->
+    <!--/*@thymesVar id="titleUrlBase64" type="java.lang.String"*/-->
     <!--/*@thymesVar id="persons" type="java.lang.String"*/-->
     <!--/*@thymesVar id="year" type="java.lang.Integer"*/-->
     <!--/*@thymesVar id="month" type="java.lang.Integer"*/-->
@@ -17,47 +18,67 @@
 
     <div class="feedback" th:if="${post}">
         <div class="success" th:if="${success}">
-            Successfully replaced thumbnail.
+            Successfully edited data.
         </div>
         <div class="failure" th:if="${!success}">
-            <div>Could not replaced thumbnail!</div>
+            <div>Could not edit data!</div>
             Exception: [[${exception}]]<br>
             Details: [[${details}]]<br>
-            <a class="button" th:href="@{'/video/replace-thumbnail/'+${video.title}}">Try again</a>
+            <a class="button" th:href="@{'/video/edit-data/'+${titleUrlBase64}}">Try again</a>
         </div>
         <p>
             <a th:href="@{/video/index}">Back to video list</a>
         </p>
     </div>
 
-    <form method="post" th:if="${!post}" th:action="@{'/video/edit-data/'+${video.title}}">
-        <label>
-            <span>Title</span>
-            <input type="text" name="title" th:value="${video.title}">
-        </label>
-        <label>
-            <span>Description</span>
-            <textarea name="description">[[${video.title}]]</textarea>
-        </label>
-        <label>
-            <span>Persons (comma-separated)</span>
-            <input type="text" name="persons" th:value="${persons}">
-        </label>
-        <label>
-            <span>Recorded where?</span>
-            <input type="checkbox" name="recordedInCologne" th:attrappend="checked=${video.recordedInCologne ? 'checked' : ''}"> Cologne
-            <input type="checkbox" name="recordedInGardelegen" th:attrappend="checked=${video.recordedInGardelegen ? 'checked' : ''}"> Gardelegen
-        </label>
-        <label>
-            <span>Recorded when?</span>
-            <input name="year" type="number" th:value="${year}" min="1994" max="2999" required> Year
-            <input name="month" type="number" th:value="${month}" min="0" max="12"> Month (0 means unknown)
-            <input name="day" type="number" th:value="${day}" min="0" max="31" required> Day (0 means unknown)
-        </label>
-        <button type="submit">Replace Thumbnail</button>
-    </form>
-
-
+    <th:block th:if="${!post}">
+        <div class="feedback" th:if="${!success}">
+            <div class="failure">
+                <div>Could not load data!</div>
+                Exception: [[${exception}]]<br>
+                Details: [[${details}]]<br>
+                <a class="button" th:href="@{'/video/edit-data/'+${titleUrlBase64}}">Try again</a>
+            </div>
+        </div>
+        <th:block th:if="${success}">
+            <form method="post" th:action="@{'/video/edit-data/'+${titleUrlBase64}}">
+                <label>
+                    <span>Title</span>
+                    <input type="text" name="title" id="title" th:value="${video.title}" required>
+                </label>
+                <label>
+                    <span>Description</span>
+                    <textarea name="description" id="description">[[${video.description}]]</textarea>
+                </label>
+                <label>
+                    <span>Persons (comma-separated)</span>
+                    <input type="text" name="persons" th:value="${persons}">
+                </label>
+                <label>
+                    <span>Recorded where?</span>
+                    <input type="checkbox" name="recordedInCologne" th:attrappend="checked=${video.recordedInCologne ? 'checked' : ''}" value="cologne"> Cologne
+                    <input type="checkbox" name="recordedInGardelegen" th:attrappend="checked=${video.recordedInGardelegen ? 'checked' : ''}" value="gardelegen"> Gardelegen
+                </label>
+                <div>
+                    <div>Recorded when?</div>
+                    <label class="inline"><input name="year" type="number" th:value="${year}" min="1994" max="2999" required> Year</label>
+                    <label class="inline"><input name="month" id="month" type="number" th:value="${month}" min="0" max="12"
+                                                 onchange="checkSilvester();" required> Month (0 means unknown)</label>
+                    <label class="inline"><input name="day" id="day" type="number" th:value="${day}" min="0" max="31"
+                                                 onchange="checkSilvester();" required> Day (0 means unknown)</label>
+                    <label class="inline" id="silvesterToggle"><input name="silvester" id="silvester" th:attrappend="checked=${video.years.size()>1 ? 'checked' : ''}"
+                                                                      type="checkbox" value="silvester">Silvester</label>
+                </div>
+                <input name="thumbnailKey" type="hidden" th:value="${video.thumbnail.key.key}">
+                <input name="thumbnailIv" type="hidden" th:value="${video.thumbnail.key.iv}">
+                <button type="submit">Update Video</button>
+            </form>
+            <script>
+                decryptTitleAndDescription('[[${masterKey}]]', '[[${video.key.key}]]', '[[${video.key.iv}]]');
+                checkSilvester();
+            </script>
+        </th:block>
+    </th:block>
 </div>
 
 </body>

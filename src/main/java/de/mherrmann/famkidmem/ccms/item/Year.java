@@ -5,7 +5,7 @@ public class Year {
     private int value;
     private boolean enabled;
 
-    private Year() {}
+    public Year() {}
 
     public int getValue() {
         return value;

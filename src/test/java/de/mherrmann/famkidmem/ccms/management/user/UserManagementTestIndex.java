@@ -74,7 +74,7 @@ public class UserManagementTestIndex {
 
     @Test
     public void shouldFailLoadIndexViewCausedByBadRequestResponse() throws Exception {
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetUsers.class))
                 .willReturn(testUtil.createTestResponseEntityGetUsersError());
 
 
@@ -88,7 +88,7 @@ public class UserManagementTestIndex {
 
     @Test
     public void shouldFailLoadIndexViewCausedByConnectionFailure() throws Exception {
-        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBody.class))
+        given(restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/get", HttpMethod.GET, testUtil.createTestHttpEntityNoBody(), ResponseBodyGetUsers.class))
                 .willThrow(new RuntimeException());
 
 

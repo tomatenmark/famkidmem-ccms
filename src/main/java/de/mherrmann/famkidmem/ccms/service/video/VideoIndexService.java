@@ -47,7 +47,6 @@ public class VideoIndexService {
             model.addAttribute("success", true);
         } catch(Exception ex){
             exceptionUtil.handleException(ex, model, LOGGER);
-            model.addAttribute("users", Collections.emptyList());
         }
     }
 

@@ -54,3 +54,12 @@ function decryptKey(encryptedKeyBase64, masterKeyBase64){
     let key = CryptoJS.AES.decrypt({ciphertext:encryptedKey}, masterKey, {mode:CryptoJS.mode.ECB, padding: CryptoJS.pad.NoPadding});
     return CryptoJS.enc.Base64.stringify(key);
 }
+
+function checkSilvester(){
+    let month = parseInt(document.getElementById('month').value);
+    let day = parseInt(document.getElementById('day').value);
+    let maybeSilvester = (month === 12 && day === 31) || (month === 1 && day === 1);
+    let checked = document.getElementById('silvester').checked;
+    document.getElementById('silvesterToggle').style.display = maybeSilvester ? 'inline' : 'none';
+    document.getElementById('silvester').checked = checked && maybeSilvester;
+}
