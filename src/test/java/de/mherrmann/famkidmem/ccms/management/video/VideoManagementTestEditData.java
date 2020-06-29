@@ -3,9 +3,7 @@ package de.mherrmann.famkidmem.ccms.management.video;
 import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.TestUtil;
 import de.mherrmann.famkidmem.ccms.body.RequestBodyUpdateVideo;
-import de.mherrmann.famkidmem.ccms.body.ResponseBody;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
-import de.mherrmann.famkidmem.ccms.item.Key;
 import de.mherrmann.famkidmem.ccms.item.Person;
 import de.mherrmann.famkidmem.ccms.item.Video;
 import de.mherrmann.famkidmem.ccms.item.Year;
@@ -14,7 +12,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,11 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -130,8 +125,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoTwoPersons1999MarchSecondCologne() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoTwoPersons1999MarchSecondCologne() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestTwoPersons1999March2Cologne();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -149,8 +144,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoTwoPersons1999December31Gardelegen() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoTwoPersons1999December31Gardelegen() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestTwoPersons1999December31Gardelegen();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -168,8 +163,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoOnePerson1999December31Silvester() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoOnePerson1999December31Silvester() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestOnePerson1999December31Silvester();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -187,8 +182,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoOnePerson2000January11Silvester() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoOnePerson2000January11Silvester() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestOnePerson2000January1Silvester();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -206,8 +201,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoOnePerson2000January11() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoOnePerson2000January11() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestOnePerson2000January1();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -224,8 +219,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoOnePerson2003May() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoOnePerson2003May() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestOnePerson2003May();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -242,8 +237,8 @@ public class VideoManagementTestEditData {
     }
 
     @Test
-    public void shouldAddVideoOnePerson2005CologneAndGardelegen() throws Exception {
-        prepareUpdateVideoTest();
+    public void shouldUpdateVideoOnePerson2005CologneAndGardelegen() throws Exception {
+        testUtil.prepareUpdateVideoTest(cryptoUtil, restTemplate);
         RequestBodyUpdateVideo updateVideoRequest = testUtil.createUpdateVideoRequestOnePerson2005CologneAndGardelegen();
 
         this.mockMvc.perform(post("/video/edit-data/title")
@@ -259,30 +254,6 @@ public class VideoManagementTestEditData {
                 .andExpect(model().attribute("success", Matchers.equalTo(true)))
                 .andExpect(model().attribute("post", Matchers.equalTo(true)))
                 .andExpect(model().attribute("updateVideoRequest", Matchers.equalTo(updateVideoRequest)));
-    }
-
-    //TODO: add tests: shouldEditDataVideo, shouldFailEditDataCausedByBadRequestResponse, shouldFailEditDataCausedByConnectionFailure, (maybe) shouldFailEditDataCausedByInvalidForm
-
-    private void prepareUpdateVideoTest() throws Exception {
-        byte[] keyDummy = new byte[]{0,0,0,0,0,0,0,0};
-        byte[] encryptedTitleDummy = new byte[]{1,1,1,1,1,1,1,1};
-        byte[] encryptedDescriptionDummy = new byte[]{2,2,2,2,2,2,2,2};
-        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/edit/video/update"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(ResponseBody.class)))
-                .willReturn(testUtil.createTestResponseEntityStatusOk());
-        given(cryptoUtil.generateSecureRandomKeyParam())
-                .willReturn(keyDummy);
-        given(cryptoUtil.encrypt(ArgumentMatchers.eq("title".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
-                .willReturn(encryptedTitleDummy);
-        given(cryptoUtil.encrypt(ArgumentMatchers.eq("description".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
-                .willReturn(encryptedDescriptionDummy);
-        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedTitleDummy)))
-                .willReturn("titleEncrypted");
-        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedDescriptionDummy)))
-                .willReturn("descriptionEncrypted");
-        given(cryptoUtil.toBase64(ArgumentMatchers.eq(keyDummy)))
-                .willReturn("iv");
-        given(cryptoUtil.encryptKey(ArgumentMatchers.eq(keyDummy)))
-                .willReturn("keyEncrypted");
     }
 
 }
