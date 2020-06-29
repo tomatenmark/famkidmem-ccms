@@ -7,6 +7,7 @@
 <div id="main">
 
     <!--/*@thymesVar id="username" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="passwordKeySalt" type="java.lang.String"*/-->
     <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
     <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
 
@@ -23,11 +24,11 @@
         </div>
     </div>
 
-    <form method="post" th:action="@{/user/add}" name="userForm" style="display: none">
+    <form th:if="${!post}" method="post" th:action="@{/user/add}" name="userForm" style="display: none">
         <input type="text" name="displayName" placeholder="displayName">
         <input type="hidden" name="username" th:value="${username}">
         <input type="hidden" name="loginHash">
-        <input type="hidden" name="passwordKeySalt">
+        <input type="hidden" name="passwordKeySalt" th:value="${passwordKeySalt}">
         <input type="hidden" name="link">
         <input type="hidden" name="userKey">
         <button type="submit">Add</button>
