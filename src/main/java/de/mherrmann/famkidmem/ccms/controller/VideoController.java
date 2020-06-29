@@ -64,10 +64,10 @@ public class VideoController {
         return "video/edit-data";
     }
 
-    @GetMapping(value = "/video/replace-thumbnail")
-    public String loadReplaceThumbnailView(Model model){
-        //videoAddService.fillReplaceThumbnailModel(model); TODO: fix to VideoEditService
-        return "video/index";
+    @GetMapping(value = "/video/replace-thumbnail/{designator}")
+    public String loadReplaceThumbnailView(Model model, @PathVariable String designator){
+        videoEditService.fillReplaceThumbnailModel(model, designator);
+        return "video/replace-thumbnail";
     }
 
     @GetMapping(value = "/video/remove")

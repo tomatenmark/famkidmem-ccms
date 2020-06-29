@@ -81,11 +81,9 @@ public class VideoEditService {
         }
     }
 
-    public void fillReplaceThumbnailModel(Model model){
-        /* TODO: fill:
-         * post=false
-         * title (video.title)
-         */
+    public void fillReplaceThumbnailModel(Model model, String designator){
+        model.addAttribute("post", false);
+        model.addAttribute("title", designator);
     }
 
     public void replaceThumbnail(MultipartFile file, Model model, String title){
