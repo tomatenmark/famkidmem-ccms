@@ -80,6 +80,7 @@ public class VideoManagementTestReplaceThumbnail {
     public void checkUploadToWebBackendCall() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "thumbnail",
                 "text/plain", "thumbnail".getBytes());
+        prepareReplaceThumbnailTest();
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
                 .willThrow(new RuntimeException("was called"));
 
