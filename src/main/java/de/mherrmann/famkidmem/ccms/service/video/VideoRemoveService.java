@@ -37,9 +37,10 @@ public class VideoRemoveService {
             model.addAttribute("thumbnailFilename", video.getThumbnail().getFilename());
             model.addAttribute("m3u8Filename", video.getM3u8().getFilename());
             model.addAttribute("m3u8", getM3u8(video.getM3u8().getFilename()));
-            model.addAttribute("m3u8", getM3u8(video.getM3u8().getFilename()));
-            model.addAttribute("key", video.getM3u8().getKey().getKey());
-            model.addAttribute("iv", video.getM3u8().getKey().getIv());
+            model.addAttribute("m3u8Key", video.getM3u8().getKey().getKey());
+            model.addAttribute("m3u8Iv", video.getM3u8().getKey().getIv());
+            model.addAttribute("key", video.getKey().getKey());
+            model.addAttribute("iv", video.getKey().getIv());
             model.addAttribute("masterKey", Application.getSettings().getMasterKey());
             model.addAttribute("success", true);
         } catch(Exception ex){

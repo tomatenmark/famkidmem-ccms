@@ -62,8 +62,10 @@ public class VideoManagementTestRemove {
                 .andExpect(model().attribute("thumbnailFilename", Matchers.equalTo("thumbnail")))
                 .andExpect(model().attribute("m3u8Filename", Matchers.equalTo("m3u8")))
                 .andExpect(model().attribute("m3u8", Matchers.equalTo(M3U8_BASE64)))
-                .andExpect(model().attribute("key", Matchers.equalTo("m3u8Key")))
-                .andExpect(model().attribute("iv", Matchers.equalTo("m3u8Iv")))
+                .andExpect(model().attribute("m3u8Key", Matchers.equalTo("m3u8Key")))
+                .andExpect(model().attribute("m3u8Iv", Matchers.equalTo("m3u8Iv")))
+                .andExpect(model().attribute("key", Matchers.equalTo("key")))
+                .andExpect(model().attribute("iv", Matchers.equalTo("iv")))
                 .andExpect(model().attribute("masterKey", Matchers.equalTo(Application.getSettings().getMasterKey())))
                 .andExpect(model().attribute("post", Matchers.equalTo(false)))
                 .andExpect(model().attribute("success", Matchers.equalTo(true)));
