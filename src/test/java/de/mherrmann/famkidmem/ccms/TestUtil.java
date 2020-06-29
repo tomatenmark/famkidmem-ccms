@@ -3,11 +3,11 @@ package de.mherrmann.famkidmem.ccms;
 import de.mherrmann.famkidmem.ccms.body.*;
 import de.mherrmann.famkidmem.ccms.item.*;
 import de.mherrmann.famkidmem.ccms.settings.Settings;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import de.mherrmann.famkidmem.ccms.utils.CryptoUtil;
+import org.mockito.ArgumentMatchers;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.yaml.snakeyaml.tokens.Token.ID.Key;
 
 @Service
@@ -284,6 +286,7 @@ public class TestUtil {
                                                       boolean recordedInCologne, boolean recordedInGardelegen, long time, int showDateValues) {
 
         RequestBodyUpdateVideo updateVideoRequest = new RequestBodyUpdateVideo();
+        updateVideoRequest.setDesignator("title");
         updateVideoRequest.setTitle("titleEncrypted");
         updateVideoRequest.setDescription("descriptionEncrypted");
         updateVideoRequest.setKey("keyEncrypted");
@@ -386,5 +389,27 @@ public class TestUtil {
             file.delete();
         }
         directory.delete();
+    }
+
+    public void prepareUpdateVideoTest(CryptoUtil cryptoUtil, RestTemplate restTemplate) throws Exception {
+        byte[] keyDummy = new byte[]{0,0,0,0,0,0,0,0};
+        byte[] encryptedTitleDummy = new byte[]{1,1,1,1,1,1,1,1};
+        byte[] encryptedDescriptionDummy = new byte[]{2,2,2,2,2,2,2,2};
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/edit/video/update"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(ResponseBody.class)))
+                .willReturn(createTestResponseEntityStatusOk());
+        given(cryptoUtil.generateSecureRandomKeyParam())
+                .willReturn(keyDummy);
+        given(cryptoUtil.encrypt(ArgumentMatchers.eq("title".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                .willReturn(encryptedTitleDummy);
+        given(cryptoUtil.encrypt(ArgumentMatchers.eq("description".getBytes("UTF-8")), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                .willReturn(encryptedDescriptionDummy);
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedTitleDummy)))
+                .willReturn("titleEncrypted");
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(encryptedDescriptionDummy)))
+                .willReturn("descriptionEncrypted");
+        given(cryptoUtil.toBase64(ArgumentMatchers.eq(keyDummy)))
+                .willReturn("iv");
+        given(cryptoUtil.encryptKey(ArgumentMatchers.eq(keyDummy)))
+                .willReturn("keyEncrypted");
     }
 }
