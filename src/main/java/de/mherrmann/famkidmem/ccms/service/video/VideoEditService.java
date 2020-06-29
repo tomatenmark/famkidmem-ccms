@@ -54,7 +54,6 @@ public class VideoEditService {
     public void fillEditDataModel(Model model, String title){
         model.addAttribute("post", false);
         model.addAttribute("titleUrlBase64", title);
-        title = title.replace('_', '/').replace('-', '+');
         try {
             Video video = getVideo(title);
             model.addAttribute("video", video);
@@ -95,7 +94,6 @@ public class VideoEditService {
     public void replaceThumbnail(MultipartFile file, Model model, String designator){
         model.addAttribute("post", true);
         model.addAttribute("title", designator);
-        designator = designator.replace('_', '/').replace('-', '+');
         try {
             Video video = getVideo(designator);
             Key key = updateThumbnail(file, video.getThumbnail().getFilename());
@@ -119,8 +117,9 @@ public class VideoEditService {
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
-    private Video getVideo(String title) throws Exception {
-        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetSingleVideoRequest(title);
+    private Video getVideo(String designator) throws Exception {
+        designator = designator.replace('_', '/').replace('-', '+');
+        ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetSingleVideoRequest(designator);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
         }
