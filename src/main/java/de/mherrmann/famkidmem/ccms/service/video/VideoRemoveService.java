@@ -1,5 +1,6 @@
 package de.mherrmann.famkidmem.ccms.service.video;
 
+import de.mherrmann.famkidmem.ccms.Application;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyContentFileBase64;
 import de.mherrmann.famkidmem.ccms.body.ResponseBodyGetVideos;
 import de.mherrmann.famkidmem.ccms.exception.WebBackendException;
@@ -36,6 +37,10 @@ public class VideoRemoveService {
             model.addAttribute("thumbnailFilename", video.getThumbnail().getFilename());
             model.addAttribute("m3u8Filename", video.getM3u8().getFilename());
             model.addAttribute("m3u8", getM3u8(video.getM3u8().getFilename()));
+            model.addAttribute("m3u8", getM3u8(video.getM3u8().getFilename()));
+            model.addAttribute("key", video.getM3u8().getKey().getKey());
+            model.addAttribute("iv", video.getM3u8().getKey().getIv());
+            model.addAttribute("masterKey", Application.getSettings().getMasterKey());
             model.addAttribute("success", true);
         } catch(Exception ex){
             LOGGER.error("Error. Could not replace thumbnail", ex);
