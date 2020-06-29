@@ -99,8 +99,8 @@ public class VideoController {
     }
 
     @PostMapping(value = "/video/remove/{designator}")
-    public String deleteVideo(Model model, @PathVariable String designator){
-        videoRemoveService.deleteVideo(model, designator);
+    public String deleteVideo(Model model, HttpServletRequest request, @PathVariable String designator){
+        videoRemoveService.deleteVideo(model, request, designator);
         return "video/remove";
     }
 
