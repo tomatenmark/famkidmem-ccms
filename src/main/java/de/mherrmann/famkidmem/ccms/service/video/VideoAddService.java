@@ -59,24 +59,6 @@ public class VideoAddService {
         this.ffmpegService = ffmpegService;
     }
 
-
-
-    //TODO: move to VideoDeleteService
-    public void fillRemoveVideoModel(Model model){
-        /* TODO: fill:
-         * post=false
-         * title (video.title)
-         * m3u8 (base64 content of m3u8 file from server)
-         * m3u8 filename
-         * thumbnail filename
-         */
-    }
-
-    //TODO: move to VideoDeleteService
-    public void deleteVideo(Model model, String title){
-        //TODO: delete video (get names of files to delete from request)
-    }
-
     public void uploadThumbnail(MultipartFile file) throws FileUploadException {
         uploadFile(file, "thumbnail.png");
         pushService.push(PushMessage.thumbnailUploadComplete());

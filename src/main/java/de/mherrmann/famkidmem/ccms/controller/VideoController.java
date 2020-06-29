@@ -3,6 +3,7 @@ package de.mherrmann.famkidmem.ccms.controller;
 import de.mherrmann.famkidmem.ccms.service.video.VideoAddService;
 import de.mherrmann.famkidmem.ccms.service.video.VideoEditService;
 import de.mherrmann.famkidmem.ccms.service.video.VideoIndexService;
+import de.mherrmann.famkidmem.ccms.service.video.VideoRemoveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,15 @@ public class VideoController {
     private final VideoAddService videoAddService;
     private final VideoIndexService videoIndexService;
     private final VideoEditService videoEditService;
+    private final VideoRemoveService videoRemoveService;
 
     @Autowired
-    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService, VideoEditService videoEditService) {
+    public VideoController(VideoAddService videoAddService, VideoIndexService videoIndexService,
+                           VideoEditService videoEditService, VideoRemoveService videoRemoveService) {
         this.videoAddService = videoAddService;
         this.videoIndexService = videoIndexService;
         this.videoEditService = videoEditService;
+        this.videoRemoveService = videoRemoveService;
     }
 
     @GetMapping(value = "/video/index")
@@ -70,10 +74,10 @@ public class VideoController {
         return "video/replace-thumbnail";
     }
 
-    @GetMapping(value = "/video/remove")
-    public String loadRemoveVideoView(Model model){
-        //videoAddService.fillRemoveVideoModel(model); TODO: fix to VideoDeleteService
-        return "video/index";
+    @GetMapping(value = "/video/remove/{designator}")
+    public String loadRemoveVideoView(Model model, @PathVariable String designator){
+        videoRemoveService.fillRemoveVideoModel(model, designator);
+        return "video/remove";
     }
 
     @PostMapping(value = "/video/add")
@@ -94,9 +98,9 @@ public class VideoController {
         return "video/replace-thumbnail";
     }
 
-    @PostMapping(value = "/video/remove/{title}")
-    public String deleteVideo(Model model, @PathVariable String title){
-        //videoAddService.deleteVideo(model, title); TODO: fix to VideoDeleteService
+    @PostMapping(value = "/video/remove/{designator}")
+    public String deleteVideo(Model model, @PathVariable String designator){
+        videoRemoveService.deleteVideo(model, designator);
         return "video/remove";
     }
 
