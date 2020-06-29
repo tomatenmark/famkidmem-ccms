@@ -31,8 +31,8 @@
 
     <form method="post" th:if="${!post}" th:action="@{'/video/remove/'+${title}}" id="videoRemoveForm" name="videoRemoveForm">
         Are you sure you want to remove the video [[${title}]]?
-        <input type="hidden" name="m3u8Filename" th:value="${m3u8Filename}">
         <input type="hidden" name="thumbnailFilename" th:value="${thumbnailFilename}">
+        <input type="hidden" name="m3u8Filename" th:value="${m3u8Filename}">
         <button type="submit">Yes</button>
         <a class="button" th:href="@{/user/index}">No</a>
     </form>
