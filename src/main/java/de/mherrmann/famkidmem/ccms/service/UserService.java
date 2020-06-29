@@ -73,7 +73,7 @@ public class UserService {
         fillResetPasswordModel(model, username, true);
         try {
             RequestBodyDeleteUser deleteUserRequest = createDeleteUserRequest(username);
-            ResponseEntity<ResponseBody> response = connectionService.doDeleteRequest(deleteUserRequest, "/ccms/admin/user/delete", MediaType.APPLICATION_JSON);
+            ResponseEntity<ResponseBody> response = connectionService.doDeleteUserRequest(deleteUserRequest);
             if(!response.getStatusCode().is2xxSuccessful()){
                 throw new WebBackendException(response.getBody());
             }

@@ -50,12 +50,16 @@ public class ConnectionService {
         return doRequest(HttpMethod.POST, body, "/ccms/upload", MediaType.MULTIPART_FORM_DATA, String.class);
     }
 
-    public ResponseEntity doDeleteRequest(Object body, String path, MediaType mediaType) throws RestClientException {
-        return doRequest(HttpMethod.DELETE, body, path, mediaType, ResponseBody.class);
+    ResponseEntity doDeleteUserRequest(Object body) throws RestClientException {
+        return doRequest(HttpMethod.DELETE, body, "/ccms/admin/user/delete",  MediaType.APPLICATION_JSON, ResponseBody.class);
     }
 
-    public ResponseEntity doDeleteRequest(String path) throws RestClientException {
-        return doRequest(HttpMethod.DELETE, null, path, null, ResponseBody.class);
+    public ResponseEntity doDeleteVideoRequest(String designator) throws RestClientException {
+        return doRequest(HttpMethod.DELETE, null, "/ccms/edit/video/delete/"+designator, null, ResponseBody.class);
+    }
+
+    public ResponseEntity doDeleteFileRequest(String filename) throws RestClientException {
+        return doRequest(HttpMethod.DELETE, null, "/ccms/delete/"+filename, null, String.class);
     }
 
     private ResponseEntity doRequest(HttpMethod method, Object body, String path, MediaType mediaType, Class responseClass) throws RestClientException {

@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
-import java.time.*;
 import java.util.*;
 
 @Service
@@ -145,7 +144,7 @@ public class VideoAddService {
     private void rollbackWebBackendUpload(List<String> filesList){
         for(String path : filesList){
             String filename = new File(path).getName();
-            ResponseEntity<ResponseBody> response = connectionService.doDeleteRequest("/ccms/delete/"+filename);
+            ResponseEntity<String> response = connectionService.doDeleteFileRequest(filename);
             if(!response.getStatusCode().is2xxSuccessful()){
                 LOGGER.error("Fatal Error: Could not rollback web-backend upload for file {}. Try to delete manually.", filename);
             }
