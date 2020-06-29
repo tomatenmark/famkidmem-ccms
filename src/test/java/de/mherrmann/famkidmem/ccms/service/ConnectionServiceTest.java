@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -117,14 +116,36 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void shouldReturnResponseBodyDelete(){
+    public void shouldReturnResponseBodyDeleteUser(){
         given(
-                this.restTemplate.exchange(Application.getSettings().getBackendUrl(), HttpMethod.DELETE, testUtil.createTestHttpEntityTestBody(), ResponseBody.class))
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/admin/user/delete", HttpMethod.DELETE, testUtil.createTestHttpEntityTestBody(), ResponseBody.class))
                 .willReturn(testUtil.createTestResponseEntityStatusOk());
 
-        ResponseEntity<ResponseBody> body = connectionService.doDeleteRequest("", "", MediaType.APPLICATION_JSON);
+        ResponseEntity<ResponseBody> body = connectionService.doDeleteUserRequest("");
 
         assertThat(body.getBody().getDetails()).isEqualTo("testDetails");
+    }
+
+    @Test
+    public void shouldReturnResponseBodyDeleteVideo(){
+        given(
+                this.restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/edit/video/delete/video"), eq(HttpMethod.DELETE), any(), eq(ResponseBody.class)))
+                .willReturn(testUtil.createTestResponseEntityStatusOk());
+
+        ResponseEntity<ResponseBody> body = connectionService.doDeleteVideoRequest("video");
+
+        assertThat(body.getBody().getDetails()).isEqualTo("testDetails");
+    }
+
+    @Test
+    public void shouldReturnStringOkDeleteFile(){
+        given(
+                this.restTemplate.exchange(Application.getSettings().getBackendUrl()+"/ccms/delete/file", HttpMethod.DELETE, testUtil.createTestHttpEntityNoBody(), String.class))
+                .willReturn(ResponseEntity.ok("ok"));
+
+        ResponseEntity<String> body = connectionService.doDeleteFileRequest("file");
+
+        assertThat(body.getBody()).isEqualTo("ok");
     }
 
     @Test

@@ -345,6 +345,8 @@ public class TestUtil {
         Key key = new Key("key", "iv");
         Key thumbnailKey = new Key("thumbnailKey", "thumbnailIv");
         video.setThumbnail(new FileEntity("thumbnail", thumbnailKey));
+        Key m3u8Key = new Key("m3u8Key", "m3u8Iv");
+        video.setM3u8(new FileEntity("m3u8", m3u8Key));
         video.setKey(key);
         return video;
     }

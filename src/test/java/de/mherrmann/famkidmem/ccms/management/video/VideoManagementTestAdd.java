@@ -173,7 +173,7 @@ public class VideoManagementTestAdd {
         new File("./files/"+RANDOM_NAME+".2.ts").delete();
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
                 .willReturn(ResponseEntity.ok("ok"));
-        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/delete/"+RANDOM_NAME+".png"), eq(HttpMethod.DELETE), ArgumentMatchers.any(), eq(ResponseBody.class)))
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/delete/"+RANDOM_NAME+".png"), eq(HttpMethod.DELETE), ArgumentMatchers.any(), eq(String.class)))
                 .willThrow(new RuntimeException("thrown while rollback"));
 
         MvcResult result = this.mockMvc.perform(post("/video/upload-web"))

@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
-import java.time.*;
 import java.util.*;
 
 @Service
@@ -57,24 +56,6 @@ public class VideoAddService {
         this.pushService = pushService;
         this.cryptoUtil = cryptoUtil;
         this.ffmpegService = ffmpegService;
-    }
-
-
-
-    //TODO: move to VideoDeleteService
-    public void fillRemoveVideoModel(Model model){
-        /* TODO: fill:
-         * post=false
-         * title (video.title)
-         * m3u8 (base64 content of m3u8 file from server)
-         * m3u8 filename
-         * thumbnail filename
-         */
-    }
-
-    //TODO: move to VideoDeleteService
-    public void deleteVideo(Model model, String title){
-        //TODO: delete video (get names of files to delete from request)
     }
 
     public void uploadThumbnail(MultipartFile file) throws FileUploadException {
@@ -163,7 +144,7 @@ public class VideoAddService {
     private void rollbackWebBackendUpload(List<String> filesList){
         for(String path : filesList){
             String filename = new File(path).getName();
-            ResponseEntity<ResponseBody> response = connectionService.doDeleteRequest("/ccms/delete/"+filename);
+            ResponseEntity<String> response = connectionService.doDeleteFileRequest(filename);
             if(!response.getStatusCode().is2xxSuccessful()){
                 LOGGER.error("Fatal Error: Could not rollback web-backend upload for file {}. Try to delete manually.", filename);
             }
