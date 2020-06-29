@@ -109,6 +109,7 @@ public class UserService {
         model.addAttribute("username", username);
         model.addAttribute("password", cryptoUtil.generateSecureRandomCredential());
         model.addAttribute("post", post);
+        model.addAttribute("passwordKeySalt", cryptoUtil.toBase64(cryptoUtil.generateSecureRandomKeyParam()));
     }
 
     @SuppressWarnings("unchecked") //we know, the assignment will work

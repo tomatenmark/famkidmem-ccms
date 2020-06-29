@@ -4,11 +4,11 @@ function prepareUserForm(username, password, frontendUrl, masterKey, linkType){
     const secret = CryptoJS.enc.Utf8.parse(password);
     const loginPepper = "H8KDQYZplb7FUZLoX4lHLg==";
     const loginSpice = CryptoJS.enc.Utf8.parse(loginPepper+username);
-    const passwordKeySalt = CryptoJS.lib.WordArray.random(128 / 8);
+    const passwordKeySaltBase64 = document.userForm.passwordKeySalt.value;
+    const passwordKeySalt =  CryptoJS.enc.Base64.parse(passwordKeySaltBase64);
     const passwordKey = CryptoJS.PBKDF2(secret, passwordKeySalt, {keySize: 128 / 32, iterations: 2500});
     const loginHash = CryptoJS.PBKDF2(secret, loginSpice, {keySize: 128 / 32, iterations: 1250});
     document.userForm.loginHash.value = CryptoJS.enc.Base64.stringify(loginHash);
-    document.userForm.passwordKeySalt.value = CryptoJS.enc.Base64.stringify(passwordKeySalt);
     document.userForm.userKey.value = createUserKey(passwordKey, masterKey);
     document.userForm.style.display = 'block';
     createLink(username, password, frontendUrl, linkType);
