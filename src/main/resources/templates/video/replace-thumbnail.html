@@ -27,7 +27,7 @@
     </div>
 
     <form method="post" th:if="${!post}" th:action="@{'/video/replace-thumbnail/'+${title}}" enctype="multipart/form-data">
-        Select new thumbnail file <input type="file" name="thumbnailFile" id="thumbnailFile">
+        Select new thumbnail file <input type="file" name="file" id="thumbnailFile">
         <button type="submit">Replace Thumbnail</button>
     </form>
 
