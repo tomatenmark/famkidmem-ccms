@@ -22,6 +22,9 @@ This repository contains the sources for the FamKidMem Control & Content Managem
 * ffmpeg must be installed
 * The bin directory of ffmpeg must be added to the systems PATH variable
 
+## HLS support
+* A browser with hls support is required
+
 # settings.json
 You will need a settings.json with following format:\
 {\
