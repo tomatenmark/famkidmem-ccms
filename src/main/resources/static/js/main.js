@@ -15,14 +15,15 @@ function prepareUserForm(username, password, frontendUrl, masterKey, linkType){
 }
 
 function createLink(username, password, frontendUrl, linkType){
-    const credentials = {
+    const data = {
         username: username,
-        password: password
+        password: password,
+        userKey: document.userForm.userKey.value
     };
-    const credentialString = JSON.stringify(credentials);
-    const credentialWords = CryptoJS.enc.Utf8.parse(credentialString);
-    const credentialsBase64 = CryptoJS.enc.Base64.stringify(credentialWords);
-    document.userForm.link.value = `${frontendUrl}#${linkType}/${credentialsBase64}`;
+    const dataString = JSON.stringify(data);
+    const dataWords = CryptoJS.enc.Utf8.parse(dataString);
+    const dataBase64 = CryptoJS.enc.Base64.stringify(dataWords);
+    document.userForm.link.value = `${frontendUrl}#${linkType}/${dataBase64}`;
 }
 
 function createUserKey(passwordKey, masterKeyEncoded){
