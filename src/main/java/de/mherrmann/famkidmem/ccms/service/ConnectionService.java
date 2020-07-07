@@ -77,7 +77,7 @@ public class ConnectionService {
         if(mediaType != null){
             headers.setContentType(mediaType);
         }
-        headers.add("CCMS_AUTH_TOKEN", Application.getSettings().getApiKey());
+        headers.add("CCMS-AUTH-TOKEN", Application.getSettings().getApiKey());
         return headers;
     }
 

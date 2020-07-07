@@ -53,21 +53,21 @@ public class TestUtil {
 
     public HttpEntity createTestHttpEntityNoBody(){
         HttpHeaders headers = new HttpHeaders();
-        headers.add("CCMS_AUTH_TOKEN", Application.getSettings().getApiKey());
+        headers.add("CCMS-AUTH-TOKEN", Application.getSettings().getApiKey());
         return new HttpEntity<>(null, headers);
     }
 
     public HttpEntity createTestHttpEntityTestBody(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("CCMS_AUTH_TOKEN", Application.getSettings().getApiKey());
+        headers.add("CCMS-AUTH-TOKEN", Application.getSettings().getApiKey());
         return new HttpEntity<>("", headers);
     }
 
     public HttpEntity createTestHttpEntityGivenBody(Object body){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("CCMS_AUTH_TOKEN", Application.getSettings().getApiKey());
+        headers.add("CCMS-AUTH-TOKEN", Application.getSettings().getApiKey());
         return new HttpEntity<>(body, headers);
     }
 
