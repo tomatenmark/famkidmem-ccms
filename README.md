@@ -1,13 +1,8 @@
-# FamKidMem (Familien-Kindheits-Erinnerungen)
-Remember those 'selbstgedrehte videos' from mid ninetees?\
-Maybe you have them on a stick or your pc, but do you know where to look for it?\
-Are you sure, you not lost it?\
-Imagine you could always watch this videos and experience childhood memories with just one click in the internet.\
-This is what this web based application does.\
-You don't even have to turn your tower pc on. You can watch the videos online on your smartphone (better via wlan)
+# FamKidMem
+WebApp and Tools to share Videos online, but securely encrypted. One Admin/Editor, Many Users/Whatchers.
 
 # CCMS
-This repository contains the sources for the FamKidMem Control & Content Management System.\
+This repository contains the sources for the FamKidMem Control & Content Management System / Admin & Editor Tool.\
 
 
 # Features
@@ -56,4 +51,15 @@ The ffmpegDummy.sh file is a ffmpeg dummy for testing. The command allows its ex
 * Frontend: https://github.com/tomatenmark/famkidmem-frontend
 
 # Security Architecture
-https://cloud.markherrmann.de/index.php/s/DoK6MV7uHZx0wy2
+https://famkidmem.de/security-architecture.pdf
+
+# License
+CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+# Disclaimer
+**This software is for privacy, not to hide crime. Please do not use it to encrypt your illegal contents. Thank you**
+
+# Credits
+* Spring boot and Vue.js
+* javax.crypto and crypto-js
+* FFmpeg and HLS
