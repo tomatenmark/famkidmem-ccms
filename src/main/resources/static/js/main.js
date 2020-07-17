@@ -15,6 +15,9 @@ function prepareUserForm(username, password, frontendUrl, masterKey, linkType){
 }
 
 function createLink(username, password, frontendUrl, linkType){
+    if(frontendUrl.substr(frontendUrl.length-1, 1) === '/'){
+        frontendUrl = frontendUrl.substr(0, frontendUrl.length-1);
+    }
     const data = {
         username: username,
         password: password,
@@ -23,7 +26,7 @@ function createLink(username, password, frontendUrl, linkType){
     const dataString = JSON.stringify(data);
     const dataWords = CryptoJS.enc.Utf8.parse(dataString);
     const dataBase64 = CryptoJS.enc.Base64.stringify(dataWords);
-    document.userForm.link.value = `${frontendUrl}#${linkType}/${dataBase64}`;
+    document.userForm.link.value = `${frontendUrl}/${linkType}.html#${linkType}/${dataBase64}`;
 }
 
 function createUserKey(passwordKey, masterKeyEncoded){
