@@ -83,11 +83,13 @@ a:active {
 
 .video {
     display: table-row;
-    height: 175px;
+    height: 173px;
 }
 
 .video img {
-    width: 205px;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
 }
 
 .video .cell {

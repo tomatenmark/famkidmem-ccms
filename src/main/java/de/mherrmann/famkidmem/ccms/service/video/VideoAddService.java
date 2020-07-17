@@ -82,7 +82,7 @@ public class VideoAddService {
             pushService.push(PushMessage.finishedWithWebUpload());
             LOGGER.info("Successfully uploaded video files to web-backend.");
             cleanUpFilesDirectory();
-        } catch(IOException | RestClientException | WebBackendException ex){
+        } catch(Exception ex){
             LOGGER.error("Error during file upload to web-backend.", ex);
             if(files > 0){
                 rollbackWebBackendUpload(filesList.subList(0, files-1));

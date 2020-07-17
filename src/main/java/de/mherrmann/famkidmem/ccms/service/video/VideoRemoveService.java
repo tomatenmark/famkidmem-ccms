@@ -11,7 +11,6 @@ import de.mherrmann.famkidmem.ccms.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -68,7 +67,6 @@ public class VideoRemoveService {
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private Video getVideo(String designator) throws Exception {
-        designator = designator.replace('_', '/').replace('-', '+');
         ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetSingleVideoRequest(designator);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
@@ -114,7 +112,6 @@ public class VideoRemoveService {
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private void removeVideo(String designator) throws Exception {
-        designator = designator.replace('_', '/').replace('-', '+');
         try {
             ResponseEntity<ResponseBody> response = connectionService.doDeleteVideoRequest(designator);
             if(!response.getStatusCode().is2xxSuccessful()){

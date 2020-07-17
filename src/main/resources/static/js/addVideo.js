@@ -70,7 +70,7 @@ function startEncryption() {
 function startShowVideoEncryption() {
     document.getElementById('step').innerText = 'Step 4/6: encrypt video';
     document.getElementById('progressBar').value = '';
-    document.getElementById('ffmpegProgress').innerHTML = '<div>starting...</div>';
+    document.getElementById('ffmpegProgress').innerHTML = '<div></div>';
     document.getElementById('ffmpegProgress').style.display = 'block';
     document.getElementById('autoScrollLabel').style.display = 'inline';
 }
