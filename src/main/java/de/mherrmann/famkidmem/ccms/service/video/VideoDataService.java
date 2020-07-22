@@ -39,7 +39,11 @@ public class VideoDataService {
     }
 
     List<String> getPersonsList(String personsFieldValue){
-        String sanitizedPersonsFieldValue = personsFieldValue.replace(" ", "").replaceAll("(^,|,$)", "");
+        String sanitizedPersonsFieldValue = personsFieldValue
+                .replace(" ", "")
+                .replaceAll("^,", "")
+                .replaceAll(",$", "")
+                .replaceAll(",,+", ",");
         String[] personsArray = sanitizedPersonsFieldValue.split(",");
         return Arrays.asList(personsArray);
     }
