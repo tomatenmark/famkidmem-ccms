@@ -198,7 +198,7 @@ public class VideoAddService {
     private void encryptThumbnail(String name) throws EncryptionException, GeneralSecurityException {
         byte[] key = cryptoUtil.generateSecureRandomKeyParam();
         byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
-        encryptFile(name, "thumbnail.jpg", "png", key, iv);
+        encryptFile(name, "thumbnail.jpg", "jpg", key, iv);
         state.thumbnailKey = new Key(cryptoUtil.encryptKey(key), cryptoUtil.toBase64(iv));
         pushService.push(PushMessage.finishedWithThumbnail());
         LOGGER.info("Successfully encrypted thumbnail.");
