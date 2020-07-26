@@ -94,7 +94,7 @@ public class VideoManagementTestAdd {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertThat(new File(TEST_DIRECTORY + "thumbnail.png").exists()).isTrue();
+        assertThat(new File(TEST_DIRECTORY + "thumbnail.jpg").exists()).isTrue();
         assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("ok");
     }
 
@@ -138,7 +138,7 @@ public class VideoManagementTestAdd {
         String thumbnailPath = "";
         String m3u8Path = "";
         for(String file : new File("./files/").list()){
-            if(!file.contains("thumbnail") && file.contains(".png")){
+            if(!file.contains("thumbnail") && file.contains(".jpg")){
                 thumbnailPath = file;
             }
             if(!file.contains("index") && file.contains(".m3u8")){
@@ -173,7 +173,7 @@ public class VideoManagementTestAdd {
         new File("./files/"+RANDOM_NAME+".2.ts").delete();
         given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), ArgumentMatchers.any(), eq(String.class)))
                 .willReturn(ResponseEntity.ok("ok"));
-        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/delete/"+RANDOM_NAME+".png"), eq(HttpMethod.DELETE), ArgumentMatchers.any(), eq(String.class)))
+        given(restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/delete/"+RANDOM_NAME+".jpg"), eq(HttpMethod.DELETE), ArgumentMatchers.any(), eq(String.class)))
                 .willThrow(new RuntimeException("thrown while rollback"));
 
         MvcResult result = this.mockMvc.perform(post("/video/upload-web"))
@@ -343,12 +343,12 @@ public class VideoManagementTestAdd {
     }
 
     private void createMediaFiles() throws IOException {
-        new File("./files/thumbnail.png").createNewFile();
+        new File("./files/thumbnail.jpg").createNewFile();
         new File("./files/index.m3u8").createNewFile();
     }
 
     private void createEncryptedMediaFiles() throws IOException {
-        new File("./files/"+RANDOM_NAME+".png").createNewFile();
+        new File("./files/"+RANDOM_NAME+".jpg").createNewFile();
         new File("./files/"+RANDOM_NAME+".m3u8").createNewFile();
         new File("./files/"+RANDOM_NAME+".0.ts").createNewFile();
         new File("./files/"+RANDOM_NAME+".1.ts").createNewFile();

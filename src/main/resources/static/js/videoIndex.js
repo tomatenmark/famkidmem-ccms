@@ -31,7 +31,7 @@ function buildIndexItem(video){
                         <a class="button" href="/video/edit-data/${encryptedTitleUrlBase64}">Show/Edit Video data</a>
                     </div>
                     <div class="cell thumbnail">
-                        <img src="/img/thumbnail-placeholder.png" alt="thumbnail" id="thumbnail_${video.title}" onclick="initPlayVideo('${video.m3u8.filename}', '${video.m3u8.key.key}', '${video.m3u8.key.iv}');"><br>
+                        <img src="/img/thumbnail-placeholder.jpg" alt="thumbnail" id="thumbnail_${video.title}" onclick="initPlayVideo('${video.m3u8.filename}', '${video.m3u8.key.key}', '${video.m3u8.key.iv}');"><br>
                         <a class="button" href="/video/replace-thumbnail/${encryptedTitleUrlBase64}">Replace Thumbnail</a>
                     </div>
                     <div class="cell remove">
@@ -112,7 +112,7 @@ function doHls(source){
 function handlePushIndex(message){
     let messageObject = JSON.parse(message.body);
     let filename = messageObject.message;
-    if(filename.indexOf(".png") >= 0){
+    if(filename.indexOf(".jpg") >= 0){
         loadThumbnail(filename, messageObject.details)
     }
     if(filename.indexOf(".m3u8") >= 0){

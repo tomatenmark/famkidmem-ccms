@@ -59,7 +59,7 @@ public class VideoAddService {
     }
 
     public void uploadThumbnail(MultipartFile file) throws FileUploadException {
-        uploadFile(file, "thumbnail.png");
+        uploadFile(file, "thumbnail.jpg");
         pushService.push(PushMessage.thumbnailUploadComplete());
         LOGGER.info("Successfully uploaded thumbnail to ccms.");
     }
@@ -122,7 +122,7 @@ public class VideoAddService {
         addVideoRequest.setM3u8Filename(state.randomName+".m3u8");
         addVideoRequest.setM3u8Key(state.m3u8Key.getKey());
         addVideoRequest.setM3u8Iv(state.m3u8Key.getIv());
-        addVideoRequest.setThumbnailFilename(state.randomName+".png");
+        addVideoRequest.setThumbnailFilename(state.randomName+".jpg");
         addVideoRequest.setThumbnailKey(state.thumbnailKey.getKey());
         addVideoRequest.setThumbnailIv(state.thumbnailKey.getIv());
         addVideoRequest.setRecordedInCologne("cologne".equals(request.getParameter("recordedInCologne")));
@@ -154,7 +154,7 @@ public class VideoAddService {
     private List<String> getFilesToUploadList(){
         String dirPath = "./files";
         List<String> filesList = new ArrayList<>();
-        filesList.add(String.format("%s/%s.png", dirPath, state.randomName));
+        filesList.add(String.format("%s/%s.jpg", dirPath, state.randomName));
         filesList.add(String.format("%s/%s.m3u8", dirPath, state.randomName));
         for(int i = 0; i < state.tsFiles; i++){
             filesList.add(String.format("%s/%s.%s.ts", dirPath, state.randomName, i));
@@ -198,7 +198,7 @@ public class VideoAddService {
     private void encryptThumbnail(String name) throws EncryptionException, GeneralSecurityException {
         byte[] key = cryptoUtil.generateSecureRandomKeyParam();
         byte[] iv = cryptoUtil.generateSecureRandomKeyParam();
-        encryptFile(name, "thumbnail.png", "png", key, iv);
+        encryptFile(name, "thumbnail.jpg", "png", key, iv);
         state.thumbnailKey = new Key(cryptoUtil.encryptKey(key), cryptoUtil.toBase64(iv));
         pushService.push(PushMessage.finishedWithThumbnail());
         LOGGER.info("Successfully encrypted thumbnail.");
