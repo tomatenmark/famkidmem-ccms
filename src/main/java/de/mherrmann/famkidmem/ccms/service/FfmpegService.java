@@ -22,6 +22,7 @@ public class FfmpegService {
     private static State state;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FfmpegService.class);
+    private static final int TS_DURATION = 7;
 
     @Autowired
     public FfmpegService(PushService pushService, CryptoUtil cryptoUtil) {
@@ -52,7 +53,7 @@ public class FfmpegService {
                 "-y",
                 "-i",
                 "./files/video.mp4",
-                "-hls_time", "10",
+                "-hls_time", String.valueOf(TS_DURATION),
                 "-hls_flags", "periodic_rekey",
                 "-hls_key_info_file", "./files/enc.keyinfo",
                 "-hls_playlist_type", "vod",
@@ -154,7 +155,7 @@ public class FfmpegService {
     }
 
     private void setTsFilesExpected(){
-        state.tsFilesExpected = (int) Math.ceil(state.seconds / 10);
+        state.tsFilesExpected = (int) Math.ceil(state.seconds / TS_DURATION);
     }
 
     private void sendProgress(String line){

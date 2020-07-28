@@ -83,13 +83,13 @@ public class FfmpegServiceTest {
     public void shouldRunCheckTsFilesAndSeconds() {
         FfmpegService.State state = ffmpegService.encryptVideo("");
 
-        assertThat(state.tsFiles).isEqualTo(3);
+        assertThat(state.tsFiles).isEqualTo(4);
         assertThat(state.seconds).isEqualTo(24.0);
     }
 
     @Test
     public void shouldRunCheckCall() throws Exception {
-        String expectedCall = "-y -i ./files/video.mp4 -hls_time 10 -hls_flags periodic_rekey -hls_key_info_file " +
+        String expectedCall = "-y -i ./files/video.mp4 -hls_time 7 -hls_flags periodic_rekey -hls_key_info_file " +
                 "./files/enc.keyinfo -hls_playlist_type vod -hls_segment_filename \"./files/.%d.ts\" ./files/index.m3u8";
 
         Runnable runnable = () -> ffmpegService.encryptVideo("");

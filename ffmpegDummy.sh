@@ -15,5 +15,6 @@ echo "frame= 160 fps " 1>&2
 
 sleep 5
 
+echo "[hls Opening 'crypto:fileSequence3' " 1>&2
 echo "frame= 240 fps " 1>&2
 echo "video " 1>&2
