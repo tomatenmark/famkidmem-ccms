@@ -1,8 +1,9 @@
 /* userForms */
 
+const loginPepper = "ee/ZUOqS8i30+TKZ5mU9dA==";
+
 function prepareUserForm(username, password, frontendUrl, masterKey, linkType){
     const secret = CryptoJS.enc.Utf8.parse(password);
-    const loginPepper = "H8KDQYZplb7FUZLoX4lHLg==";
     const loginSpice = CryptoJS.enc.Utf8.parse(loginPepper+username);
     const passwordKeySaltBase64 = document.userForm.passwordKeySalt.value;
     const passwordKeySalt =  CryptoJS.enc.Base64.parse(passwordKeySaltBase64);
