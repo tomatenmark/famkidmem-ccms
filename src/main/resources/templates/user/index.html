@@ -34,7 +34,8 @@
         <h2 th:if="${users.size() <= 0}">Not yet any users</h2>
     </th:block>
 
-    <a class="button" th:href="@{/user/add}">Add User</a>
+    <a class="button" th:href="@{/user/add}">Add User</a><br>
+    <a th:href="@{/video/index}">Manage videos instead</a>
 </div>
 
 </body>
