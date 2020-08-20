@@ -1,10 +1,3 @@
-//TODO: move to deleteVideo.js
-function addTsFilenamesToVideoRemoveForm(){
-    const m3u8Base64 = document.getElementById('m3u8').getAttribute('data-m3u8');
-    //TODO: decrypt m3u8, find ts filenames and add them to videoRemoveForm
-    //example for inputField for second ts file: <input type="hidden" name="tsFilename[1]" value="{FILENAME}">
-}
-
 let submit = false;
 
 function addVideo(){

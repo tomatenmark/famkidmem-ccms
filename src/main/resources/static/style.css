@@ -7,6 +7,7 @@ body { padding: 30px; }
     left: 0;
     border-bottom: 2px black solid;
     width: 100%;
+    background: #bebebe;
 }
 
 #header h1 {
@@ -79,6 +80,7 @@ a:active {
 
 #videos {
     display: table;
+    border-spacing: 16px;
 }
 
 .video {
@@ -87,8 +89,8 @@ a:active {
 }
 
 .video img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
 }
 
@@ -130,7 +132,6 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 2px;
 }
 
-/* TODO: add styles for input fields, checkbox, label and other new things in the new templates (maybe initialize some elements with display:none)*/
 label {
     display: block;
 }
@@ -152,7 +153,7 @@ progress:after {
 }
 
 #ffmpegProgress {
-    max-height: 600px;
+    max-height: 500px;
     overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */

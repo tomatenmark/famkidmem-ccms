@@ -36,8 +36,8 @@
         Are you sure you want to remove the video <span id="title">[[${title}]]</span>?
         <input type="hidden" name="thumbnailFilename" th:value="${thumbnailFilename}">
         <input type="hidden" name="m3u8Filename" th:value="${m3u8Filename}">
-        <input type="hidden" name="tsFilesName" th:value="${m3u8Filename}">
-        <input type="hidden" name="tsFilesCount" th:value="${m3u8Filename}">
+        <input type="hidden" name="tsFilesName">
+        <input type="hidden" name="tsFilesCount">
         <button type="submit">Yes</button>
         <a class="button" th:href="@{/user/index}">No</a>
     </form>
