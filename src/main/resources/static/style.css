@@ -137,7 +137,8 @@ label {
 }
 
 label.inline {
-    display: inline;
+    display: inline-block;
+    margin-right: 20px;
 }
 
 label span {

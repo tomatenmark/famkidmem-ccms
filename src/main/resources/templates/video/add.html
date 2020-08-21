@@ -50,11 +50,15 @@
                     <span>Persons (comma-separated)</span>
                     <input type="text" name="persons">
                 </label>
-                <label>
-                    <span>Recorded where?</span>
-                    <input type="checkbox" name="recordedInCologne" value="cologne"> Cologne
-                    <input type="checkbox" name="recordedInGardelegen" value="gardelegen"> Gardelegen
-                </label>
+                <div>
+                    <span>Recorded where?&emsp;</span>
+                    <label class="inline">
+                        <input type="checkbox" name="recordedInCologne" value="cologne"> Cologne
+                    </label>
+                    <label class="inline">
+                        <input type="checkbox" name="recordedInGardelegen" value="gardelegen"> Gardelegen
+                    </label>
+                </div>
                 <div>
                     <div>Recorded when?</div>
                     <label class="inline"><input name="year" type="number" min="1994" max="2999" required> Year</label>
