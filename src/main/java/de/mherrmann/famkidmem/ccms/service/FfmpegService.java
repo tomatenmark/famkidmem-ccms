@@ -102,7 +102,6 @@ public class FfmpegService {
     private void handleFfmpegSpecialLine(String line) throws IOException {
         if(line.matches("^\\s*Duration:\\s\\d+:\\d+:\\d+.*$")){
             setSeconds(line);
-            setTsFilesExpected();
         }
         if(line.matches("^(.*Opening\\s'crypto:.*|video.*)$")){
             state.tsFiles++;
@@ -154,10 +153,6 @@ public class FfmpegService {
         return Double.valueOf(line.replaceFirst(pattern, "$3")) + minutes*60;
     }
 
-    private void setTsFilesExpected(){
-        state.tsFilesExpected = (int) Math.ceil(state.seconds / TS_DURATION);
-    }
-
     private void sendProgress(String line){
         String logLine = extractRelevantAndBeautify(line);
         pushService.push(PushMessage.videoEncryptionProgress(logLine, state.frameLineBefore, state.getPercentage()));
@@ -166,7 +161,7 @@ public class FfmpegService {
 
     private String extractRelevantAndBeautify(String line){
         switch(line.substring(0, 5)){
-            case "[hls ": return String.format("Chunk %d/%d", state.tsFiles+1, state.tsFilesExpected);
+            case "[hls ": return String.format("Chunk %d", state.tsFiles+1);
             case "frame": return String.format("Frame %d/%d", state.frames, state.framesExpected);
             case "video": return "Finished";
         }
@@ -183,7 +178,6 @@ public class FfmpegService {
         int frames;
         int framesExpected;
         public int tsFiles = -1;
-        int tsFilesExpected;
         boolean frameLineBefore;
         boolean errorState;
         boolean finished;
