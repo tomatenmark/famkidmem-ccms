@@ -80,7 +80,7 @@ a:active {
 
 #videos {
     display: table;
-    border-spacing: 16px;
+    border-spacing: 0 16px;
 }
 
 .video {
