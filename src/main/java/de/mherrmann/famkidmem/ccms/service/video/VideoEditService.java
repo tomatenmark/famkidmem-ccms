@@ -118,7 +118,6 @@ public class VideoEditService {
 
     @SuppressWarnings("unchecked") //we know, the assignment will work
     private Video getVideo(String designator) throws Exception {
-        designator = designator.replace('_', '/').replace('-', '+');
         ResponseEntity<ResponseBodyGetVideos> response = connectionService.doGetSingleVideoRequest(designator);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new WebBackendException(response.getBody());
