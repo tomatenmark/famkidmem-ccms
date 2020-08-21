@@ -123,7 +123,7 @@ function handlePushIndex(message){
 function loadBase64FromFile(filename){
     let client = new XMLHttpRequest();
     client.addEventListener("error", handleFileReadError);
-    client.open("GET", "/video/file/base64/"+filename); ///video/file/base64/f39a1b7e-0267-44cf-b5cf-89dbf4815108.m3u8
+    client.open("GET", "/video/file/base64/"+filename);
     client.send();
 }
 
