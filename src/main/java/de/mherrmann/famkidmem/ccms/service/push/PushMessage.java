@@ -19,6 +19,12 @@ public class PushMessage {
         this.details = details;
     }
 
+    private PushMessage(String message, String details, int value) {
+        this.message = message;
+        this.details = details;
+        this.value = value;
+    }
+
     private PushMessage(String message, int value) {
         this.message = message;
         this.value = value;
@@ -60,8 +66,10 @@ public class PushMessage {
         return new PushMessage("error", details);
     }
 
-    public static PushMessage webBackendUploadProgress(int progress){
-        return new PushMessage("webBackendUploadProgress", progress);
+    public static PushMessage webBackendUploadProgress(int current, int total){
+        int value = (int) Math.round(100.0 / total * current);
+        String details = String.format("%d/%d", current, total);
+        return new PushMessage("webBackendUploadProgress", details, value);
     }
 
     public static PushMessage base64(String filename, String base64){

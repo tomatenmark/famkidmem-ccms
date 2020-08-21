@@ -76,8 +76,7 @@ public class VideoAddService {
         try {
             for(String path : filesList){
                 uploadFileToWebBackend(path);
-                int percentage = (int) Math.round(100.0 / filesList.size() * ++files);
-                pushService.push(PushMessage.webBackendUploadProgress(percentage));
+                pushService.push(PushMessage.webBackendUploadProgress(++files, filesList.size()));
             }
             pushService.push(PushMessage.finishedWithWebUpload());
             LOGGER.info("Successfully uploaded video files to web-backend.");

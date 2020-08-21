@@ -38,6 +38,7 @@ function handlePushAdd(message){
             break;
         case 'webBackendUploadProgress':
             document.getElementById('progressBar').value = messageObject.value;
+            document.getElementById('step').innerText = `Step 5/6: upload files to web-backend (${messageObject.details})`;
             break;
         case 'finishedWithWebUpload':
             submitAddVideo();
