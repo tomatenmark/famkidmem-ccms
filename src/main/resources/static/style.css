@@ -153,16 +153,7 @@ progress:after {
     content: attr(value)'%';
 }
 
-#ffmpegProgress {
-    max-height: 500px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE 10+ */
-    margin: 20px 0;
-}
-
-#progress, #ffmpegProgress, #ffmpegProgress::-webkit-scrollbar /*Chrome Safari*/, #autoScrollLabel, #silvesterToggle {
+#progress, #progressDetails, #silvesterToggle {
     display: none;
 }
 

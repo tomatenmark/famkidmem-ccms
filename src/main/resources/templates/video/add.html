@@ -40,15 +40,15 @@
                 </div>
                 <label>
                     <span>Title</span>
-                    <input type="text" name="title" required>
+                    <input type="text" name="title" maxlength="150" required>
                 </label>
                 <label>
                     <span>Description</span>
-                    <textarea name="description" required></textarea>
+                    <textarea name="description" maxlength="150" required></textarea>
                 </label>
                 <label>
                     <span>Persons (comma-separated)</span>
-                    <input type="text" name="persons">
+                    <input type="text" maxlength="150" name="persons">
                 </label>
                 <div>
                     <span>Recorded where?&emsp;</span>
@@ -75,11 +75,11 @@
             <div id="progress">
                 <span id="step"></span>:
                 <progress id="progressBar" value="0" max="100"></progress>
-                <div id="ffmpegProgress"></div>
-                <label id="autoScrollLabel"><input type="checkbox" id="autoScroll" checked> Auto scroll log box</label>
+                <div id="progressDetails"></div>
             </div>
 
             <div id="fileProcessingErrors"></div>
+            <div id="detailedErrors"></div>
 
             <script>connectPush("add");</script>
         </th:block>

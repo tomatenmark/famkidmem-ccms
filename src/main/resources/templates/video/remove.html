@@ -7,6 +7,7 @@
 <div id="main">
 
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="titleForUrl" type="java.lang.String"*/-->
     <!--/*@thymesVar id="post" type="java.lang.Boolean"*/-->
     <!--/*@thymesVar id="success" type="java.lang.Boolean"*/-->
     <!--/*@thymesVar id="m3u8" type="java.lang.String"*/-->
@@ -24,7 +25,7 @@
             <div>Could not remove video!</div>
             Exception: [[${exception}]]<br>
             Details: [[${details}]]<br>
-            <a class="button" th:href="@{'/video/remove/'+${title}}">Try again</a>
+            <a class="button" th:href="@{'/video/remove/'+${titleForUrl}}">Try again</a>
         </div>
         <p>
             <a th:href="@{/video/index}">Back to video list</a>
@@ -32,14 +33,14 @@
     </div>
 
 
-    <form method="post" th:if="${!post}" th:action="@{'/video/remove/'+${title}}" id="videoRemoveForm" name="videoRemoveForm">
-        Are you sure you want to remove the video <span id="title">[[${title}]]</span>?
+    <form method="post" th:if="${!post}" th:action="@{'/video/remove/'+${titleForUrl}}" id="videoRemoveForm" name="videoRemoveForm">
+        Are you sure you want to remove the video <span id="title"></span>?
         <input type="hidden" name="thumbnailFilename" th:value="${thumbnailFilename}">
         <input type="hidden" name="m3u8Filename" th:value="${m3u8Filename}">
         <input type="hidden" name="tsFilesName">
         <input type="hidden" name="tsFilesCount">
         <button type="submit">Yes</button>
-        <a class="button" th:href="@{/user/index}">No</a>
+        <a class="button" th:href="@{/video/index}">No</a>
     </form>
 
 

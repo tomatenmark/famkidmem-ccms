@@ -11,7 +11,7 @@ function addVideo(){
     submit = true;
     document.getElementById('fileProcessingErrors').innerText = '';
     document.getElementById("progress").style.display = 'block';
-    uploadFile("thumbnailFile", "Step 1/6: upload thumbnail", "/video/upload-thumbnail");
+    uploadFile("thumbnailFile", "Step 1/6: copy thumbnail", "/video/upload-thumbnail");
     return false;
 }
 
@@ -19,7 +19,7 @@ function handlePushAdd(message){
     let messageObject = JSON.parse(message.body);
     switch(messageObject.message){
         case 'thumbnailUploadComplete':
-            uploadFile("videoFile", "Step 2/6: upload video", "/video/upload-video");
+            uploadFile("videoFile", "Step 2/6: copy video", "/video/upload-video");
             break;
         case 'videoUploadComplete':
             startEncryption();
@@ -37,8 +37,7 @@ function handlePushAdd(message){
             startShowWebUploadProgress();
             break;
         case 'webBackendUploadProgress':
-            document.getElementById('progressBar').value = messageObject.value;
-            document.getElementById('step').innerText = `Step 5/6: upload files to web-backend (${messageObject.details})`;
+            showProgress(messageObject);
             break;
         case 'finishedWithWebUpload':
             submitAddVideo();
@@ -50,6 +49,7 @@ function handlePushAdd(message){
 }
 
 function submitAddVideo(){
+    document.getElementById('progressDetails').style.display = 'none';
     document.getElementById('progressBar').value = 99.9;
     document.getElementById('step').innerText = 'Step 6/6: save video';
     document.videoDataForm.submit();
@@ -64,36 +64,23 @@ function startEncryption() {
 function startShowVideoEncryption() {
     document.getElementById('step').innerText = 'Step 4/6: encrypt video';
     document.getElementById('progressBar').value = '';
-    document.getElementById('ffmpegProgress').innerHTML = '<div></div>';
-    document.getElementById('ffmpegProgress').style.display = 'block';
-    document.getElementById('autoScrollLabel').style.display = 'inline';
 }
 
 function startShowWebUploadProgress() {
     document.getElementById('step').innerText = 'Step 5/6: upload files to web-backend';
     document.getElementById('progressBar').value = '';
-    document.getElementById('ffmpegProgress').style.display = 'none';
-    document.getElementById('autoScrollLabel').style.display = 'none';
     uploadToWebBackend();
 }
 
 function showProgress(messageObject){
+    document.getElementById('progressDetails').style.display = 'block';
     document.getElementById('progressBar').value = messageObject.value;
-    let logBox = document.getElementById('ffmpegProgress');
-    if(messageObject.override){
-        let entries = logBox.children.length;
-        logBox.children[entries-1].innerText = messageObject.details;
-    } else {
-        logBox.innerHTML += '<div>' + messageObject.details + '</div>';
-    }
-    if(document.getElementById("autoScroll").checked){
-        logBox.scrollTop = logBox.scrollHeight;
-    }
+    document.getElementById('progressDetails').innerText = messageObject.details;
 }
 
 function showVideoEncryptionError(messageObject){
     document.getElementById('progressBar').value = 0;
-    document.getElementById('ffmpegProgress').innerHTML += '<div class="error">' + messageObject.details + '</div>';
+    document.getElementById('detailedErrors').innerHTML += '<div class="error">' + messageObject.details + '</div>';
 }
 
 function showError(message){

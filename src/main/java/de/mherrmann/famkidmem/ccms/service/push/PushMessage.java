@@ -4,15 +4,7 @@ public class PushMessage {
 
     private String message;
     private String details;
-    private boolean override;
     private int value;
-
-    private PushMessage(String message, String details, boolean override, int value) {
-        this.message = message;
-        this.details = details;
-        this.value = value;
-        this.override = override;
-    }
 
     private PushMessage(String message, String details) {
         this.message = message;
@@ -22,11 +14,6 @@ public class PushMessage {
     private PushMessage(String message, String details, int value) {
         this.message = message;
         this.details = details;
-        this.value = value;
-    }
-
-    private PushMessage(String message, int value) {
-        this.message = message;
         this.value = value;
     }
 
@@ -42,8 +29,8 @@ public class PushMessage {
         return new PushMessage("videoUploadComplete");
     }
 
-    public static PushMessage videoEncryptionProgress(String logLine, boolean override, int progress){
-        return new PushMessage("videoEncryptionProgress", logLine, override, progress);
+    public static PushMessage videoEncryptionProgress(String logLine, int progress){
+        return new PushMessage("videoEncryptionProgress", logLine, progress);
     }
 
     public static PushMessage videoEncryptionError(String details){
@@ -68,7 +55,7 @@ public class PushMessage {
 
     public static PushMessage webBackendUploadProgress(int current, int total){
         int value = (int) Math.round(100.0 / total * current);
-        String details = String.format("%d/%d", current, total);
+        String details = String.format("File %d/%d", current, total);
         return new PushMessage("webBackendUploadProgress", details, value);
     }
 
@@ -82,10 +69,6 @@ public class PushMessage {
 
     public String getDetails() {
         return details;
-    }
-
-    public boolean isOverride() {
-        return override;
     }
 
     public int getValue() {

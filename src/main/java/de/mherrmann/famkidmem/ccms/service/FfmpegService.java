@@ -94,8 +94,8 @@ public class FfmpegService {
             handleError(line);
             return;
         }
-        if(line.matches("^(.*Opening\\s'crypto:.*|(video|frame).*)$")){
-            sendProgress(line);
+        if(line.startsWith("frame")){
+            sendProgress();
         }
     }
 
@@ -153,19 +153,9 @@ public class FfmpegService {
         return Double.valueOf(line.replaceFirst(pattern, "$3")) + minutes*60;
     }
 
-    private void sendProgress(String line){
-        String logLine = extractRelevantAndBeautify(line);
-        pushService.push(PushMessage.videoEncryptionProgress(logLine, state.frameLineBefore, state.getPercentage()));
-        state.frameLineBefore = line.startsWith("frame");
-    }
-
-    private String extractRelevantAndBeautify(String line){
-        switch(line.substring(0, 5)){
-            case "[hls ": return String.format("Chunk %d", state.tsFiles+1);
-            case "frame": return String.format("Frame %d/%d", state.frames, state.framesExpected);
-            case "video": return "Finished";
-        }
-        return "";
+    private void sendProgress(){
+        String logLine = String.format("Frame %d/%d", state.frames, state.framesExpected);
+        pushService.push(PushMessage.videoEncryptionProgress(logLine, state.getPercentage()));
     }
 
     private void handleError(String line){
@@ -178,7 +168,6 @@ public class FfmpegService {
         int frames;
         int framesExpected;
         public int tsFiles = -1;
-        boolean frameLineBefore;
         boolean errorState;
         boolean finished;
 

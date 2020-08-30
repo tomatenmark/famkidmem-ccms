@@ -55,14 +55,12 @@ public class FfmpegServiceTest {
         Thread.sleep(1000);
         assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Frame 80/240");
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(33);
-        assertThat(PushService.getLastMessage().isOverride()).isEqualTo(false);
         Thread.sleep(5000);
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(67);
         assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Frame 160/240");
-        assertThat(PushService.getLastMessage().isOverride()).isEqualTo(true);
         Thread.sleep(5000);
         assertThat(PushService.getLastMessage().getValue()).isEqualTo(100);
-        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Finished");
+        assertThat(PushService.getLastMessage().getDetails()).isEqualTo("Frame 240/240");
     }
 
     @Test

@@ -34,7 +34,8 @@ public class VideoRemoveService {
 
     public void fillRemoveVideoModel(Model model, String designator){
         model.addAttribute("post", false);
-        model.addAttribute("title", designator);
+        model.addAttribute("titleForUrl", designator);
+        model.addAttribute("title", designator.replace("-", "+").replace("_", "/"));
         try {
             Video video = getVideo(designator);
             model.addAttribute("thumbnailFilename", video.getThumbnail().getFilename());
