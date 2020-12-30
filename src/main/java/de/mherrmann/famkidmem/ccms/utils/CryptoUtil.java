@@ -15,7 +15,7 @@ public class CryptoUtil {
 
     public String generateSecureRandomCredential() {
         byte[] bytes = generateSecureRandomBytes(20);
-        return toBase64(bytes);
+        return toUrlBase64(bytes);
     }
 
     public String generateSecureRandomKeyParamHex() {
@@ -35,6 +35,11 @@ public class CryptoUtil {
     public String toBase64(byte[] bytes){
         Base64.Encoder encoder = Base64.getEncoder();
         return encoder.encodeToString(bytes);
+    }
+
+    public String toUrlBase64(byte[] bytes){
+        String base64 = toBase64(bytes);
+        return base64.replace("+", "-").replace("/", "_");
     }
 
     public byte[] encrypt(byte[] plain, byte[] key, byte[] iv) throws GeneralSecurityException {

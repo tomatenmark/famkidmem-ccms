@@ -30,7 +30,7 @@ public class CryptoUtilTest {
     public void shouldGetSecureRandomCredential(){
         String credential = cryptoUtil.generateSecureRandomCredential();
 
-        assertThat(credential).matches("^[a-zA-Z\\d+/]{27}=$");
+        assertThat(credential).matches("^[a-zA-Z\\d_\\-]{27}=$");
     }
 
     @Test
