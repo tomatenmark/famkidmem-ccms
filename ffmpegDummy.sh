@@ -1,4 +1,4 @@
-echo %*>./files/call.txt
+echo $*>./files/call.txt
 
 echo " Duration: 00:00:24.00 " 1>&2
 echo " Stream Video , 10 fps, " 1>&2
