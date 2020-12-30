@@ -154,7 +154,7 @@ public class ConnectionServiceTest {
                 this.restTemplate.exchange(eq(Application.getSettings().getBackendUrl()+"/ccms/upload"), eq(HttpMethod.POST), any(), eq(String.class)))
                 .willReturn(ResponseEntity.ok("ok"));
 
-        ResponseEntity<ResponseBody> body = connectionService.doUploadRequest(null);
+        ResponseEntity<String> body = connectionService.doUploadRequest(null);
 
         assertThat(body.getBody()).isEqualTo("ok");
     }
