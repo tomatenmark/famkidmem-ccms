@@ -7,7 +7,7 @@
     <groupId>de.markherrmann.famkidmem</groupId>
     <artifactId>famkidmem-ccms</artifactId>
     <description>Control and Content Management System for Family Kid Memories (Online version for 'selbstgedrehte videos')</description>
-    <version>1.0_beta1</version>
+    <version>1.1</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
